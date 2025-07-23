@@ -101,6 +101,10 @@
         .page-section { display: none; }
         .page-section.active { display: block; }
         .nav-link.active { color: var(--text-main); font-weight: 600; }
+        .exam-tab-btn.active { background-color: var(--color-primary); color: var(--text-contrast); }
+        .exam-tab-content { display: none; }
+        .exam-tab-content.active { display: block; }
+
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
@@ -149,7 +153,7 @@
                 <section id="page-inicio" class="page-section active">
                     <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                            <img src="logo2.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg">
+                            <img src="logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg">
                             <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] font-poppins">Bienestar Animal, Cuidado Consciente</h1>
                             <p class="mt-4 text-lg text-[var(--text-muted)] max-w-3xl mx-auto">Información confiable y humana para el bienestar de tu compañero peludo.</p>
                              <div class="mt-10 flex flex-wrap justify-center gap-4" id="home-buttons">
@@ -185,19 +189,8 @@
                     <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                             <h2 class="text-3xl font-bold text-center text-[var(--text-main)] font-poppins mb-12">Mis Servicios</h2>
-                            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                                <div class="bg-[var(--color-surface)] p-6 rounded-xl shadow-lg text-center">
-                                    <h3 class="font-bold text-xl text-[var(--color-primary)] mb-2">Consulta General</h3>
-                                    <p class="text-[var(--text-muted)]">Chequeos de rutina, diagnóstico y tratamiento de enfermedades comunes.</p>
-                                </div>
-                                <div class="bg-[var(--color-surface)] p-6 rounded-xl shadow-lg text-center">
-                                    <h3 class="font-bold text-xl text-[var(--color-primary)] mb-2">Medicina Integrativa</h3>
-                                    <p class="text-[var(--text-muted)]">Terapias complementarias para un enfoque holístico de la salud.</p>
-                                </div>
-                                <div class="bg-[var(--color-surface)] p-6 rounded-xl shadow-lg text-center">
-                                    <h3 class="font-bold text-xl text-[var(--color-primary)] mb-2">Asesoría Nutricional</h3>
-                                    <p class="text-[var(--text-muted)]">Planes de alimentación personalizados para cada etapa y necesidad.</p>
-                                </div>
+                            <div id="services-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                                <!-- Service cards will be injected here by JS -->
                             </div>
                         </div>
                     </div>
@@ -350,7 +343,18 @@
                         </div>
                     </div>
                     <div id="hub-desparasitacion-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Control de Desparasitaciones</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
-                    <div id="hub-examenes-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Resultados de Exámenes</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
+                    <div id="hub-examenes-content" class="hub-section-content hidden">
+                        <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
+                             <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-[#4A4A4A]">Exámenes</h2>
+                                <div>
+                                    <button id="new-exam-order-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold text-lg mr-2">Crear Orden</button>
+                                    <button id="new-exam-result-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold text-lg">Agregar Resultados</button>
+                                </div>
+                            </div>
+                            <div id="exam-history-list" class="space-y-3"></div>
+                        </div>
+                    </div>
                     <div id="hub-certificados-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Emisión de Certificados</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
                 </div>
             </div>
@@ -521,7 +525,7 @@
     </div>
     <div id="notification-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><p id="notification-message" class="text-lg text-[#4A4A4A]"></p><button id="notification-close-btn" class="mt-6 btn-secondary text-white px-5 py-2 rounded-lg font-semibold">Cerrar</button></div></div>
     <div id="delete-confirmation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><h3 class="text-xl font-bold text-gray-800">Confirmar Eliminación</h3><p id="delete-confirmation-message" class="text-[#7F8B96] my-4"></p><p class="text-sm text-red-600 font-semibold">Esta acción no se puede deshacer.</p><div class="flex justify-center gap-4 mt-6"><button id="cancel-delete-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button><button id="confirm-delete-btn" class="btn-danger px-5 py-2 rounded-lg font-semibold">Eliminar Permanentemente</button></div></div></div>
-    <div id="consultation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 overflow-y-auto p-4"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-6 m-4 max-w-4xl w-full"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Nueva Consulta</h2><form id="consultation-form" class="space-y-6 max-h-[80vh] overflow-y-auto pr-4"><section><h3 class="text-lg font-medium text-[#4A4A4A] mb-2">Anamnesis Remota (Editable)</h3><textarea id="modal-anamnesis-remota" rows="4" class="w-full p-2 border rounded-lg"></textarea></section><section><h3 class="text-lg font-medium section-header">III. Historial Médico</h3><h4 class="text-md font-semibold text-[#4A4A4A] mb-2">A. Motivo de Consulta (MC)</h4><div class="grid grid-cols-1 gap-4"><div><label for="modal-mc-fecha" class="block text-sm">Fecha de Consulta:</label><input type="date" id="modal-mc-fecha"></div><div><label for="modal-mc-sintomas" class="block text-sm">Síntomas Principales y Duración:</label><textarea id="modal-mc-sintomas" rows="2"></textarea></div></div><h4 class="text-md font-semibold text-[#4A4A4A] mt-4 mb-2">B. Anamnesis (de la consulta)</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="modal-anamnesis-sintomas" class="block text-sm">Síntomas Adicionales:</label><textarea id="modal-anamnesis-sintomas" rows="2"></textarea></div><div><label for="modal-anamnesis-cambios" class="block text-sm">Cambios Recientes:</label><textarea id="modal-anamnesis-cambios" rows="2"></textarea></div><div><label for="modal-anamnesis-medicamentos" class="block text-sm">Medicamentos Actuales:</label><input type="text" id="modal-anamnesis-medicamentos"></div><div><label for="modal-anamnesis-historial" class="block text-sm">Historial Enfermedades/Cirugías:</label><textarea id="modal-anamnesis-historial" rows="2"></textarea></div><div><label for="modal-anamnesis-alergias" class="block text-sm">Alergias Conocidas:</label><input type="text" id="modal-anamnesis-alergias"></div><div><label for="modal-anamnesis-habitos" class="block text-sm">Hábitos de Eliminación:</label><input type="text" id="modal-anamnesis-habitos"></div><div><label for="modal-anamnesis-dieta" class="block text-sm">Dieta Actual:</label><input type="text" id="modal-anamnesis-dieta"></div><div><label for="modal-anamnesis-actividad" class="block text-sm">Nivel de Actividad:</label><input type="text" id="modal-anamnesis-actividad"></div><div class="md:col-span-2"><label for="modal-anamnesis-ambiente" class="block text-sm">Ambiente:</label><input type="text" id="modal-anamnesis-ambiente"></div></div></section><section><h3 class="text-lg font-medium section-header">IV. Examen Físico General</h3><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div><label for="modal-efg-temp" class="block text-sm">Temp:</label><input type="text" id="modal-efg-temp"></div><div><label for="modal-efg-fc" class="block text-sm">FC:</label><input type="text" id="modal-efg-fc"></div><div><label for="modal-efg-fr" class="block text-sm">FR:</label><input type="text" id="modal-efg-fr"></div><div><label for="modal-efg-trc" class="block text-sm">TRC:</label><input type="text" id="modal-efg-trc"></div></div><div class="mt-4"><label for="modal-efg-hallazgos" class="block text-sm">Hallazgos Examen Físico:</label><textarea id="modal-efg-hallazgos" rows="4"></textarea></div></section><section><h3 class="text-lg font-medium section-header">V. Diagnóstico y Plan</h3><div><label for="modal-diag-presuntivo" class="block text-sm">Diagnóstico Presuntivo:</label><textarea id="modal-diag-presuntivo" rows="2"></textarea></div><div class="mt-4"><label for="modal-diag-diferencial" class="block text-sm">Diagnóstico Diferencial:</label><textarea id="modal-diag-diferencial" rows="2"></textarea></div><div class="mt-4"><label for="modal-plan-terapeutico" class="block text-sm">Plan Terapéutico:</label><textarea id="modal-plan-terapeutico" rows="3"></textarea></div></section><section><h3 class="text-lg font-medium section-header">VI. Notas Adicionales y Seguimiento</h3><div><label for="modal-notas-adicionales" class="block text-sm">Observaciones Veterinarias:</label><textarea id="modal-notas-adicionales" rows="3"></textarea></div><div class="mt-4"><label for="modal-proxima-cita" class="block text-sm">Próxima Cita/Revisión:</label><input type="text" id="modal-proxima-cita"></div></section><div class="flex justify-end gap-4 mt-4"><button id="cancel-consultation-btn" type="button" class="bg-gray-300 px-4 py-2 rounded-lg">Cancelar</button><button id="save-consultation-btn" type="submit" class="btn-primary px-4 py-2 rounded-lg">Guardar Consulta</button></div></form></div></div>
+    <div id="consultation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 overflow-y-auto p-4"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-6 m-4 max-w-4xl w-full"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Nueva Consulta</h2><form id="consultation-form" class="space-y-6 max-h-[80vh] overflow-y-auto pr-4"><section><h3 class="text-lg font-medium text-[#4A4A4A] mb-2">Anamnesis Remota (Editable)</h3><textarea id="modal-anamnesis-remota" rows="4" class="w-full p-2 border rounded-lg"></textarea></section><section><h3 class="text-lg font-medium section-header">III. Historial Médico</h3><h4 class="text-md font-semibold text-[#4A4A4A] mb-2">A. Motivo de Consulta (MC)</h4><div class="grid grid-cols-1 gap-4"><div><label for="modal-mc-fecha" class="block text-sm">Fecha de Consulta:</label><input type="date" id="modal-mc-fecha"></div><div><label for="modal-mc-sintomas" class="block text-sm">Síntomas Principales y Duración:</label><textarea id="modal-mc-sintomas" rows="2"></textarea></div></div><h4 class="text-md font-semibold text-[#4A4A4A] mt-4 mb-2">B. Anamnesis (de la consulta)</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="modal-anamnesis-sintomas" class="block text-sm">Síntomas Adicionales:</label><textarea id="modal-anamnesis-sintomas" rows="2"></textarea></div><div><label for="modal-anamnesis-cambios" class="block text-sm">Cambios Recientes:</label><textarea id="modal-anamnesis-cambios" rows="2"></textarea></div><div><label for="modal-anamnesis-medicamentos" class="block text-sm">Medicamentos Actuales:</label><input type="text" id="modal-anamnesis-medicamentos"></div><div><label for="modal-anamnesis-historial" class="block text-sm">Historial Enfermedades/Cirurgías:</label><textarea id="modal-anamnesis-historial" rows="2"></textarea></div><div><label for="modal-anamnesis-alergias" class="block text-sm">Alergias Conocidas:</label><input type="text" id="modal-anamnesis-alergias"></div><div><label for="modal-anamnesis-habitos" class="block text-sm">Hábitos de Eliminación:</label><input type="text" id="modal-anamnesis-habitos"></div><div><label for="modal-anamnesis-dieta" class="block text-sm">Dieta Actual:</label><input type="text" id="modal-anamnesis-dieta"></div><div><label for="modal-anamnesis-actividad" class="block text-sm">Nivel de Actividad:</label><input type="text" id="modal-anamnesis-actividad"></div><div class="md:col-span-2"><label for="modal-anamnesis-ambiente" class="block text-sm">Ambiente:</label><input type="text" id="modal-anamnesis-ambiente"></div></div></section><section><h3 class="text-lg font-medium section-header">IV. Examen Físico General</h3><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div><label for="modal-efg-temp" class="block text-sm">Temp:</label><input type="text" id="modal-efg-temp"></div><div><label for="modal-efg-fc" class="block text-sm">FC:</label><input type="text" id="modal-efg-fc"></div><div><label for="modal-efg-fr" class="block text-sm">FR:</label><input type="text" id="modal-efg-fr"></div><div><label for="modal-efg-trc" class="block text-sm">TRC:</label><input type="text" id="modal-efg-trc"></div></div><div class="mt-4"><label for="modal-efg-hallazgos" class="block text-sm">Hallazgos Examen Físico:</label><textarea id="modal-efg-hallazgos" rows="4"></textarea></div></section><section><h3 class="text-lg font-medium section-header">V. Diagnóstico y Plan</h3><div><label for="modal-diag-presuntivo" class="block text-sm">Diagnóstico Presuntivo:</label><textarea id="modal-diag-presuntivo" rows="2"></textarea></div><div class="mt-4"><label for="modal-diag-diferencial" class="block text-sm">Diagnóstico Diferencial:</label><textarea id="modal-diag-diferencial" rows="2"></textarea></div><div class="mt-4"><label for="modal-plan-terapeutico" class="block text-sm">Plan Terapéutico:</label><textarea id="modal-plan-terapeutico" rows="3"></textarea></div></section><section><h3 class="text-lg font-medium section-header">VI. Notas Adicionales y Seguimiento</h3><div><label for="modal-notas-adicionales" class="block text-sm">Observaciones Veterinarias:</label><textarea id="modal-notas-adicionales" rows="3"></textarea></div><div class="mt-4"><label for="modal-proxima-cita" class="block text-sm">Próxima Cita/Revisión:</label><input type="text" id="modal-proxima-cita"></div></section><div class="flex justify-end gap-4 mt-4"><button id="cancel-consultation-btn" type="button" class="bg-gray-300 px-4 py-2 rounded-lg">Cancelar</button><button id="save-consultation-btn" type="submit" class="btn-primary px-4 py-2 rounded-lg">Guardar Consulta</button></div></form></div></div>
     <div id="vaccine-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
         <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
             <button id="close-vaccine-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
@@ -552,6 +556,80 @@
             </form>
         </div>
     </div>
+    <div id="exam-order-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-2xl m-4 relative">
+            <button id="close-exam-order-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Crear Orden de Examen</h2>
+            <form id="exam-order-form" class="space-y-4">
+                <div>
+                    <label for="exam-order-date" class="block text-sm font-medium text-[#7F8B96] mb-1">Fecha de Orden</label>
+                    <input id="exam-order-date" type="date" required class="w-full">
+                </div>
+                <div class="flex border-b">
+                    <button type="button" data-tab="laboratorio" class="exam-tab-btn flex-1 p-2 font-semibold active">Laboratorio</button>
+                    <button type="button" data-tab="imagenes" class="exam-tab-btn flex-1 p-2 font-semibold">Imágenes</button>
+                </div>
+                <div id="exam-tab-laboratorio" class="exam-tab-content active">
+                    <label class="block text-sm font-medium text-[#7F8B96] mb-1">Seleccionar Exámenes</label>
+                    <div id="exam-list-container" class="h-64 overflow-y-auto border rounded-lg p-2 bg-gray-50 space-y-1">
+                        <!-- Exam checkboxes will be inserted here -->
+                    </div>
+                </div>
+                 <div id="exam-tab-imagenes" class="exam-tab-content">
+                    <label class="block text-sm font-medium text-[#7F8B96] mb-1">Seleccionar Exámenes de Imagen</label>
+                    <div id="imaging-list-container" class="h-64 overflow-y-auto border rounded-lg p-2 bg-gray-50 space-y-1">
+                        <!-- Imaging exam accordions will be inserted here -->
+                    </div>
+                </div>
+                <div>
+                    <label for="exam-order-instructions" class="block text-sm font-medium text-[#7F8B96] mb-1">Indicaciones para el Tutor</label>
+                    <textarea id="exam-order-instructions" rows="4" placeholder="Las indicaciones se agregarán automáticamente..." class="w-full"></textarea>
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="cancel-exam-order-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
+                    <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Orden</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="exam-result-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
+            <button id="close-exam-result-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Agregar Resultados de Examen</h2>
+            <form id="exam-result-form" class="space-y-4">
+                <div>
+                    <label for="exam-result-date" class="block text-sm font-medium text-[#7F8B96] mb-1">Fecha de Resultados</label>
+                    <input id="exam-result-date" type="date" required class="w-full">
+                </div>
+                <div>
+                    <label for="exam-result-description" class="block text-sm font-medium text-[#7F8B96] mb-1">Descripción</label>
+                    <input id="exam-result-description" type="text" placeholder="Ej: Resultados de Perfil Bioquímico" class="w-full">
+                </div>
+                <div>
+                    <label for="exam-result-file" class="block text-sm font-medium text-[#7F8B96] mb-1">Adjuntar Archivo (PDF, JPG, etc.)</label>
+                    <input id="exam-result-file" type="file" class="w-full">
+                    <p class="text-xs text-[#7C7C75] mt-1">Nota: La subida de archivos requiere configuración de Firebase Storage.</p>
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="cancel-exam-result-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
+                    <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Resultados</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="service-detail-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
+            <button id="close-service-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 id="service-modal-title" class="text-2xl font-bold text-center text-[#4A4A4A] mb-6"></h2>
+            <p id="service-modal-description" class="text-[#7F8B96]"></p>
+        </div>
+    </div>
     
     <!-- Main Application Logic -->
     <script type="module">
@@ -573,7 +651,10 @@
             notification: document.getElementById('notification-modal'),
             consultation: document.getElementById('consultation-modal'),
             deleteConfirmation: document.getElementById('delete-confirmation-modal'),
-            vaccine: document.getElementById('vaccine-modal')
+            vaccine: document.getElementById('vaccine-modal'),
+            examOrder: document.getElementById('exam-order-modal'),
+            examResult: document.getElementById('exam-result-modal'),
+            serviceDetail: document.getElementById('service-detail-modal'),
         };
         
         // --- Navigation & Modal Functions ---
@@ -633,6 +714,7 @@
                 loadConsultationHistory(patientId);
                 loadPrescriptionHistory(patientId);
                 loadVaccineHistory(patientId);
+                loadExamHistory(patientId);
             } else {
                 showNotification(`No se encontró el paciente con Ficha Nº ${patientId}.`);
                 navigateTo('dashboard');
@@ -855,6 +937,7 @@
                 await deleteSubcollection(currentPatientId, 'consultations');
                 await deleteSubcollection(currentPatientId, 'prescriptions');
                 await deleteSubcollection(currentPatientId, 'vaccines');
+                await deleteSubcollection(currentPatientId, 'exams');
                 await deleteDoc(doc(db, "patients", currentPatientId));
                 hideModal('deleteConfirmation');
                 showNotification("Paciente eliminado correctamente.");
@@ -1130,6 +1213,197 @@
             }
         }
 
+        // --- Exam Logic ---
+        function openNewExamOrderModal() {
+            document.getElementById('exam-order-form').reset();
+            const labContainer = document.getElementById('exam-list-container');
+            const imagingContainer = document.getElementById('imaging-list-container');
+            labContainer.innerHTML = ''; 
+            imagingContainer.innerHTML = '';
+            
+            // Populate lab exams
+            examList.forEach(exam => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center';
+                div.innerHTML = `
+                    <input id="exam-${exam.id}" type="checkbox" value="${exam.name}" data-instructions="${exam.instructions}" class="h-4 w-4 text-[var(--color-primary)] border-gray-300 rounded focus:ring-[var(--color-primary)]">
+                    <label for="exam-${exam.id}" class="ml-3 block text-sm text-[var(--text-main)]">${exam.name}</label>
+                `;
+                labContainer.appendChild(div);
+            });
+            
+            // Populate imaging exams
+            Object.keys(imagingExams).forEach(category => {
+                const categoryDiv = document.createElement('div');
+                const header = document.createElement('div');
+                header.className = 'accordion-header font-semibold';
+                header.textContent = category;
+                const body = document.createElement('div');
+                body.className = 'accordion-body p-2 space-y-2';
+                
+                imagingExams[category].forEach(exam => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center';
+                    div.innerHTML = `
+                        <input id="exam-${exam.id}" type="checkbox" value="${exam.name}" data-instructions="${exam.instructions}" class="h-4 w-4 text-[var(--color-primary)] border-gray-300 rounded focus:ring-[var(--color-primary)]">
+                        <label for="exam-${exam.id}" class="ml-3 block text-sm text-[var(--text-main)]">${exam.name}</label>
+                    `;
+                    body.appendChild(div);
+                });
+
+                categoryDiv.appendChild(header);
+                categoryDiv.appendChild(body);
+                imagingContainer.appendChild(categoryDiv);
+
+                header.addEventListener('click', () => {
+                    header.classList.toggle('active');
+                    body.classList.toggle('expanded');
+                });
+            });
+
+
+            document.querySelectorAll('#exam-order-modal input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', updateExamInstructions);
+            });
+
+            updateExamInstructions(); // Clear instructions initially
+            showModal('examOrder');
+        }
+        
+        function updateExamInstructions() {
+            const instructionsTextarea = document.getElementById('exam-order-instructions');
+            const selectedExams = document.querySelectorAll('#exam-order-modal input:checked');
+            let instructions = new Set();
+            let maxAyuno = 0;
+
+            selectedExams.forEach(checkbox => {
+                const instructionText = checkbox.dataset.instructions || "";
+                // Handle fasting
+                if (instructionText.toLowerCase().includes('ayuno')) {
+                    if (instructionText.includes('> 12 h')) maxAyuno = Math.max(maxAyuno, 12);
+                    else if (instructionText.includes('> 8 h')) maxAyuno = Math.max(maxAyuno, 8);
+                    else if (instructionText.includes('> 6 h')) maxAyuno = Math.max(maxAyuno, 6);
+                }
+                // Handle other instructions
+                if (instructionText.toLowerCase().includes('post prandial')) {
+                     instructions.add("Requiere muestra post prandial (2 horas después de comer).");
+                }
+                if (!instructionText.toLowerCase().includes('ayuno') && instructionText !== 'N/A') {
+                    instructions.add(instructionText);
+                }
+            });
+            
+            if(maxAyuno > 0) {
+                instructions.add(`Ayuno de al menos ${maxAyuno} horas de alimento.`);
+            }
+
+            instructionsTextarea.value = [...instructions].join('\n');
+        }
+
+
+        function openNewExamResultModal() {
+            document.getElementById('exam-result-form').reset();
+            showModal('examResult');
+        }
+
+        async function saveNewExamOrder(e) {
+            e.preventDefault();
+            if (!currentPatientId) return;
+            const { collection, addDoc, serverTimestamp } = window.firebase;
+            const db = window.db;
+
+            const selectedExams = [];
+            document.querySelectorAll('#exam-order-modal input:checked').forEach(checkbox => {
+                selectedExams.push(checkbox.value);
+            });
+
+            const examData = {
+                date: document.getElementById('exam-order-date').value,
+                details: selectedExams.join(', '),
+                instructions: document.getElementById('exam-order-instructions').value,
+                type: 'order',
+                createdAt: serverTimestamp()
+            };
+            try {
+                const docRef = await addDoc(collection(db, "patients", currentPatientId, "exams"), examData);
+                hideModal('examOrder');
+                loadExamHistory(currentPatientId);
+                showNotification("Orden de examen guardada.");
+                // We could open a printable view here if needed
+            } catch (error) {
+                showNotification("Error al guardar la orden.", true);
+                console.error("Error saving exam order:", error);
+            }
+        }
+
+        async function saveNewExamResult(e) {
+            e.preventDefault();
+            if (!currentPatientId) return;
+            const { collection, addDoc, serverTimestamp } = window.firebase;
+            const db = window.db;
+            const fileInput = document.getElementById('exam-result-file');
+            const file = fileInput.files[0];
+            
+            // NOTE: This only saves the file name. Full file upload requires Firebase Storage setup.
+            const examData = {
+                date: document.getElementById('exam-result-date').value,
+                description: document.getElementById('exam-result-description').value,
+                fileName: file ? file.name : 'No se adjuntó archivo',
+                type: 'result',
+                createdAt: serverTimestamp()
+            };
+            try {
+                await addDoc(collection(db, "patients", currentPatientId, "exams"), examData);
+                hideModal('examResult');
+                loadExamHistory(currentPatientId);
+                showNotification("Resultados de examen guardados.");
+            } catch (error) {
+                showNotification("Error al guardar los resultados.", true);
+                console.error("Error saving exam result:", error);
+            }
+        }
+
+        async function loadExamHistory(patientId) {
+            const container = document.getElementById('exam-history-list');
+            container.innerHTML = '<p>Cargando historial de exámenes...</p>';
+            
+            const { collection, query, getDocs, orderBy } = window.firebase;
+            const db = window.db;
+
+            try {
+                const q = query(collection(db, "patients", patientId, "exams"), orderBy("date", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="text-center text-gray-500">No hay exámenes registrados.</p>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isOrder = data.type === 'order';
+                    const card = document.createElement('div');
+                    card.className = 'bg-gray-50 p-4 rounded-lg border';
+                    card.innerHTML = `
+                        <p class="font-bold text-md text-[#4A4A4A]">${data.date || 'N/A'}</p>
+                        <p class="font-semibold text-sm ${isOrder ? 'text-blue-600' : 'text-green-600'}">${isOrder ? 'Orden de Examen' : 'Resultados'}</p>
+                        <div class="mt-2 text-sm">
+                            <strong class="block">${isOrder ? 'Exámenes Solicitados:' : 'Descripción:'}</strong>
+                            <p class="whitespace-pre-wrap">${isOrder ? data.details : data.description || 'N/A'}</p>
+                        </div>
+                        ${isOrder ? `<div class="mt-2 text-sm"><strong class="block">Indicaciones:</strong><p class="whitespace-pre-wrap">${data.instructions || 'N/A'}</p></div>` : ''}
+                        ${!isOrder ? `<div class="mt-2 text-sm"><strong class="block">Archivo:</strong><p>${data.fileName}</p></div>` : ''}
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                container.innerHTML = '<p class="text-center text-red-500">Error al cargar el historial de exámenes.</p>';
+                console.error("Error loading exam history:", error);
+            }
+        }
+
 
         function downloadPDF() {
             const element = document.getElementById('prescription-content-generator');
@@ -1251,6 +1525,94 @@
                 showNotification("Error al cerrar sesión.", true);
             }
         }
+
+        // --- Data for Modals ---
+        const examList = [
+            { id: 'acetilcolinesterasa', name: 'Acetilcolinesterasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'acido-urico', name: 'Acido urico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'acidos-biliares-post', name: 'Acidos biliares post', instructions: 'POST PRANDIAL Y CADENA DE FRÍO' },
+            { id: 'acidos-biliares-pre-y-post', name: 'Acidos biliares pre y post', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'albumina', name: 'Albumina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'amilasa', name: 'Amilasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'amonio', name: 'Amonio', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'bacteriologico-y-antibiograma', name: 'Bacteriologico y antibiograma', instructions: 'N/A' },
+            { id: 'calcio-ionico', name: 'Calcio ionico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'calcio-total', name: 'Calcio total', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'citologia', name: 'Citologia', instructions: 'N/A' },
+            { id: 'clearence-creatinina', name: 'Clearence creatinina', instructions: 'N/A' },
+            { id: 'cloro', name: 'Cloro', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'colesterol-total', name: 'Colesterol total', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'coprologico-funcional', name: 'Coprologico funcional', instructions: 'N/A' },
+            { id: 'cortisol-post-acth', name: 'Cortisol post acth', instructions: 'N/A' },
+            { id: 'cortisol-pre-y-post-dexametasona', name: 'Cortisol pre y post dexametasona', instructions: 'N/A' },
+            { id: 'creatinina', name: 'Creatinina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'ck-total', name: 'Ck total', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'densidad-urinaria', name: 'Densidad urinaria', instructions: 'N/A' },
+            { id: 'determinacion-de-sexo-por-pcr', name: 'Determinacion de sexo por pcr', instructions: 'N/A' },
+            { id: 'distemper-canino-ac', name: 'Distemper canino (ac)', instructions: 'N/A' },
+            { id: 'distemper-canino-ag', name: 'Distemper canino (ag)', instructions: 'N/A' },
+            { id: 'erlichia-canis', name: 'Erlichia canis', instructions: 'N/A' },
+            { id: 'estradiol', name: 'Estradiol', instructions: 'N/A' },
+            { id: 'estudio-de-calculo-urinario', name: 'Estudio de calculo urinario', instructions: 'N/A' },
+            { id: 'fenobarbital', name: 'Fenobarbital', instructions: 'N/A' },
+            { id: 'fibrinogeno', name: 'Fibrinogeno', instructions: 'N/A' },
+            { id: 'fosforo', name: 'Fosforo', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'fosfatasas-alcalinas', name: 'Fosfatasas alcalinas', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'fructosamina', name: 'Fructosamina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'ggt', name: 'Ggt', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'giardia-duodenalis', name: 'Giardia duodenalis', instructions: 'N/A' },
+            { id: 'glucosa', name: 'Glucosa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'hemograma-completo', name: 'Hemograma completo', instructions: 'N/A' },
+            { id: 'histopatologia', name: 'Histopatologia', instructions: 'N/A' },
+            { id: 'inmunodeficiencia-felina', name: 'Inmunodeficiencia felina', instructions: 'N/A' },
+            { id: 'insulina', name: 'Insulina', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'lactato', name: 'Lactato', instructions: 'N/A' },
+            { id: 'leucemia-felina', name: 'Leucemia felina', instructions: 'N/A' },
+            { id: 'lipasa', name: 'Lipasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'magnesio', name: 'Magnesio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'micologico', name: 'Micologico', instructions: 'N/A' },
+            { id: 'nitrogeno-ureico', name: 'Nitrogeno ureico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'panel-respiratorio-felino', name: 'Panel respiratorio felino', instructions: 'N/A' },
+            { id: 'panel-respiratorio-canino', name: 'Panel respiratorio canino', instructions: 'N/A' },
+            { id: 'parvovirus-canino', name: 'Parvovirus canino', instructions: 'N/A' },
+            { id: 'perfil-bioquimico', name: 'Perfil bioquimico', instructions: 'AYUNO > 8 h Y CADENA DE FRÍO' },
+            { id: 'perfil-lipidico', name: 'Perfil lipidico', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'perfil-prequirurgico', name: 'Perfil prequirurgico', instructions: 'AYUNO > 8 h Y CADENA DE FRÍO' },
+            { id: 'pif', name: 'Pif', instructions: 'N/A' },
+            { id: 'potasio', name: 'Potasio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'progesterona', name: 'Progesterona', instructions: 'N/A' },
+            { id: 'proteinas-totales', name: 'Proteinas totales', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'rpc', name: 'Rpc', instructions: 'N/A' },
+            { id: 'raspado-de-piel', name: 'Raspado de piel', instructions: 'N/A' },
+            { id: 'recuento-de-reticulocitos', name: 'Recuento de reticulocitos', instructions: 'N/A' },
+            { id: 'relacion-albumina-creatinina', name: 'Relacion albumina/creatinina', instructions: 'N/A' },
+            { id: 'relacion-proteina-creatinina', name: 'Relacion proteina/creatinina', instructions: 'N/A' },
+            { id: 'sdma', name: 'Sdma', instructions: 'N/A' },
+            { id: 'sodio', name: 'Sodio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 't4-libre', name: 'T4 libre', instructions: 'N/A' },
+            { id: 't4-total', name: 'T4 total', instructions: 'N/A' },
+            { id: 'testosterona', name: 'Testosterona', instructions: 'N/A' },
+            { id: 'tiempo-de-coagulacion', name: 'Tiempo de coagulacion', instructions: 'N/A' },
+            { id: 'tiempo-de-protrombina', name: 'Tiempo de protrombina', instructions: 'N/A' },
+            { id: 'tiempo-de-tromboplastina', name: 'Tiempo de tromboplastina', instructions: 'N/A' },
+            { id: 'trigliceridos', name: 'Trigliceridos', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'tsh', name: 'Tsh', instructions: 'N/A' },
+            { id: 'uroanalisis-completo', name: 'Uroanalisis completo', instructions: 'N/A' },
+            { id: 'urocultivo-y-antibiograma', name: 'Urocultivo y antibiograma', instructions: 'N/A' },
+        ];
+        const imagingExams = {
+            "Ecografías": [
+                { id: 'eco-abdominal', name: 'Ecotomografía Abdominal', instructions: 'Ayuno de al menos 8 horas de alimento.' },
+                { id: 'eco-tiroidea', name: 'Ecotomografía Tiroidea', instructions: 'N/A' },
+            ],
+            "Radiografías": [
+                { id: 'rx-torax', name: 'Estudio Radiográfico de Tórax', instructions: 'Proyecciones solicitadas: Latero-lateral derecha, latero-lateral izquierda y ventro-dorsal.' },
+                { id: 'rx-abdomen', name: 'Estudio Radiográfico de Abdomen', instructions: 'Proyecciones solicitadas: Latero-lateral y ventro-dorsal.' },
+                { id: 'rx-hombro', name: 'Estudio Radiográfico de Hombro', instructions: 'Proyecciones solicitadas: Latero-lateral y ventro-dorsal.' },
+                { id: 'rx-codo', name: 'Estudio Radiográfico de Codo', instructions: 'Proyecciones solicitadas: Latero-lateral y cráneo-caudal.' },
+                { id: 'rx-cadera', name: 'Estudio Radiográfico de Cadera (VD)', instructions: 'Proyección solicitada: Ventro-dorsal con sedación.' },
+            ]
+        };
 
         // --- Initial Load & Event Listeners ---
         function initializeApp() {
@@ -1384,6 +1746,54 @@
              document.getElementById('vaccine-form').addEventListener('submit', saveNewVaccine);
              document.getElementById('close-vaccine-modal-btn').addEventListener('click', () => hideModal('vaccine'));
              document.getElementById('cancel-vaccine-btn').addEventListener('click', () => hideModal('vaccine'));
+
+            // Exam Modal Listeners
+            document.getElementById('new-exam-order-btn').addEventListener('click', openNewExamOrderModal);
+            document.getElementById('exam-order-form').addEventListener('submit', saveNewExamOrder);
+            document.getElementById('close-exam-order-modal-btn').addEventListener('click', () => hideModal('examOrder'));
+            document.getElementById('cancel-exam-order-btn').addEventListener('click', () => hideModal('examOrder'));
+            document.getElementById('new-exam-result-btn').addEventListener('click', openNewExamResultModal);
+            document.getElementById('exam-result-form').addEventListener('submit', saveNewExamResult);
+            document.getElementById('close-exam-result-modal-btn').addEventListener('click', () => hideModal('examResult'));
+            document.getElementById('cancel-exam-result-btn').addEventListener('click', () => hideModal('examResult'));
+            document.querySelectorAll('.exam-tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.exam-tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.exam-tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(`exam-tab-${btn.dataset.tab}`).classList.add('active');
+                });
+            });
+
+            // Service Modal Logic
+            const serviceData = {
+                'consulta-general': { title: 'Consulta General', description: 'Evaluación completa del estado de salud de tu mascota, diagnóstico de enfermedades y recomendación de tratamientos.' },
+                'vacunaciones': { title: 'Vacunaciones', description: 'Aplicación de vacunas esenciales para proteger a tu mascota contra enfermedades infecciosas comunes.' },
+                'microchip': { title: 'Colocación de Microchip', description: 'Implantación subcutánea de un microchip de identificación estándar, un método seguro y permanente para registrar a tu mascota.' },
+                'examenes-sangre': { title: 'Exámenes de Sangre', description: 'Toma de muestras para perfiles bioquímicos, hemogramas y otros análisis para una evaluación interna completa.' },
+                'presion-arterial': { title: 'Toma de Presión Arterial', description: 'Medición no invasiva de la presión arterial, crucial para el monitoreo de pacientes con enfermedades cardíacas, renales o de la tercera edad.' },
+                'certificados-salud': { title: 'Certificados de Salud para Viajes', description: 'Emisión de certificados de salud necesarios para viajes nacionales e internacionales, asegurando que tu mascota cumple con todos los requisitos.' },
+                'desparasitaciones': { title: 'Desparasitaciones', description: 'Administración de tratamientos para el control de parásitos internos y externos, fundamental para la salud de tu mascota y tu familia.' },
+                'homenaje-final': { title: 'Acompañamiento y Homenaje Final', description: 'Un servicio compasivo y respetuoso para acompañarte en el difícil momento de la despedida, asegurando un final tranquilo y digno para tu fiel compañero.' }
+            };
+            document.getElementById('services-grid').innerHTML = Object.keys(serviceData).map(key => {
+                return `
+                    <div data-service="${key}" class="service-card bg-[var(--color-surface)] p-6 rounded-xl shadow-lg text-center flex flex-col items-center cursor-pointer hover:shadow-xl transition-shadow">
+                        <h3 class="font-bold text-xl text-[var(--color-primary)] mb-2">${serviceData[key].title}</h3>
+                    </div>
+                `;
+            }).join('');
+            
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const serviceKey = card.dataset.service;
+                    const data = serviceData[serviceKey];
+                    document.getElementById('service-modal-title').textContent = data.title;
+                    document.getElementById('service-modal-description').textContent = data.description;
+                    showModal('serviceDetail');
+                });
+            });
+            document.getElementById('close-service-modal-btn').addEventListener('click', () => hideModal('serviceDetail'));
         }
         
         document.addEventListener('DOMContentLoaded', initializeApp);
