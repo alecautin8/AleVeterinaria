@@ -1691,8 +1691,8 @@
         ];
         const imagingExams = {
             "Ecografías": [
-                { id: 'eco-abdominal', name: 'Ecografía Abdominal Completa', instructions: 'Ayuno 8–12 h. Rasurado abdominal. No requiere sedación.' },
-                { id: 'eco-cardiograma', name: 'Ecocardiograma (modo B, M, Doppler)', instructions: 'No requiere ayuno. Sedación solo si hay agitación. Rasurado torácico derecho.' },
+                { id: 'eco-abdominal', name: 'Ecografía Abdominal', instructions: 'Ayuno 8–12 h. Rasurado abdominal. No requiere sedación.' },
+                { id: 'eco-cardiograma', name: 'Ecocardiograma', instructions: 'No requiere ayuno. Sedación solo si hay agitación. Rasurado torácico derecho.' },
                 { id: 'eco-toracica', name: 'Ecografía Torácica', instructions: 'No requiere ayuno. Rasurado torácico. No requiere sedación.' },
                 { id: 'eco-musculoesqueletica', name: 'Ecografía Musculoesquelética / Articular', instructions: 'Rasurado local. No requiere ayuno. Sedación si hay dolor o poca cooperación.' },
                 { id: 'eco-ocular', name: 'Ecografía Ocular', instructions: 'No requiere ayuno ni sedación. Rasurado periorbitario opcional.' },
@@ -1708,17 +1708,29 @@
                 { id: 'rx-columna-toracica', name: 'Radiografía de Columna Torácica', instructions: 'Vistas: Laterolateral, Ventrodorsal. Sedación necesaria. Ayuno 8 h si se seda.' },
                 { id: 'rx-columna-lumbar', name: 'Radiografía de Columna Lumbar', instructions: 'Vistas: Laterolateral, Ventrodorsal. Sedación necesaria. Ayuno 8 h si se seda.' },
                 { id: 'rx-columna-lumbosacra', name: 'Radiografía de Columna Lumbosacra', instructions: 'Vistas: Laterolateral, Ventrodorsal. Sedación necesaria. Ayuno 8 h si se seda.' },
-                { id: 'rx-codo-hombro', name: 'Radiografía de Codo / Hombro', instructions: 'Vistas: Lateromedial flexionado, Craniocaudal (CC). No requiere ayuno.' },
-                { id: 'rx-tarso-carpo', name: 'Radiografía de Tarso / Carpo', instructions: 'Vistas: Lateromedial, Dorsoplantar o Dorsopalmar. No requiere ayuno.' },
-                { id: 'rx-craneo', name: 'Radiografía de Cráneo / Mandíbula', instructions: 'Vistas: Lateral, Dorsoventral, Oblicuas. Sedación generalmente necesaria. Ayuno si se seda.' },
+                { id: 'rx-codo', name: 'Radiografía de Codo', instructions: 'Vistas: Lateromedial flexionado, Craniocaudal (CC). No requiere ayuno.' },
+                { id: 'rx-hombro', name: 'Radiografía de Hombro', instructions: 'Vistas: Lateromedial flexionado, Craniocaudal (CC). No requiere ayuno.' }
+                { id: 'rx-tarso', name: 'Radiografía de Tarso', instructions: 'Vistas: Lateromedial, Dorsoplantar o Dorsopalmar. No requiere ayuno.' },
+                { id: 'rx-carpo', name: 'Radiografía de Carpo', instructions: 'Vistas: Lateromedial, Dorsoplantar o Dorsopalmar. No requiere ayuno.' },
+                { id: 'rx-craneo', name: 'Radiografía de Cráneo', instructions: 'Vistas: Lateral, Dorsoventral, Oblicuas. Sedación generalmente necesaria. Ayuno si se seda.' },
                 { id: 'rx-dental', name: 'Radiografía Dental Intraoral', instructions: 'Anestesia general obligatoria. Ayuno mínimo 8 h.' },
                 { id: 'rx-contrastada', name: 'Radiografías Contrastadas', instructions: 'Ayuno mínimo 12 h. Enema previo en estudios digestivos. Sedación obligatoria.' },
             ],
             "Tomografía (TAC)": [
-                 { id: 'tac-general', name: 'TAC (cabeza, columna, tórax, abdomen)', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio necesario.' },
+                 { id: 'tac-cabeza', name: 'TAC Cabeza', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio necesario.' },
+                 { id: 'tac-columna', name: 'TAC Columna)', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio necesario.' },
+                 { id: 'tac-tórax', name: 'TAC Tórax', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio necesario.' },
+                 { id: 'tac-abdomen', name: 'TAC Abdomen', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio necesario.' },
             ],
             "Resonancia Magnética (RM)": [
-                { id: 'rm-general', name: 'RM (cráneo, columna, articulaciones)', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
+                { id: 'rm-Cerebro', name: 'RM Cerebro', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
+                { id: 'rm-Cervical', name: 'RM Cervical', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
+                { id: 'rm-Toracolumbar', name: 'RM Toracolumbar', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
+                { id: 'rm-Lumbar', name: 'RM Lumbar', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
+                { id: 'rm-Lumbosacro', name: 'RM Lumbosacro', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
+                { id: 'rm-Rodilla', name: 'RM Rodilla', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
+                { id: 'rm-Oído', name: 'RM Oído', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
+                { id: 'rm-Cavidad nasal', name: 'RM Cavidad nasal', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },                
             ],
             "Endoscopías": [
                 { id: 'endoscopia-digestiva', name: 'Endoscopía digestiva (alta / baja)', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria.' },
