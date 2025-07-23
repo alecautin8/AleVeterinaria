@@ -49,8 +49,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Custom Styles -->
     <style>
+        :root {
+            --color-background: #F9F5EF;
+            --color-surface: #FFFFFF;
+            --color-primary: #A3CBB2;
+            --color-secondary: #F7DCDC;
+            --color-accent: #CFEDEC;
+            --color-highlight: #DAD4E6;
+            --text-main: #4B4B4B;
+            --text-muted: #7C7C75;
+            --text-contrast: #FFFFFF;
+        }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Lato', sans-serif; background-color: #E0F5F0; color: #4A4A4A; }
+        body { font-family: 'Lato', sans-serif; background-color: var(--color-background); color: var(--text-main); }
         h1, h2, h3, button, .font-poppins { font-family: 'Poppins', sans-serif; }
         .view { display: none; }
         .view.active { display: block; }
@@ -58,38 +69,38 @@
         .modal.active { display: flex; }
         
         /* New Color Palette Buttons */
-        .btn-primary { background-color: #9FCBB9; color: #FFFFFF; transition: background-color 0.3s; }
-        .btn-primary:hover { background-color: #8FBAA8; }
-        .btn-secondary { background-color: #FAD4D4; color: #4A4A4A; transition: background-color 0.3s; }
-        .btn-secondary:hover { background-color: #F8C2C2; }
-        .btn-tertiary { background-color: #A5E4E2; color: #4A4A4A; transition: background-color 0.3s; }
-        .btn-tertiary:hover { background-color: #94D3D1; }
+        .btn-primary { background-color: var(--color-primary); color: var(--text-contrast); transition: background-color 0.3s; }
+        .btn-primary:hover { background-color: #8FBBA1; }
+        .btn-secondary { background-color: var(--color-secondary); color: var(--text-main); transition: background-color 0.3s; }
+        .btn-secondary:hover { background-color: #F5CECE; }
+        .btn-tertiary { background-color: var(--color-accent); color: var(--text-main); transition: background-color 0.3s; }
+        .btn-tertiary:hover { background-color: #BDE6E5; }
         .btn-danger { background-color: #EF4444; color: white; transition: background-color 0.3s; }
         .btn-danger:hover { background-color: #DC2626; }
         
         /* New Color Palette Texts & Accents */
-        .text-accent-dark { color: #4A4A4A; }
-        .text-highlight { color: #D8D3E6; }
-        .ring-accent:focus { --tw-ring-color: #A5E4E2; }
+        .text-accent-dark { color: var(--text-main); }
+        .text-highlight { color: var(--color-highlight); }
+        .ring-accent:focus { --tw-ring-color: var(--color-accent); }
         
         input[type="text"], input[type="date"], input[type="email"], input[type="tel"], input[type="password"], textarea, select { border: 1px solid #CBD5E0; border-radius: 0.375rem; padding: 0.5rem 0.75rem; transition: border-color 0.2s, box-shadow 0.2s; width: 100%;}
-        input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus { border-color: #9FCBB9; box-shadow: 0 0 0 3px rgba(159, 203, 185, 0.3); outline: none; }
+        input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(163, 203, 178, 0.3); outline: none; }
         input[readonly] { background-color: #F3F4F6; cursor: not-allowed; }
-        .form-radio, .form-checkbox { color: #9FCBB9; }
-        .form-radio:checked, .form-checkbox:checked { background-color: #9FCBB9; border-color: #9FCBB9; }
-        .section-header { border-bottom: 2px solid #9FCBB9; padding-bottom: 0.5rem; margin-bottom: 1.5rem; color: #4A4A4A; }
-        .hub-section-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; color: #4A4A4A; background-color: #f3f4f6; border: 1px solid transparent; transition: all 0.3s; }
+        .form-radio, .form-checkbox { color: var(--color-primary); }
+        .form-radio:checked, .form-checkbox:checked { background-color: var(--color-primary); border-color: var(--color-primary); }
+        .section-header { border-bottom: 2px solid var(--color-primary); padding-bottom: 0.5rem; margin-bottom: 1.5rem; color: var(--text-main); }
+        .hub-section-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; color: var(--text-main); background-color: #f3f4f6; border: 1px solid transparent; transition: all 0.3s; }
         .hub-section-btn:hover { background-color: #e5e7eb; }
-        .hub-section-btn.active-hub-btn { background-color: #A5E4E2; color: #4A4A4A; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .hub-section-btn.active-hub-btn { background-color: var(--color-accent); color: var(--text-main); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
         .accordion-header { cursor: pointer; padding: 1rem; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.3s; }
         .accordion-header:hover { background-color: #f3f4f6; }
-        .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; padding: 0 1rem; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; background-color: #FFFFFF; }
+        .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; padding: 0 1rem; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; background-color: var(--color-surface); }
         .accordion-body.expanded { padding: 1.5rem 1rem; max-height: 1500px; }
         .accordion-arrow { transition: transform 0.3s ease-in-out; }
         .accordion-header.active .accordion-arrow { transform: rotate(90deg); }
         .page-section { display: none; }
         .page-section.active { display: block; }
-        .nav-link.active { color: #4A4A4A; font-weight: 600; }
+        .nav-link.active { color: var(--text-main); font-weight: 600; }
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
@@ -97,24 +108,24 @@
 
     <!-- ===== Landing Page / Public View ===== -->
     <div id="view-landing" class="view active">
-        <div class="min-h-screen bg-[#FFFFFF]">
-            <nav class="bg-[#FFFFFF] shadow-sm sticky top-0 z-40">
+        <div class="min-h-screen bg-[var(--color-surface)]">
+            <nav class="bg-[var(--color-surface)] shadow-sm sticky top-0 z-40">
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center h-16">
                         <!-- Mobile Menu Button (Left on mobile) -->
                         <div class="md:hidden">
-                            <button id="mobile-menu-btn" class="text-[#7F8B96] hover:text-[#4A4A4A]">
+                            <button id="mobile-menu-btn" class="text-[var(--text-muted)] hover:text-[var(--text-main)]">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                             </button>
                         </div>
                         <!-- Desktop Menu (Left) -->
                         <div class="hidden md:flex items-center space-x-8" id="desktop-nav">
-                            <a href="#inicio" class="nav-link text-[#7F8B96] hover:text-[#4A4A4A] transition">Inicio</a>
-                            <a href="#quien-soy" class="nav-link text-[#7F8B96] hover:text-[#4A4A4A] transition">Quién soy</a>
-                            <a href="#servicios" class="nav-link text-[#7F8B96] hover:text-[#4A4A4A] transition">Servicios</a>
-                            <a href="#agenda" class="nav-link text-[#7F8B96] hover:text-[#4A4A4A] transition">Agenda</a>
-                            <a href="#recursos" class="nav-link text-[#7F8B96] hover:text-[#4A4A4A] transition">Recursos</a>
-                            <a href="#contacto" class="nav-link text-[#7F8B96] hover:text-[#4A4A4A] transition">Contacto</a>
+                            <a href="#inicio" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Inicio</a>
+                            <a href="#quien-soy" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Quién soy</a>
+                            <a href="#servicios" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Servicios</a>
+                            <a href="#agenda" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Agenda</a>
+                            <a href="#recursos" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Recursos</a>
+                            <a href="#contacto" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Contacto</a>
                         </div>
                         <!-- Login Button (Right) -->
                         <div>
@@ -123,24 +134,24 @@
                     </div>
                 </div>
                 <!-- Mobile Menu -->
-                <div id="mobile-menu" class="md:hidden hidden bg-[#FFFFFF] border-t">
-                    <a href="#inicio" class="nav-link block py-2 px-4 text-sm text-[#7F8B96] hover:bg-[#E0F5F0]">Inicio</a>
-                    <a href="#quien-soy" class="nav-link block py-2 px-4 text-sm text-[#7F8B96] hover:bg-[#E0F5F0]">Quién soy</a>
-                    <a href="#servicios" class="nav-link block py-2 px-4 text-sm text-[#7F8B96] hover:bg-[#E0F5F0]">Servicios</a>
-                    <a href="#agenda" class="nav-link block py-2 px-4 text-sm text-[#7F8B96] hover:bg-[#E0F5F0]">Agenda</a>
-                    <a href="#recursos" class="nav-link block py-2 px-4 text-sm text-[#7F8B96] hover:bg-[#E0F5F0]">Recursos</a>
-                    <a href="#contacto" class="nav-link block py-2 px-4 text-sm text-[#7F8B96] hover:bg-[#E0F5F0]">Contacto</a>
+                <div id="mobile-menu" class="md:hidden hidden bg-[var(--color-surface)] border-t">
+                    <a href="#inicio" class="nav-link block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Inicio</a>
+                    <a href="#quien-soy" class="nav-link block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Quién soy</a>
+                    <a href="#servicios" class="nav-link block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Servicios</a>
+                    <a href="#agenda" class="nav-link block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Agenda</a>
+                    <a href="#recursos" class="nav-link block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Recursos</a>
+                    <a href="#contacto" class="nav-link block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Contacto</a>
                 </div>
             </nav>
             
             <main id="public-main-content">
                 <!-- Inicio Section -->
                 <section id="page-inicio" class="page-section active">
-                    <div class="py-20 bg-[#E0F5F0]">
+                    <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                            <img src="logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg">
-                            <h1 class="text-4xl md:text-5xl font-bold text-[#4A4A4A] font-poppins">Bienestar Animal, Cuidado Consciente</h1>
-                            <p class="mt-4 text-lg text-[#7F8B96] max-w-3xl mx-auto">Información confiable y humana para el bienestar de tu compañero peludo.</p>
+                            <img src="logo2.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg">
+                            <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] font-poppins">Bienestar Animal, Cuidado Consciente</h1>
+                            <p class="mt-4 text-lg text-[var(--text-muted)] max-w-3xl mx-auto">Información confiable y humana para el bienestar de tu compañero peludo.</p>
                              <div class="mt-10 flex flex-wrap justify-center gap-4" id="home-buttons">
                                 <a href="#inicio" class="nav-link btn-primary px-6 py-3 rounded-lg font-semibold text-lg">Inicio</a>
                                 <a href="#quien-soy" class="nav-link btn-primary px-6 py-3 rounded-lg font-semibold text-lg">Quién soy</a>
@@ -155,15 +166,15 @@
 
                 <!-- Quién soy Section -->
                 <section id="page-quien-soy" class="page-section">
-                     <div class="py-20 bg-[#FFFFFF]">
+                     <div class="py-20 bg-[var(--color-surface)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-12 items-center">
                             <div class="md:col-span-1">
-                                <img src="https://placehold.co/400x400/FAD4D4/4A4A4A?text=Dra.+A." alt="Foto de Dra. Alejandra" class="rounded-full shadow-xl mx-auto">
+                                <img src="https://placehold.co/400x400/F7DCDC/4B4B4B?text=Dra.+A." alt="Foto de Dra. Alejandra" class="rounded-full shadow-xl mx-auto">
                             </div>
                             <div class="md:col-span-2">
-                                <h2 class="text-3xl font-bold text-[#4A4A4A] font-poppins mb-4">Sobre Alejandra Cautín</h2>
-                                <p class="text-[#7F8B96] mb-4">Médica Veterinaria con una profunda pasión por la salud integrativa y el bienestar animal. Mi práctica se centra en fortalecer el vínculo único entre tutores y sus mascotas a través de un cuidado informado y compasivo.</p>
-                                <p class="text-[#4A4A4A] italic text-lg">"Acompaño desde el cuidado consciente, respetando la conexión entre tutor y animal."</p>
+                                <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-4">Sobre Alejandra Cautín</h2>
+                                <p class="text-[var(--text-muted)] mb-4">Médica Veterinaria con una profunda pasión por la salud integrativa y el bienestar animal. Mi práctica se centra en fortalecer el vínculo único entre tutores y sus mascotas a través de un cuidado informado y compasivo.</p>
+                                <p class="text-[var(--text-main)] italic text-lg">"Acompaño desde el cuidado consciente, respetando la conexión entre tutor y animal."</p>
                             </div>
                         </div>
                     </div>
@@ -171,21 +182,21 @@
 
                 <!-- Servicios Section -->
                 <section id="page-servicios" class="page-section">
-                    <div class="py-20 bg-[#E0F5F0]">
+                    <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <h2 class="text-3xl font-bold text-center text-[#4A4A4A] font-poppins mb-12">Mis Servicios</h2>
+                            <h2 class="text-3xl font-bold text-center text-[var(--text-main)] font-poppins mb-12">Mis Servicios</h2>
                             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                                <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center">
-                                    <h3 class="font-bold text-xl text-[#9FCBB9] mb-2">Consulta General</h3>
-                                    <p class="text-[#7F8B96]">Chequeos de rutina, diagnóstico y tratamiento de enfermedades comunes.</p>
+                                <div class="bg-[var(--color-surface)] p-6 rounded-xl shadow-lg text-center">
+                                    <h3 class="font-bold text-xl text-[var(--color-primary)] mb-2">Consulta General</h3>
+                                    <p class="text-[var(--text-muted)]">Chequeos de rutina, diagnóstico y tratamiento de enfermedades comunes.</p>
                                 </div>
-                                <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center">
-                                    <h3 class="font-bold text-xl text-[#9FCBB9] mb-2">Medicina Integrativa</h3>
-                                    <p class="text-[#7F8B96]">Terapias complementarias para un enfoque holístico de la salud.</p>
+                                <div class="bg-[var(--color-surface)] p-6 rounded-xl shadow-lg text-center">
+                                    <h3 class="font-bold text-xl text-[var(--color-primary)] mb-2">Medicina Integrativa</h3>
+                                    <p class="text-[var(--text-muted)]">Terapias complementarias para un enfoque holístico de la salud.</p>
                                 </div>
-                                <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center">
-                                    <h3 class="font-bold text-xl text-[#9FCBB9] mb-2">Asesoría Nutricional</h3>
-                                    <p class="text-[#7F8B96]">Planes de alimentación personalizados para cada etapa y necesidad.</p>
+                                <div class="bg-[var(--color-surface)] p-6 rounded-xl shadow-lg text-center">
+                                    <h3 class="font-bold text-xl text-[var(--color-primary)] mb-2">Asesoría Nutricional</h3>
+                                    <p class="text-[var(--text-muted)]">Planes de alimentación personalizados para cada etapa y necesidad.</p>
                                 </div>
                             </div>
                         </div>
@@ -194,13 +205,13 @@
 
                 <!-- Agenda Section -->
                 <section id="page-agenda" class="page-section">
-                    <div class="py-20 bg-[#FFFFFF]">
+                    <div class="py-20 bg-[var(--color-surface)]">
                         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                            <h2 class="text-3xl font-bold text-[#4A4A4A] font-poppins mb-8">Agenda tu Cita</h2>
-                            <p class="text-[#7F8B96] mb-8">Puedes agendar una hora para tu mascota directamente desde aquí. Selecciona un día y hora disponible en el calendario.</p>
+                            <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-8">Agenda tu Cita</h2>
+                            <p class="text-[var(--text-muted)] mb-8">Puedes agendar una hora para tu mascota directamente desde aquí. Selecciona un día y hora disponible en el calendario.</p>
                             <!-- Placeholder for a booking widget like Calendly -->
                             <div class="bg-gray-200 rounded-lg p-8 h-96 flex items-center justify-center">
-                                <p class="text-[#7F8B96]">[Aquí iría el widget para agendar citas]</p>
+                                <p class="text-[var(--text-muted)]">[Aquí iría el widget para agendar citas]</p>
                             </div>
                         </div>
                     </div>
@@ -208,9 +219,9 @@
 
                 <!-- Recursos Section -->
                 <section id="page-recursos" class="page-section">
-                     <div class="py-20 bg-[#E0F5F0]">
+                     <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <h2 class="text-3xl font-bold text-center text-[#4A4A4A] font-poppins mb-12">Recursos y Preguntas Frecuentes</h2>
+                            <h2 class="text-3xl font-bold text-center text-[var(--text-main)] font-poppins mb-12">Recursos y Preguntas Frecuentes</h2>
                             <div id="faq-accordion" class="space-y-4">
                                 <!-- FAQ items will be inserted here by JS -->
                             </div>
@@ -220,9 +231,9 @@
 
                 <!-- Contacto Section -->
                 <section id="page-contacto" class="page-section">
-                    <div class="py-20 bg-[#FFFFFF]">
+                    <div class="py-20 bg-[var(--color-surface)]">
                         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                            <h2 class="text-3xl font-bold text-[#4A4A4A] font-poppins mb-8">Contáctame</h2>
+                            <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-8">Contáctame</h2>
                             <form id="contact-form" class="space-y-4">
                                 <input type="text" placeholder="Tu Nombre" class="w-full p-3 rounded-lg border">
                                 <input type="email" placeholder="Tu Correo Electrónico" class="w-full p-3 rounded-lg border">
@@ -230,9 +241,9 @@
                                 <button type="submit" class="btn-secondary px-8 py-3 rounded-lg font-semibold text-lg">Enviar Mensaje</button>
                             </form>
                             <div class="mt-12">
-                                <p class="text-[#7F8B96]">O contáctame directamente:</p>
-                                <p class="font-semibold text-[#4A4A4A] mt-2">avmveterinaria@gmail.com</p>
-                                <p class="text-[#7F8B96]">Santiago, Chile</p>
+                                <p class="text-[var(--text-muted)]">O contáctame directamente:</p>
+                                <p class="font-semibold text-[var(--text-main)] mt-2">avmveterinaria@gmail.com</p>
+                                <p class="text-[var(--text-muted)]">Santiago, Chile</p>
                             </div>
                         </div>
                     </div>
@@ -329,7 +340,15 @@
                             <div id="prescription-history-list" class="space-y-3"></div>
                         </div>
                     </div>
-                    <div id="hub-vacunas-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Control de Vacunas</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
+                    <div id="hub-vacunas-content" class="hub-section-content hidden">
+                        <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-[#4A4A4A]">Control de Vacunas</h2>
+                                <button id="new-vaccine-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold text-lg">+ Nueva Vacuna</button>
+                            </div>
+                            <div id="vaccine-history-table" class="overflow-x-auto"></div>
+                        </div>
+                    </div>
                     <div id="hub-desparasitacion-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Control de Desparasitaciones</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
                     <div id="hub-examenes-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Resultados de Exámenes</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
                     <div id="hub-certificados-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Emisión de Certificados</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
@@ -503,11 +522,42 @@
     <div id="notification-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><p id="notification-message" class="text-lg text-[#4A4A4A]"></p><button id="notification-close-btn" class="mt-6 btn-secondary text-white px-5 py-2 rounded-lg font-semibold">Cerrar</button></div></div>
     <div id="delete-confirmation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><h3 class="text-xl font-bold text-gray-800">Confirmar Eliminación</h3><p id="delete-confirmation-message" class="text-[#7F8B96] my-4"></p><p class="text-sm text-red-600 font-semibold">Esta acción no se puede deshacer.</p><div class="flex justify-center gap-4 mt-6"><button id="cancel-delete-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button><button id="confirm-delete-btn" class="btn-danger px-5 py-2 rounded-lg font-semibold">Eliminar Permanentemente</button></div></div></div>
     <div id="consultation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 overflow-y-auto p-4"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-6 m-4 max-w-4xl w-full"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Nueva Consulta</h2><form id="consultation-form" class="space-y-6 max-h-[80vh] overflow-y-auto pr-4"><section><h3 class="text-lg font-medium text-[#4A4A4A] mb-2">Anamnesis Remota (Editable)</h3><textarea id="modal-anamnesis-remota" rows="4" class="w-full p-2 border rounded-lg"></textarea></section><section><h3 class="text-lg font-medium section-header">III. Historial Médico</h3><h4 class="text-md font-semibold text-[#4A4A4A] mb-2">A. Motivo de Consulta (MC)</h4><div class="grid grid-cols-1 gap-4"><div><label for="modal-mc-fecha" class="block text-sm">Fecha de Consulta:</label><input type="date" id="modal-mc-fecha"></div><div><label for="modal-mc-sintomas" class="block text-sm">Síntomas Principales y Duración:</label><textarea id="modal-mc-sintomas" rows="2"></textarea></div></div><h4 class="text-md font-semibold text-[#4A4A4A] mt-4 mb-2">B. Anamnesis (de la consulta)</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="modal-anamnesis-sintomas" class="block text-sm">Síntomas Adicionales:</label><textarea id="modal-anamnesis-sintomas" rows="2"></textarea></div><div><label for="modal-anamnesis-cambios" class="block text-sm">Cambios Recientes:</label><textarea id="modal-anamnesis-cambios" rows="2"></textarea></div><div><label for="modal-anamnesis-medicamentos" class="block text-sm">Medicamentos Actuales:</label><input type="text" id="modal-anamnesis-medicamentos"></div><div><label for="modal-anamnesis-historial" class="block text-sm">Historial Enfermedades/Cirugías:</label><textarea id="modal-anamnesis-historial" rows="2"></textarea></div><div><label for="modal-anamnesis-alergias" class="block text-sm">Alergias Conocidas:</label><input type="text" id="modal-anamnesis-alergias"></div><div><label for="modal-anamnesis-habitos" class="block text-sm">Hábitos de Eliminación:</label><input type="text" id="modal-anamnesis-habitos"></div><div><label for="modal-anamnesis-dieta" class="block text-sm">Dieta Actual:</label><input type="text" id="modal-anamnesis-dieta"></div><div><label for="modal-anamnesis-actividad" class="block text-sm">Nivel de Actividad:</label><input type="text" id="modal-anamnesis-actividad"></div><div class="md:col-span-2"><label for="modal-anamnesis-ambiente" class="block text-sm">Ambiente:</label><input type="text" id="modal-anamnesis-ambiente"></div></div></section><section><h3 class="text-lg font-medium section-header">IV. Examen Físico General</h3><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div><label for="modal-efg-temp" class="block text-sm">Temp:</label><input type="text" id="modal-efg-temp"></div><div><label for="modal-efg-fc" class="block text-sm">FC:</label><input type="text" id="modal-efg-fc"></div><div><label for="modal-efg-fr" class="block text-sm">FR:</label><input type="text" id="modal-efg-fr"></div><div><label for="modal-efg-trc" class="block text-sm">TRC:</label><input type="text" id="modal-efg-trc"></div></div><div class="mt-4"><label for="modal-efg-hallazgos" class="block text-sm">Hallazgos Examen Físico:</label><textarea id="modal-efg-hallazgos" rows="4"></textarea></div></section><section><h3 class="text-lg font-medium section-header">V. Diagnóstico y Plan</h3><div><label for="modal-diag-presuntivo" class="block text-sm">Diagnóstico Presuntivo:</label><textarea id="modal-diag-presuntivo" rows="2"></textarea></div><div class="mt-4"><label for="modal-diag-diferencial" class="block text-sm">Diagnóstico Diferencial:</label><textarea id="modal-diag-diferencial" rows="2"></textarea></div><div class="mt-4"><label for="modal-plan-terapeutico" class="block text-sm">Plan Terapéutico:</label><textarea id="modal-plan-terapeutico" rows="3"></textarea></div></section><section><h3 class="text-lg font-medium section-header">VI. Notas Adicionales y Seguimiento</h3><div><label for="modal-notas-adicionales" class="block text-sm">Observaciones Veterinarias:</label><textarea id="modal-notas-adicionales" rows="3"></textarea></div><div class="mt-4"><label for="modal-proxima-cita" class="block text-sm">Próxima Cita/Revisión:</label><input type="text" id="modal-proxima-cita"></div></section><div class="flex justify-end gap-4 mt-4"><button id="cancel-consultation-btn" type="button" class="bg-gray-300 px-4 py-2 rounded-lg">Cancelar</button><button id="save-consultation-btn" type="submit" class="btn-primary px-4 py-2 rounded-lg">Guardar Consulta</button></div></form></div></div>
+    <div id="vaccine-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
+            <button id="close-vaccine-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Registrar Vacuna</h2>
+            <form id="vaccine-form" class="space-y-4">
+                <div>
+                    <label for="vaccine-date" class="block text-sm font-medium text-[#7F8B96] mb-1">Fecha de Aplicación</label>
+                    <input id="vaccine-date" type="date" required class="w-full">
+                </div>
+                <div>
+                    <label for="vaccine-type" class="block text-sm font-medium text-[#7F8B96] mb-1">Tipo de Vacuna</label>
+                    <select id="vaccine-type" required class="w-full"></select>
+                </div>
+                <div>
+                    <label for="vaccine-brand" class="block text-sm font-medium text-[#7F8B96] mb-1">Marca y Lote</label>
+                    <input id="vaccine-brand" type="text" placeholder="Ej: Nobivac KC, Lote 12345" class="w-full">
+                </div>
+                <div>
+                    <label for="vaccine-next-dose" class="block text-sm font-medium text-[#7F8B96] mb-1">Próxima Dosis</label>
+                    <input id="vaccine-next-dose" type="date" class="w-full">
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="cancel-vaccine-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
+                    <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Vacuna</button>
+                </div>
+            </form>
+        </div>
+    </div>
     
     <!-- Main Application Logic -->
     <script type="module">
         // --- Application State ---
         let currentPatientId = null;
+        let currentPatientSpecies = null;
 
         // --- DOM Element References ---
         const views = {
@@ -522,7 +572,8 @@
             login: document.getElementById('login-modal'),
             notification: document.getElementById('notification-modal'),
             consultation: document.getElementById('consultation-modal'),
-            deleteConfirmation: document.getElementById('delete-confirmation-modal')
+            deleteConfirmation: document.getElementById('delete-confirmation-modal'),
+            vaccine: document.getElementById('vaccine-modal')
         };
         
         // --- Navigation & Modal Functions ---
@@ -559,6 +610,7 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
+                currentPatientSpecies = data.species; // Store species for other functions
                 document.getElementById('hub-patient-name').textContent = data.name || 'Paciente sin nombre';
                 document.getElementById('hub-patient-id').textContent = `Nº Ficha: ${patientId}`;
                 document.getElementById('hub-anamnesis-remota').value = data.anamnesisRemota || '';
@@ -580,6 +632,7 @@
                 
                 loadConsultationHistory(patientId);
                 loadPrescriptionHistory(patientId);
+                loadVaccineHistory(patientId);
             } else {
                 showNotification(`No se encontró el paciente con Ficha Nº ${patientId}.`);
                 navigateTo('dashboard');
@@ -801,6 +854,7 @@
             try {
                 await deleteSubcollection(currentPatientId, 'consultations');
                 await deleteSubcollection(currentPatientId, 'prescriptions');
+                await deleteSubcollection(currentPatientId, 'vaccines');
                 await deleteDoc(doc(db, "patients", currentPatientId));
                 hideModal('deleteConfirmation');
                 showNotification("Paciente eliminado correctamente.");
@@ -953,7 +1007,7 @@
 
                     accordionItem.innerHTML = `
                         <div class="accordion-header">
-                            <p class="font-bold text-lg text-accent-dark">${date}</p>
+                            <p class="font-bold text-lg text-[#4A4A4A]">${date}</p>
                             <svg class="accordion-arrow w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                         <div class="accordion-body">
@@ -976,6 +1030,106 @@
                 console.error("Error loading prescription history:", error);
             }
         }
+        
+        // --- Vaccine Logic ---
+        function openNewVaccineModal() {
+            const form = document.getElementById('vaccine-form');
+            form.reset();
+
+            const vaccineSelect = document.getElementById('vaccine-type');
+            vaccineSelect.innerHTML = ''; // Clear previous options
+
+            const canineVaccines = ['Sextuple/Octuple', 'Antirrábica', 'Bordetella'];
+            const felineVaccines = ['Triple Felina', 'Leucemia Felina', 'Antirrábica'];
+            
+            const options = (currentPatientSpecies === 'Felina') ? felineVaccines : canineVaccines;
+            
+            options.forEach(v => {
+                const option = document.createElement('option');
+                option.value = v;
+                option.textContent = v;
+                vaccineSelect.appendChild(option);
+            });
+            
+            showModal('vaccine');
+        }
+
+        async function saveNewVaccine(e) {
+            e.preventDefault();
+            if (!currentPatientId) return;
+
+            const { collection, addDoc, serverTimestamp } = window.firebase;
+            const db = window.db;
+
+            const vaccineData = {
+                date: document.getElementById('vaccine-date').value,
+                type: document.getElementById('vaccine-type').value,
+                brand: document.getElementById('vaccine-brand').value,
+                nextDose: document.getElementById('vaccine-next-dose').value,
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "patients", currentPatientId, "vaccines"), vaccineData);
+                hideModal('vaccine');
+                loadVaccineHistory(currentPatientId);
+                showNotification("Vacuna registrada con éxito.");
+            } catch (error) {
+                showNotification("Error al registrar la vacuna.", true);
+                console.error("Error saving vaccine:", error);
+            }
+        }
+
+        async function loadVaccineHistory(patientId) {
+            const container = document.getElementById('vaccine-history-table');
+            container.innerHTML = '<p>Cargando historial de vacunas...</p>';
+            
+            const { collection, query, getDocs, orderBy } = window.firebase;
+            const db = window.db;
+
+            try {
+                const q = query(collection(db, "patients", patientId, "vaccines"), orderBy("date", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="text-center text-gray-500">No hay vacunas registradas.</p>';
+                    return;
+                }
+
+                let tableHTML = `
+                    <table class="min-w-full bg-white text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="py-2 px-4 text-left">Fecha</th>
+                                <th class="py-2 px-4 text-left">Vacuna</th>
+                                <th class="py-2 px-4 text-left">Marca/Lote</th>
+                                <th class="py-2 px-4 text-left">Próxima Dosis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    tableHTML += `
+                        <tr class="border-b">
+                            <td class="py-2 px-4">${data.date || 'N/A'}</td>
+                            <td class="py-2 px-4">${data.type || 'N/A'}</td>
+                            <td class="py-2 px-4">${data.brand || 'N/A'}</td>
+                            <td class="py-2 px-4">${data.nextDose || 'N/A'}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `</tbody></table>`;
+                container.innerHTML = tableHTML;
+
+            } catch (error) {
+                container.innerHTML = '<p class="text-center text-red-500">Error al cargar el historial de vacunas.</p>';
+                console.error("Error loading vaccine history:", error);
+            }
+        }
+
 
         function downloadPDF() {
             const element = document.getElementById('prescription-content-generator');
@@ -1176,7 +1330,6 @@
                 });
 
                 navLinks.forEach(navLink => navLink.classList.remove('active'));
-                // Highlight both desktop and mobile links if they exist
                 document.querySelectorAll(`.nav-link[href="#${targetId}"]`).forEach(l => l.classList.add('active'));
                 
                 document.getElementById('mobile-menu').classList.add('hidden');
@@ -1189,7 +1342,6 @@
                  link.addEventListener('click', handleNavClick);
             });
 
-            // Mobile menu toggle
             document.getElementById('mobile-menu-btn').addEventListener('click', () => {
                 document.getElementById('mobile-menu').classList.toggle('hidden');
             });
@@ -1226,6 +1378,12 @@
             });
 
              document.querySelector('.nav-link[href="#inicio"]').classList.add('active');
+             
+             // Vaccine Modal Listeners
+             document.getElementById('new-vaccine-btn').addEventListener('click', openNewVaccineModal);
+             document.getElementById('vaccine-form').addEventListener('submit', saveNewVaccine);
+             document.getElementById('close-vaccine-modal-btn').addEventListener('click', () => hideModal('vaccine'));
+             document.getElementById('cancel-vaccine-btn').addEventListener('click', () => hideModal('vaccine'));
         }
         
         document.addEventListener('DOMContentLoaded', initializeApp);
