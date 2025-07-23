@@ -160,7 +160,7 @@
                     <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                             <!-- IMPROVEMENT: Use hosted image -->
-                            <img src=logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/A3CBB2/FFFFFF?text=Logo';">
+                            <img src="logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/A3CBB2/FFFFFF?text=Logo';">
                             <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] font-poppins">Dra. Alejandra Cautin Bastias</h1>
                             <p class="mt-4 text-lg text-[var(--text-muted)] max-w-3xl mx-auto">Medica Veterinaria a domicilio, para cuidar con calidez y respeto lo que más amas.</p>
                              <div class="mt-10 flex flex-wrap justify-center gap-4" id="home-buttons">
@@ -1837,7 +1837,7 @@
             }
 
             // Redirect to Calendly
-            const calendlyUrl = `https://calendly.com/ale-cautin/consulta?name=${encodeURIComponent(petName)}&a1=${encodeURIComponent(tutorName)}&a2=${encodeURIComponent(tutorRutRaw)}&a3=${encodeURIComponent(tutorCommune)}`;
+            const calendlyUrl = `https://calendly.com/avmveterinaria=${encodeURIComponent(petName)}&a1=${encodeURIComponent(tutorName)}&a2=${encodeURIComponent(tutorRutRaw)}&a3=${encodeURIComponent(tutorCommune)}`;
             window.location.href = calendlyUrl;
         }
         
