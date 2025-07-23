@@ -14,31 +14,29 @@
     <script type="module">
         // --- Firebase Configuration ---
         const firebaseConfig = {
-          apiKey: "AIzaSyBrYOiaa_skDuvRDD_zMZvUBknfwmTyDko",
-          authDomain: "ale-veterinaria.firebaseapp.com",
-          projectId: "ale-veterinaria",
-          storageBucket: "ale-veterinaria.appspot.com",
-          messagingSenderId: "87862276548",
-          appId: "1:87862276548:web:a55b3154a31e4c6948b491",
-          measurementId: "G-PNKMJC92K3"
+        apiKey: "AIzaSyBrYOiaa_skDuvRDD_zMZvUBknfwmTyDko",
+        authDomain: "ale-veterinaria.firebaseapp.com",
+        projectId: "ale-veterinaria",
+        storageBucket: "ale-veterinaria.appspot.com",
+        messagingSenderId: "87862276548",
+        appId: "1:87862276548:web:a55b3154a31e4c6948b491",
+        measurementId: "G-PNKMJC92K3"
         };
         
         // --- Firebase Initialization ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getFirestore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, runTransaction, orderBy, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-        // IMPROVEMENT: Import Firebase Storage modules
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
         
         try {
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
             const auth = getAuth(app);
-            const storage = getStorage(app); // IMPROVEMENT: Initialize Storage
-            // Make Firebase services globally available
+            const storage = getStorage(app);
             window.db = db;
             window.auth = auth;
-            window.storage = storage; // Make storage available globally
+            window.storage = storage;
             window.firebase = { 
                 collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, 
                 runTransaction, orderBy, addDoc, deleteDoc, updateDoc, signInWithEmailAndPassword, 
@@ -46,8 +44,6 @@
             };
         } catch (e) {
             console.error("Firebase initialization error. Please check your firebaseConfig.", e);
-            // Use a custom modal instead of alert
-            // alert("No se pudo conectar a la base de datos. Verifique la configuración de Firebase.");
         }
     </script>
     <!-- html2pdf.js for PDF generation -->
@@ -106,15 +102,11 @@
         .page-section { display: none; }
         .page-section.active { display: block; }
         .nav-link.active { color: var(--text-main); font-weight: 600; }
-        .exam-tab-btn.active { background-color: var(--color-primary); color: var(--text-contrast); }
-        .exam-tab-content { display: none; }
-        .exam-tab-content.active { display: block; }
 
         @media print { .no-print { display: none !important; } }
-        /* IMPROVEMENT: Responsive modal styles */
         .modal-content {
-             max-height: 90vh;
-             overflow-y: auto;
+            max-height: 90vh;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -159,7 +151,6 @@
                 <section id="page-inicio" class="page-section active">
                     <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                            <!-- IMPROVEMENT: Use hosted image -->
                             <img src="logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/A3CBB2/FFFFFF?text=Logo';">
                             <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] font-poppins">Dra. Alejandra Cautin Bastias</h1>
                             <p class="mt-4 text-lg text-[var(--text-muted)] max-w-3xl mx-auto">Medica Veterinaria a domicilio, para cuidar con calidez y respeto lo que más amas.</p>
@@ -209,7 +200,6 @@
                         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                             <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-8">Agenda tu Cita</h2>
                             <p class="text-[var(--text-muted)] mb-6">Completa tus datos para continuar con el agendamiento en Calendly.</p>
-                            <!-- IMPROVEMENT: Restructured Agenda Form for better UX -->
                             <form id="agenda-form" class="space-y-4 text-left">
                                 <div>
                                     <label for="agenda-tutor-name" class="block text-sm font-medium text-[var(--text-muted)]">Nombre completo del tutor</label>
@@ -225,7 +215,6 @@
                                     <input type="text" id="agenda-tutor-commune" required class="mt-1">
                                 </div>
                                 
-                                <!-- Step 2: Pet Selection (Initially hidden) -->
                                 <div id="agenda-step-2" class="hidden space-y-4 pt-4 border-t">
                                     <div id="existing-pets-container" class="hidden p-4 bg-green-50 border border-green-200 rounded-lg">
                                         <p class="font-semibold mb-2">Hemos encontrado estas mascotas asociadas a tu RUT. ¿Para cuál deseas agendar?</p>
@@ -278,7 +267,6 @@
                     <div class="py-20 bg-[var(--color-surface)]">
                         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                             <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-8">Contáctame</h2>
-                            <!-- IMPROVEMENT: Functional contact form -->
                             <form id="contact-form" class="space-y-4">
                                 <input type="text" id="contact-name" placeholder="Tu Nombre" required class="w-full p-3 rounded-lg border">
                                 <input type="email" id="contact-email" placeholder="Tu Correo Electrónico" required class="w-full p-3 rounded-lg border">
@@ -394,7 +382,16 @@
                             <div id="vaccine-history-table" class="overflow-x-auto"></div>
                         </div>
                     </div>
-                    <div id="hub-desparasitacion-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Control de Desparasitaciones</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
+                    <!-- IMPROVEMENT: Desparasitacion section implemented -->
+                    <div id="hub-desparasitacion-content" class="hub-section-content hidden">
+                        <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-[#4A4A4A]">Control de Desparasitaciones</h2>
+                                <button id="new-deworming-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold text-lg">+ Nueva Desparasitación</button>
+                            </div>
+                            <div id="deworming-history-table" class="overflow-x-auto"></div>
+                        </div>
+                    </div>
                     <div id="hub-examenes-content" class="hub-section-content hidden">
                         <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
                              <div class="flex justify-between items-center mb-4">
@@ -420,7 +417,6 @@
                 <form id="patient-data-form">
                     <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg mb-6">
                         <h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">I. Datos del Tutor</h2>
-                        <!-- IMPROVEMENT: Responsive grid -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><label for="data-tutor-name" class="block text-sm font-medium">Nombre Completo:</label><input type="text" id="data-tutor-name"></div>
                             <div>
@@ -444,7 +440,6 @@
                     <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg mb-6">
                         <h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">II. Datos del Paciente</h2>
                         <p class="mb-4 text-lg"><strong>Nº de Ficha:</strong> <span id="data-ficha-number" class="text-highlight font-bold"></span></p>
-                        <!-- IMPROVEMENT: Responsive grid -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                             <div><label for="data-patient-name" class="block text-sm font-medium">Nombre del Paciente:</label><input type="text" id="data-patient-name" required></div>
                             <div><label for="data-breed" class="block text-sm font-medium">Raza:</label><input type="text" id="data-breed"></div>
@@ -486,7 +481,6 @@
                 </header>
                 <div id="prescription-content-generator" class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg">
                     <header class="text-center pb-4 border-b-2 border-gray-100">
-                        <!-- IMPROVEMENT: Use hosted image -->
                         <img src="logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/200x100/A3CBB2/FFFFFF?text=Logo';">
                         <h1 class="text-2xl font-bold text-[#4A4A4A]">Dra. Alejandra Cautín Bastías</h1>
                         <p class="text-[#7F8B96]">Médica Veterinaria</p>
@@ -547,7 +541,6 @@
                                 <div>
                                     <p class="font-bold text-[#4A4A4A] mb-2">Timbre Médico:</p>
                                     <div class="h-24 border border-gray-300 border-dashed rounded-md flex items-center justify-center">
-                                        <!-- IMPROVEMENT: Use hosted image -->
                                         <img id="rx-timbre" src="timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
                                     </div>
                                 </div>
@@ -574,7 +567,6 @@
                     <button class="back-to-hub-btn-from-exam-order bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
                 </header>
                 <div id="exam-order-content-generator" class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg">
-                    <!-- Header similar to prescription -->
                     <header class="text-center pb-4 border-b-2 border-gray-100">
                         <img src="logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/200x100/A3CBB2/FFFFFF?text=Logo';">
                         <h1 class="text-2xl font-bold text-[#4A4A4A]">Dra. Alejandra Cautín Bastías</h1>
@@ -611,12 +603,11 @@
                     </div>
 
                     <footer class="text-center mt-8 pt-8 border-t">
-                        <!-- Footer similar to prescription -->
                         <div class="grid grid-cols-2 gap-8 text-left mt-12">
                             <div>
                                 <p class="font-bold text-[#4A4A4A] mb-2">Timbre Médico:</p>
                                 <div class="h-24 border border-gray-300 border-dashed rounded-md flex items-center justify-center">
-                                    <img src="https://alecautin8.github.io/AleVeterinaria/assets/timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
+                                    <img src="timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
                                 </div>
                             </div>
                             <div>
@@ -655,7 +646,6 @@
     </div>
     <div id="notification-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><p id="notification-message" class="text-lg text-[#4A4A4A]"></p><button id="notification-close-btn" class="mt-6 btn-secondary px-5 py-2 rounded-lg font-semibold">Cerrar</button></div></div>
     <div id="delete-confirmation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><h3 class="text-xl font-bold text-gray-800">Confirmar Eliminación</h3><p id="delete-confirmation-message" class="text-[#7F8B96] my-4"></p><p class="text-sm text-red-600 font-semibold">Esta acción no se puede deshacer.</p><div class="flex justify-center gap-4 mt-6"><button id="cancel-delete-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button><button id="confirm-delete-btn" class="btn-danger px-5 py-2 rounded-lg font-semibold">Eliminar Permanentemente</button></div></div></div>
-    <!-- IMPROVEMENT: Responsive Consultation Modal -->
     <div id="consultation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 p-4"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-6 m-4 max-w-4xl w-full flex flex-col"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Nueva Consulta</h2><form id="consultation-form" class="space-y-6 overflow-y-auto pr-4 modal-content"><section><h3 class="text-lg font-medium text-[#4A4A4A] mb-2">Anamnesis Remota (Editable)</h3><textarea id="modal-anamnesis-remota" rows="4" class="w-full p-2 border rounded-lg"></textarea></section><section><h3 class="text-lg font-medium section-header">III. Historial Médico</h3><h4 class="text-md font-semibold text-[#4A4A4A] mb-2">A. Motivo de Consulta (MC)</h4><div class="grid grid-cols-1 gap-4"><div><label for="modal-mc-fecha" class="block text-sm">Fecha de Consulta:</label><input type="date" id="modal-mc-fecha"></div><div><label for="modal-mc-sintomas" class="block text-sm">Síntomas Principales y Duración:</label><textarea id="modal-mc-sintomas" rows="2"></textarea></div></div><h4 class="text-md font-semibold text-[#4A4A4A] mt-4 mb-2">B. Anamnesis (de la consulta)</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="modal-anamnesis-sintomas" class="block text-sm">Síntomas Adicionales:</label><textarea id="modal-anamnesis-sintomas" rows="2"></textarea></div><div><label for="modal-anamnesis-cambios" class="block text-sm">Cambios Recientes:</label><textarea id="modal-anamnesis-cambios" rows="2"></textarea></div><div><label for="modal-anamnesis-medicamentos" class="block text-sm">Medicamentos Actuales:</label><input type="text" id="modal-anamnesis-medicamentos"></div><div><label for="modal-anamnesis-historial" class="block text-sm">Historial Enfermedades/Cirurgías:</label><textarea id="modal-anamnesis-historial" rows="2"></textarea></div><div><label for="modal-anamnesis-alergias" class="block text-sm">Alergias Conocidas:</label><input type="text" id="modal-anamnesis-alergias"></div><div><label for="modal-anamnesis-habitos" class="block text-sm">Hábitos de Eliminación:</label><input type="text" id="modal-anamnesis-habitos"></div><div><label for="modal-anamnesis-dieta" class="block text-sm">Dieta Actual:</label><input type="text" id="modal-anamnesis-dieta"></div><div><label for="modal-anamnesis-actividad" class="block text-sm">Nivel de Actividad:</label><input type="text" id="modal-anamnesis-actividad"></div><div class="md:col-span-2"><label for="modal-anamnesis-ambiente" class="block text-sm">Ambiente:</label><input type="text" id="modal-anamnesis-ambiente"></div></div></section><section><h3 class="text-lg font-medium section-header">IV. Examen Físico General</h3><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div><label for="modal-efg-temp" class="block text-sm">Temp:</label><input type="text" id="modal-efg-temp"></div><div><label for="modal-efg-fc" class="block text-sm">FC:</label><input type="text" id="modal-efg-fc"></div><div><label for="modal-efg-fr" class="block text-sm">FR:</label><input type="text" id="modal-efg-fr"></div><div><label for="modal-efg-trc" class="block text-sm">TRC:</label><input type="text" id="modal-efg-trc"></div></div><div class="mt-4"><label for="modal-efg-hallazgos" class="block text-sm">Hallazgos Examen Físico:</label><textarea id="modal-efg-hallazgos" rows="4"></textarea></div></section><section><h3 class="text-lg font-medium section-header">V. Diagnóstico y Plan</h3><div><label for="modal-diag-presuntivo" class="block text-sm">Diagnóstico Presuntivo:</label><textarea id="modal-diag-presuntivo" rows="2"></textarea></div><div class="mt-4"><label for="modal-diag-diferencial" class="block text-sm">Diagnóstico Diferencial:</label><textarea id="modal-diag-diferencial" rows="2"></textarea></div><div class="mt-4"><label for="modal-plan-terapeutico" class="block text-sm">Plan Terapéutico:</label><textarea id="modal-plan-terapeutico" rows="3"></textarea></div></section><section><h3 class="text-lg font-medium section-header">VI. Notas Adicionales y Seguimiento</h3><div><label for="modal-notas-adicionales" class="block text-sm">Observaciones Veterinarias:</label><textarea id="modal-notas-adicionales" rows="3"></textarea></div><div class="mt-4"><label for="modal-proxima-cita" class="block text-sm">Próxima Cita/Revisión:</label><input type="text" id="modal-proxima-cita"></div></section><div class="flex justify-end gap-4 mt-4 pt-4 border-t"><button id="cancel-consultation-btn" type="button" class="bg-gray-300 px-4 py-2 rounded-lg">Cancelar</button><button id="save-consultation-btn" type="submit" class="btn-primary px-4 py-2 rounded-lg">Guardar Consulta</button></div></form></div></div>
     <div id="vaccine-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
         <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
@@ -687,7 +677,41 @@
             </form>
         </div>
     </div>
-    <!-- IMPROVEMENT: Responsive Exam Order Modal -->
+    <!-- IMPROVEMENT: New Deworming Modal -->
+    <div id="deworming-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
+            <button id="close-deworming-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Registrar Desparasitación</h2>
+            <form id="deworming-form" class="space-y-4">
+                <div>
+                    <label for="deworming-date" class="block text-sm font-medium text-[#7F8B96] mb-1">Fecha de Aplicación</label>
+                    <input id="deworming-date" type="date" required class="w-full">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-[#7F8B96] mb-1">Tipo</label>
+                    <div class="flex items-center gap-4">
+                        <label><input type="radio" name="deworming-type" value="Interna" class="form-radio" checked> Interna</label>
+                        <label><input type="radio" name="deworming-type" value="Externa" class="form-radio"> Externa</label>
+                    </div>
+                </div>
+                <div>
+                    <label for="deworming-product" class="block text-sm font-medium text-[#7F8B96] mb-1">Producto Utilizado</label>
+                    <input id="deworming-product" type="text" placeholder="Ej: Drontal, Bravecto..." class="w-full">
+                </div>
+                <div>
+                    <label for="deworming-next-dose" class="block text-sm font-medium text-[#7F8B96] mb-1">Próxima Dosis</label>
+                    <input id="deworming-next-dose" type="date" class="w-full">
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="cancel-deworming-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
+                    <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- IMPROVEMENT: Custom dropdown for exam selection -->
     <div id="exam-order-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60 p-4">
         <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-2xl m-4 relative flex flex-col modal-content">
             <button id="close-exam-order-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
@@ -699,24 +723,26 @@
                     <label for="exam-order-date" class="block text-sm font-medium text-[#7F8B96] mb-1">Fecha de Orden</label>
                     <input id="exam-order-date" type="date" required class="w-full">
                 </div>
-                <div class="flex border-b flex-shrink-0">
-                    <button type="button" data-tab="laboratorio" class="exam-tab-btn flex-1 p-2 font-semibold active">Laboratorio</button>
-                    <button type="button" data-tab="imagenes" class="exam-tab-btn flex-1 p-2 font-semibold">Imágenes</button>
-                </div>
-                <div class="flex-grow overflow-y-auto">
-                    <div id="exam-tab-laboratorio" class="exam-tab-content active">
+                
+                <div class="flex-grow flex flex-col min-h-0 space-y-4">
+                    <div class="relative">
                         <label class="block text-sm font-medium text-[#7F8B96] mb-1">Seleccionar Exámenes</label>
-                        <div id="exam-list-container" class="h-64 overflow-y-auto border rounded-lg p-2 bg-gray-50 space-y-1">
-                            <!-- Exam checkboxes will be inserted here -->
+                        <button type="button" id="exam-select-button" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-left flex justify-between items-center">
+                            <span id="exam-select-placeholder" class="text-gray-500">Haz click para seleccionar...</span>
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="exam-select-dropdown" class="absolute z-10 w-full bg-white border rounded-lg mt-1 hidden max-h-60 overflow-y-auto">
+                            <!-- Checkbox list will be populated here -->
                         </div>
                     </div>
-                     <div id="exam-tab-imagenes" class="exam-tab-content">
-                        <label class="block text-sm font-medium text-[#7F8B96] mb-1">Seleccionar Exámenes de Imagen</label>
-                        <div id="imaging-list-container" class="h-64 overflow-y-auto border rounded-lg p-2 bg-gray-50 space-y-1">
-                            <!-- Imaging exam accordions will be inserted here -->
+                    <div>
+                        <label class="block text-sm font-medium text-[#7F8B96] mb-1">Exámenes Seleccionados:</label>
+                        <div id="selected-exams-container" class="p-2 border rounded-lg bg-gray-50 min-h-[5rem] flex flex-wrap gap-2">
+                            <p class="text-sm text-gray-400">Ningún examen seleccionado.</p>
                         </div>
                     </div>
                 </div>
+
                 <div class="flex-shrink-0">
                     <label for="exam-order-instructions" class="block text-sm font-medium text-[#7F8B96] mb-1">Indicaciones para el Tutor</label>
                     <textarea id="exam-order-instructions" rows="4" placeholder="Las indicaciones se agregarán automáticamente..." class="w-full"></textarea>
@@ -746,7 +772,6 @@
                 <div>
                     <label for="exam-result-file" class="block text-sm font-medium text-[#7F8B96] mb-1">Adjuntar Archivo (PDF, JPG, etc.)</label>
                     <input id="exam-result-file" type="file" class="w-full">
-                    <!-- IMPROVEMENT: File upload status message -->
                     <p id="file-upload-status" class="text-xs text-[var(--text-muted)] mt-1"></p>
                 </div>
                 <div class="flex justify-end gap-4 pt-4">
@@ -771,7 +796,7 @@
         // --- Application State ---
         let currentPatientId = null;
         let currentPatientSpecies = null;
-        let currentPatientData = null; // Store full patient data for reuse
+        let currentPatientData = null;
 
         // --- DOM Element References ---
         const views = {
@@ -780,7 +805,7 @@
             patientHub: document.getElementById('view-patient-hub'),
             editPatientData: document.getElementById('view-edit-patient-data'),
             prescription: document.getElementById('view-prescription'),
-            examOrderPrintable: document.getElementById('view-exam-order-printable'), // NEW
+            examOrderPrintable: document.getElementById('view-exam-order-printable'),
         };
         const appContainer = document.getElementById('app-container');
         const modals = { 
@@ -789,6 +814,7 @@
             consultation: document.getElementById('consultation-modal'),
             deleteConfirmation: document.getElementById('delete-confirmation-modal'),
             vaccine: document.getElementById('vaccine-modal'),
+            deworming: document.getElementById('deworming-modal'),
             examOrder: document.getElementById('exam-order-modal'),
             examResult: document.getElementById('exam-result-modal'),
             serviceDetail: document.getElementById('service-detail-modal'),
@@ -825,7 +851,7 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                currentPatientData = { id: docSnap.id, ...data }; // Store patient data
+                currentPatientData = { id: docSnap.id, ...data };
                 currentPatientSpecies = data.species; 
                 document.getElementById('hub-patient-name').textContent = data.name || 'Paciente sin nombre';
                 document.getElementById('hub-patient-id').textContent = `Nº Ficha: ${patientId}`;
@@ -849,6 +875,7 @@
                 loadConsultationHistory(patientId);
                 loadPrescriptionHistory(patientId);
                 loadVaccineHistory(patientId);
+                loadDewormingHistory(patientId);
                 loadExamHistory(patientId);
                 navigateTo('patientHub', patientId);
             } else {
@@ -952,7 +979,6 @@
             const form = document.getElementById('patient-data-form');
             form.reset();
             if (patientId) {
-                // If data is already loaded, use it. Otherwise fetch.
                 if (currentPatientData && currentPatientData.id === patientId) {
                     loadPatientDataIntoForm(currentPatientData, patientId);
                 } else {
@@ -985,7 +1011,7 @@
             if(data.sex) document.querySelector(`#view-edit-patient-data input[name="sex"][value="${data.sex}"]`).checked = true;
             if(data.reproductiveStatus) document.querySelector(`#view-edit-patient-data input[name="reproductiveStatus"][value="${data.reproductiveStatus}"]`).checked = true;
             document.getElementById('data-birth-date').value = data.birthDate || '';
-            calculateAge(); // Update age field
+            calculateAge();
             document.getElementById('data-color-markings').value = data.colorMarkings || '';
             document.getElementById('data-microchip').value = data.microchip || '';
             document.getElementById('data-weight').value = data.weight || '';
@@ -1044,7 +1070,7 @@
                         const lastNumber = counterDoc.data()?.lastNumber || 0;
                         const newNumber = lastNumber + 1;
                         const formattedNumber = String(newNumber);
-                        data.createdAt = serverTimestamp(); // Add creation timestamp for new patients
+                        data.createdAt = serverTimestamp();
                         transaction.set(doc(db, "patients", formattedNumber), data);
                         transaction.update(counterRef, { lastNumber: newNumber });
                         return formattedNumber;
@@ -1078,6 +1104,7 @@
                 await deleteSubcollection(currentPatientId, 'consultations');
                 await deleteSubcollection(currentPatientId, 'prescriptions');
                 await deleteSubcollection(currentPatientId, 'vaccines');
+                await deleteSubcollection(currentPatientId, 'deworming');
                 await deleteSubcollection(currentPatientId, 'exams');
                 await deleteDoc(doc(db, "patients", currentPatientId));
                 hideModal('deleteConfirmation');
@@ -1143,7 +1170,7 @@
                 await updateDoc(doc(db, "patients", currentPatientId), { anamnesisRemota: updatedAnamnesisRemota });
 
                 hideModal('consultation');
-                loadConsultationHistory(currentPatientId); // Refresh history list
+                loadConsultationHistory(currentPatientId);
                 showNotification("Nueva consulta guardada.");
             } catch (error) {
                 showNotification("Error al guardar la consulta.", true);
@@ -1269,7 +1296,7 @@
             form.reset();
 
             const vaccineSelect = document.getElementById('vaccine-type');
-            vaccineSelect.innerHTML = ''; // Clear previous options
+            vaccineSelect.innerHTML = '';
 
             const canineVaccines = ['Sextuple/Octuple', 'Antirrábica', 'Bordetella', 'Otros'];
             const felineVaccines = ['Triple Felina', 'Leucemia Felina', 'Antirrábica'];
@@ -1362,78 +1389,174 @@
             }
         }
 
+        // --- Deworming Logic ---
+        function openNewDewormingModal() {
+            document.getElementById('deworming-form').reset();
+            showModal('deworming');
+        }
+
+        async function saveNewDeworming(e) {
+            e.preventDefault();
+            if (!currentPatientId) return;
+
+            const { collection, addDoc, serverTimestamp } = window.firebase;
+            const db = window.db;
+
+            const dewormingData = {
+                date: document.getElementById('deworming-date').value,
+                type: document.querySelector('input[name="deworming-type"]:checked').value,
+                product: document.getElementById('deworming-product').value,
+                nextDose: document.getElementById('deworming-next-dose').value,
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "patients", currentPatientId, "deworming"), dewormingData);
+                hideModal('deworming');
+                loadDewormingHistory(currentPatientId);
+                showNotification("Desparasitación registrada con éxito.");
+            } catch (error) {
+                showNotification("Error al registrar la desparasitación.", true);
+                console.error("Error saving deworming:", error);
+            }
+        }
+
+        async function loadDewormingHistory(patientId) {
+            const container = document.getElementById('deworming-history-table');
+            container.innerHTML = '<p>Cargando historial de desparasitaciones...</p>';
+            
+            const { collection, query, getDocs, orderBy } = window.firebase;
+            const db = window.db;
+
+            try {
+                const q = query(collection(db, "patients", patientId, "deworming"), orderBy("date", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="text-center text-gray-500">No hay desparasitaciones registradas.</p>';
+                    return;
+                }
+
+                let tableHTML = `
+                    <table class="min-w-full bg-white text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="py-2 px-4 text-left">Fecha</th>
+                                <th class="py-2 px-4 text-left">Tipo</th>
+                                <th class="py-2 px-4 text-left">Producto</th>
+                                <th class="py-2 px-4 text-left">Próxima Dosis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    tableHTML += `
+                        <tr class="border-b">
+                            <td class="py-2 px-4">${data.date || 'N/A'}</td>
+                            <td class="py-2 px-4">${data.type || 'N/A'}</td>
+                            <td class="py-2 px-4">${data.product || 'N/A'}</td>
+                            <td class="py-2 px-4">${data.nextDose || 'N/A'}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `</tbody></table>`;
+                container.innerHTML = tableHTML;
+
+            } catch (error) {
+                container.innerHTML = '<p class="text-center text-red-500">Error al cargar el historial.</p>';
+                console.error("Error loading deworming history:", error);
+            }
+        }
+
         // --- Exam Logic ---
         function openNewExamOrderModal() {
             document.getElementById('exam-order-form').reset();
-            const labContainer = document.getElementById('exam-list-container');
-            const imagingContainer = document.getElementById('imaging-list-container');
-            labContainer.innerHTML = ''; 
-            imagingContainer.innerHTML = '';
+            const dropdown = document.getElementById('exam-select-dropdown');
+            dropdown.innerHTML = '';
             
-            // Populate lab exams
-            examList.forEach(exam => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center';
-                div.innerHTML = `
-                    <input id="exam-${exam.id}" type="checkbox" value="${exam.name}" data-instructions="${exam.instructions}" class="h-4 w-4 text-[var(--color-primary)] border-gray-300 rounded focus:ring-[var(--color-primary)]">
-                    <label for="exam-${exam.id}" class="ml-3 block text-sm text-[var(--text-main)]">${exam.name}</label>
-                `;
-                labContainer.appendChild(div);
-            });
-            
-            // Populate imaging exams
-            Object.keys(imagingExams).forEach(category => {
+            const allExams = { ...labExams, ...imagingExams };
+
+            Object.keys(allExams).forEach(category => {
                 const categoryDiv = document.createElement('div');
-                const header = document.createElement('div');
-                header.className = 'accordion-header font-semibold';
-                header.textContent = category;
-                const body = document.createElement('div');
-                body.className = 'accordion-body p-2 space-y-2';
+                categoryDiv.className = 'p-2';
+                categoryDiv.innerHTML = `<h3 class="font-bold text-sm text-gray-500 sticky top-0 bg-gray-100 px-2 py-1">${category}</h3>`;
                 
-                imagingExams[category].forEach(exam => {
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center';
-                    div.innerHTML = `
-                        <input id="exam-${exam.id}" type="checkbox" value="${exam.name}" data-instructions="${exam.instructions}" class="h-4 w-4 text-[var(--color-primary)] border-gray-300 rounded focus:ring-[var(--color-primary)]">
-                        <label for="exam-${exam.id}" class="ml-3 block text-sm text-[var(--text-main)]">${exam.name}</label>
+                allExams[category].forEach(exam => {
+                    const label = document.createElement('label');
+                    label.className = 'flex items-center space-x-2 p-2 hover:bg-gray-50 cursor-pointer';
+                    label.innerHTML = `
+                        <input type="checkbox" value="${exam.name}" data-instructions="${exam.instructions}" class="form-checkbox exam-checkbox">
+                        <span>${exam.name}</span>
                     `;
-                    body.appendChild(div);
+                    categoryDiv.appendChild(label);
                 });
-
-                categoryDiv.appendChild(header);
-                categoryDiv.appendChild(body);
-                imagingContainer.appendChild(categoryDiv);
-
-                header.addEventListener('click', () => {
-                    header.classList.toggle('active');
-                    body.classList.toggle('expanded');
+                dropdown.appendChild(categoryDiv);
+            });
+            
+            dropdown.querySelectorAll('.exam-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    updateSelectedExamsDisplay();
+                    updateExamInstructions();
                 });
             });
 
-
-            document.querySelectorAll('#exam-order-modal input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', updateExamInstructions);
-            });
-
-            updateExamInstructions(); // Clear instructions initially
+            updateSelectedExamsDisplay();
+            updateExamInstructions();
             showModal('examOrder');
+        }
+        
+        function updateSelectedExamsDisplay() {
+            const checkboxes = document.querySelectorAll('#exam-select-dropdown .exam-checkbox:checked');
+            const container = document.getElementById('selected-exams-container');
+            const placeholder = document.getElementById('exam-select-placeholder');
+            container.innerHTML = '';
+            
+            if (checkboxes.length === 0) {
+                container.innerHTML = '<p class="text-sm text-gray-400">Ningún examen seleccionado.</p>';
+                placeholder.textContent = 'Haz click para seleccionar...';
+                return;
+            }
+
+            placeholder.textContent = `${checkboxes.length} examen(es) seleccionado(s)`;
+            checkboxes.forEach(checkbox => {
+                const tag = document.createElement('span');
+                tag.className = 'bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center';
+                tag.innerHTML = `
+                    ${checkbox.value}
+                    <button type="button" data-value="${checkbox.value}" class="ml-2 text-blue-600 hover:text-blue-800 remove-exam-tag">&times;</button>
+                `;
+                container.appendChild(tag);
+            });
+
+            container.querySelectorAll('.remove-exam-tag').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const valueToRemove = e.target.dataset.value;
+                    const checkboxToUncheck = document.querySelector(`#exam-select-dropdown .exam-checkbox[value="${valueToRemove}"]`);
+                    if (checkboxToUncheck) {
+                        checkboxToUncheck.checked = false;
+                        updateSelectedExamsDisplay();
+                        updateExamInstructions();
+                    }
+                });
+            });
         }
         
         function updateExamInstructions() {
             const instructionsTextarea = document.getElementById('exam-order-instructions');
-            const selectedExams = document.querySelectorAll('#exam-order-modal input:checked');
+            const selectedCheckboxes = document.querySelectorAll('#exam-select-dropdown .exam-checkbox:checked');
             let instructions = new Set();
             let maxAyuno = 0;
 
-            selectedExams.forEach(checkbox => {
+            selectedCheckboxes.forEach(checkbox => {
                 const instructionText = checkbox.dataset.instructions || "";
-                // Handle fasting
                 if (instructionText.toLowerCase().includes('ayuno')) {
                     if (instructionText.includes('12')) maxAyuno = Math.max(maxAyuno, 12);
                     else if (instructionText.includes('8')) maxAyuno = Math.max(maxAyuno, 8);
                     else if (instructionText.includes('6')) maxAyuno = Math.max(maxAyuno, 6);
                 }
-                // Handle other instructions
                 if (instructionText.toLowerCase().includes('post prandial')) {
                      instructions.add("Requiere muestra post prandial (2 horas después de comer).");
                 }
@@ -1449,7 +1572,6 @@
             instructionsTextarea.value = [...instructions].join('\n');
         }
 
-
         function openNewExamResultModal() {
             document.getElementById('exam-result-form').reset();
             document.getElementById('file-upload-status').textContent = '';
@@ -1462,10 +1584,7 @@
             const { collection, addDoc, serverTimestamp } = window.firebase;
             const db = window.db;
 
-            const selectedExams = [];
-            document.querySelectorAll('#exam-order-modal input:checked').forEach(checkbox => {
-                selectedExams.push(checkbox.value);
-            });
+            const selectedExams = Array.from(document.querySelectorAll('#exam-select-dropdown .exam-checkbox:checked')).map(cb => cb.value);
 
             const examData = {
                 date: document.getElementById('exam-order-date').value || new Date().toISOString().split('T')[0],
@@ -1479,7 +1598,6 @@
                 hideModal('examOrder');
                 loadExamHistory(currentPatientId);
                 showNotification("Orden de examen guardada.");
-                // Optionally show printable view right away
                 openPrintableExamOrder({ id: docRef.id, ...examData });
             } catch (error) {
                 showNotification("Error al guardar la orden.", true);
@@ -1508,7 +1626,6 @@
             };
 
             try {
-                // Create document first to get an ID
                 const docRef = await addDoc(collection(db, "patients", currentPatientId, "exams"), examData);
 
                 if (file) {
@@ -1517,7 +1634,6 @@
                     const uploadResult = await uploadBytes(storageRef, file);
                     const downloadURL = await getDownloadURL(uploadResult.ref);
                     
-                    // Update document with file URL
                     await updateDoc(docRef, { fileURL: downloadURL });
                     statusEl.textContent = 'Archivo subido con éxito.';
                 }
@@ -1581,7 +1697,6 @@
                     container.appendChild(card);
                 });
 
-                // Add event listeners for the new buttons
                 container.querySelectorAll('.view-exam-order-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         const orderId = e.target.dataset.orderId;
@@ -1603,7 +1718,6 @@
         function openPrintableExamOrder(orderData) {
             if (!currentPatientData) return;
             
-            // Populate patient data
             document.getElementById('exam-order-ficha-id').textContent = currentPatientData.id;
             document.getElementById('exam-order-patient-name').textContent = currentPatientData.name || '';
             document.getElementById('exam-order-species').textContent = currentPatientData.species || '';
@@ -1611,7 +1725,6 @@
             document.getElementById('exam-order-tutor-rut').textContent = currentPatientData.tutorRut ? formatRut(currentPatientData.tutorRut) : '';
             document.getElementById('exam-order-email').value = currentPatientData.tutorEmail || '';
 
-            // Populate order data
             document.getElementById('exam-order-printable-date').textContent = orderData.date;
             document.getElementById('exam-order-details').textContent = orderData.details;
             document.getElementById('exam-order-printable-instructions').textContent = orderData.instructions;
@@ -1648,9 +1761,8 @@
             if (!searchTerm) return;
             const searchResultsEl = document.getElementById('search-results');
             searchResultsEl.innerHTML = '<p>Buscando...</p>';
-            let results = new Map(); // Use a map to avoid duplicates
+            let results = new Map();
             try {
-                // Search by patient ID (Ficha)
                 if (!isNaN(searchTerm)) {
                     const docRef = doc(db, "patients", searchTerm);
                     const docSnap = await getDoc(docRef);
@@ -1659,14 +1771,12 @@
                     }
                 }
                 
-                // Search by patient name (case-insensitive)
                 const qName = query(collection(db, "patients"), where("name", ">=", searchTerm.toLowerCase()), where("name", "<=", searchTerm.toLowerCase() + '\uf8ff'));
                 const nameSnapshot = await getDocs(qName);
                 nameSnapshot.forEach((doc) => {
                     results.set(doc.id, { id: doc.id, ...doc.data() });
                 });
 
-                // Search by RUT
                 const cleanRut = searchTerm.replace(/[.-]/g, '');
                 if(cleanRut) {
                     const qRut = query(collection(db, "patients"), where("tutorRut", "==", cleanRut));
@@ -1802,9 +1912,6 @@
         
         // --- Agenda Form Logic ---
         async function handleAgendaContinue() {
-            const { getDocs, collection, query, where } = window.firebase;
-            const db = window.db;
-
             const tutorName = document.getElementById('agenda-tutor-name').value;
             const tutorRutRaw = document.getElementById('agenda-tutor-rut').value;
             const tutorCommune = document.getElementById('agenda-tutor-commune').value;
@@ -1818,12 +1925,7 @@
                 return;
             }
             
-            const cleanRut = tutorRutRaw.replace(/[.-]/g, '');
-            
-            // Logic to check existing pet or create new one
             const existingPetRadio = document.querySelector('input[name="existing-pet"]:checked');
-            const newPetRadio = document.getElementById('add-new-pet-radio');
-
             let petName = '';
             if (existingPetRadio && existingPetRadio.value !== 'new') {
                 petName = existingPetRadio.value;
@@ -1836,8 +1938,7 @@
                 return;
             }
 
-            // Redirect to Calendly
-            const calendlyUrl = `https://calendly.com/avmveterinaria=${encodeURIComponent(petName)}&a1=${encodeURIComponent(tutorName)}&a2=${encodeURIComponent(tutorRutRaw)}&a3=${encodeURIComponent(tutorCommune)}`;
+            const calendlyUrl = `https://calendly.com/ale-cautin/consulta?name=${encodeURIComponent(petName)}&a1=${encodeURIComponent(tutorName)}&a2=${encodeURIComponent(tutorRutRaw)}&a3=${encodeURIComponent(tutorCommune)}`;
             window.location.href = calendlyUrl;
         }
         
@@ -1847,7 +1948,6 @@
             
             const rutInput = document.getElementById('agenda-tutor-rut');
             if (!validateRut(rutInput.value)) {
-                // Hide pet sections if RUT becomes invalid
                 document.getElementById('agenda-step-2').classList.add('hidden');
                 return;
             }
@@ -1875,7 +1975,6 @@
                     existingPetsList.appendChild(div);
                 });
                 
-                // Add option to create a new pet for this tutor
                 const div = document.createElement('div');
                 div.innerHTML = `<label class="flex items-center"><input type="radio" id="add-new-pet-radio" name="existing-pet" value="new" class="form-radio mr-2"> Agregar una mascota nueva</label>`;
                 existingPetsList.appendChild(div);
@@ -1883,7 +1982,7 @@
                 document.getElementById('add-new-pet-radio').addEventListener('change', (e) => {
                     if (e.target.checked) {
                         newPatientContainer.classList.remove('hidden');
-                        document.getElementById('agenda-pet-name').value = ''; // Clear name field
+                        document.getElementById('agenda-pet-name').value = '';
                     }
                 });
 
@@ -1908,79 +2007,93 @@
         }
 
         // --- Data for Modals ---
-        const examList = [
-            { id: 'acetilcolinesterasa', name: 'Acetilcolinesterasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'acido-urico', name: 'Acido urico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'acidos-biliares-post', name: 'Acidos biliares post', instructions: 'POST PRANDIAL Y CADENA DE FRÍO' },
-            { id: 'acidos-biliares-pre-y-post', name: 'Acidos biliares pre y post', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-            { id: 'albumina', name: 'Albumina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'amilasa', name: 'Amilasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'amonio', name: 'Amonio', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-            { id: 'bacteriologico-y-antibiograma', name: 'Bacteriologico y antibiograma', instructions: 'N/A' },
-            { id: 'calcio-ionico', name: 'Calcio ionico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'calcio-total', name: 'Calcio total', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'citologia', name: 'Citologia', instructions: 'N/A' },
-            { id: 'clearence-creatinina', name: 'Clearence creatinina', instructions: 'N/A' },
-            { id: 'cloro', name: 'Cloro', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'colesterol-total', name: 'Colesterol total', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-            { id: 'coprologico-funcional', name: 'Coprologico funcional', instructions: 'N/A' },
-            { id: 'cortisol-post-acth', name: 'Cortisol post acth', instructions: 'N/A' },
-            { id: 'cortisol-pre-y-post-dexametasona', name: 'Cortisol pre y post dexametasona', instructions: 'N/A' },
-            { id: 'creatinina', name: 'Creatinina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'ck-total', name: 'Ck total', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'densidad-urinaria', name: 'Densidad urinaria', instructions: 'N/A' },
-            { id: 'determinacion-de-sexo-por-pcr', name: 'Determinacion de sexo por pcr', instructions: 'N/A' },
-            { id: 'distemper-canino-ac', name: 'Distemper canino (ac)', instructions: 'N/A' },
-            { id: 'distemper-canino-ag', name: 'Distemper canino (ag)', instructions: 'N/A' },
-            { id: 'erlichia-canis', name: 'Erlichia canis', instructions: 'N/A' },
-            { id: 'estradiol', name: 'Estradiol', instructions: 'N/A' },
-            { id: 'estudio-de-calculo-urinario', name: 'Estudio de calculo urinario', instructions: 'N/A' },
-            { id: 'fenobarbital', name: 'Fenobarbital', instructions: 'N/A' },
-            { id: 'fibrinogeno', name: 'Fibrinogeno', instructions: 'N/A' },
-            { id: 'fosforo', name: 'Fosforo', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'fosfatasas-alcalinas', name: 'Fosfatasas alcalinas', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'fructosamina', name: 'Fructosamina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'ggt', name: 'Ggt', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'giardia-duodenalis', name: 'Giardia duodenalis', instructions: 'N/A' },
-            { id: 'glucosa', name: 'Glucosa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'hemograma-completo', name: 'Hemograma completo', instructions: 'N/A' },
-            { id: 'histopatologia', name: 'Histopatologia', instructions: 'N/A' },
-            { id: 'inmunodeficiencia-felina', name: 'Inmunodeficiencia felina', instructions: 'N/A' },
-            { id: 'insulina', name: 'Insulina', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-            { id: 'lactato', name: 'Lactato', instructions: 'N/A' },
-            { id: 'leucemia-felina', name: 'Leucemia felina', instructions: 'N/A' },
-            { id: 'lipasa', name: 'Lipasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'magnesio', name: 'Magnesio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'micologico', name: 'Micologico', instructions: 'N/A' },
-            { id: 'nitrogeno-ureico', name: 'Nitrogeno ureico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'panel-respiratorio-felino', name: 'Panel respiratorio felino', instructions: 'N/A' },
-            { id: 'panel-respiratorio-canino', name: 'Panel respiratorio canino', instructions: 'N/A' },
-            { id: 'parvovirus-canino', name: 'Parvovirus canino', instructions: 'N/A' },
-            { id: 'perfil-bioquimico', name: 'Perfil bioquimico', instructions: 'AYUNO > 8 h Y CADENA DE FRÍO' },
-            { id: 'perfil-lipidico', name: 'Perfil lipidico', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-            { id: 'perfil-prequirurgico', name: 'Perfil prequirurgico', instructions: 'AYUNO > 8 h Y CADENA DE FRÍO' },
-            { id: 'pif', name: 'Pif', instructions: 'N/A' },
-            { id: 'potasio', name: 'Potasio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'progesterona', name: 'Progesterona', instructions: 'N/A' },
-            { id: 'proteinas-totales', name: 'Proteinas totales', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 'rpc', name: 'Rpc', instructions: 'N/A' },
-            { id: 'raspado-de-piel', name: 'Raspado de piel', instructions: 'N/A' },
-            { id: 'recuento-de-reticulocitos', name: 'Recuento de reticulocitos', instructions: 'N/A' },
-            { id: 'relacion-albumina-creatinina', name: 'Relacion albumina/creatinina', instructions: 'N/A' },
-            { id: 'relacion-proteina-creatinina', name: 'Relacion proteina/creatinina', instructions: 'N/A' },
-            { id: 'sdma', name: 'Sdma', instructions: 'N/A' },
-            { id: 'sodio', name: 'Sodio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-            { id: 't4-libre', name: 'T4 libre', instructions: 'N/A' },
-            { id: 't4-total', name: 'T4 total', instructions: 'N/A' },
-            { id: 'testosterona', name: 'Testosterona', instructions: 'N/A' },
-            { id: 'tiempo-de-coagulacion', name: 'Tiempo de coagulacion', instructions: 'N/A' },
-            { id: 'tiempo-de-protrombina', name: 'Tiempo de protrombina', instructions: 'N/A' },
-            { id: 'tiempo-de-tromboplastina', name: 'Tiempo de tromboplastina', instructions: 'N/A' },
-            { id: 'trigliceridos', name: 'Trigliceridos', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-            { id: 'tsh', name: 'Tsh', instructions: 'N/A' },
-            { id: 'uroanalisis-completo', name: 'Uroanalisis completo', instructions: 'N/A' },
-            { id: 'urocultivo-y-antibiograma', name: 'Urocultivo y antibiograma', instructions: 'N/A' },
-        ];
+        const labExams = {
+            "Perfiles y Hematología": [
+                { id: 'perfil-bioquimico', name: 'Perfil bioquimico', instructions: 'AYUNO > 8 h Y CADENA DE FRÍO' },
+                { id: 'perfil-lipidico', name: 'Perfil lipidico', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+                { id: 'perfil-prequirurgico', name: 'Perfil prequirurgico', instructions: 'AYUNO > 8 h Y CADENA DE FRÍO' },
+                { id: 'hemograma-completo', name: 'Hemograma completo', instructions: 'N/A' },
+                { id: 'recuento-de-reticulocitos', name: 'Recuento de reticulocitos', instructions: 'N/A' },
+                { id: 'fibrinogeno', name: 'Fibrinogeno', instructions: 'N/A' },
+                { id: 'tiempo-de-coagulacion', name: 'Tiempo de coagulacion', instructions: 'N/A' },
+                { id: 'tiempo-de-protrombina', name: 'Tiempo de protrombina', instructions: 'N/A' },
+                { id: 'tiempo-de-tromboplastina', name: 'Tiempo de tromboplastina', instructions: 'N/A' },
+            ],
+            "Química Sanguínea Individual": [
+                { id: 'acido-urico', name: 'Acido urico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'acidos-biliares-post', name: 'Acidos biliares post', instructions: 'POST PRANDIAL Y CADENA DE FRÍO' },
+                { id: 'acidos-biliares-pre-y-post', name: 'Acidos biliares pre y post', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+                { id: 'albumina', name: 'Albumina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'amilasa', name: 'Amilasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'amonio', name: 'Amonio', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+                { id: 'calcio-ionico', name: 'Calcio ionico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'calcio-total', name: 'Calcio total', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'cloro', name: 'Cloro', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'colesterol-total', name: 'Colesterol total', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+                { id: 'creatinina', name: 'Creatinina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'ck-total', name: 'Ck total', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'fosforo', name: 'Fosforo', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'fosfatasas-alcalinas', name: 'Fosfatasas alcalinas', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'fructosamina', name: 'Fructosamina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'ggt', name: 'Ggt', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'glucosa', name: 'Glucosa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'lactato', name: 'Lactato', instructions: 'N/A' },
+                { id: 'lipasa', name: 'Lipasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'magnesio', name: 'Magnesio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'nitrogeno-ureico', name: 'Nitrogeno ureico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'potasio', name: 'Potasio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'proteinas-totales', name: 'Proteinas totales', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'sdma', name: 'Sdma', instructions: 'N/A' },
+                { id: 'sodio', name: 'Sodio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'trigliceridos', name: 'Trigliceridos', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            ],
+            "Endocrinología y Fármacos": [
+                { id: 'cortisol-post-acth', name: 'Cortisol post acth', instructions: 'N/A' },
+                { id: 'cortisol-pre-y-post-dexametasona', name: 'Cortisol pre y post dexametasona', instructions: 'N/A' },
+                { id: 'estradiol', name: 'Estradiol', instructions: 'N/A' },
+                { id: 'fenobarbital', name: 'Fenobarbital', instructions: 'N/A' },
+                { id: 'insulina', name: 'Insulina', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+                { id: 'progesterona', name: 'Progesterona', instructions: 'N/A' },
+                { id: 't4-libre', name: 'T4 libre', instructions: 'N/A' },
+                { id: 't4-total', name: 'T4 total', instructions: 'N/A' },
+                { id: 'testosterona', name: 'Testosterona', instructions: 'N/A' },
+                { id: 'tsh', name: 'Tsh', instructions: 'N/A' },
+            ],
+            "Análisis de Orina": [
+                { id: 'clearence-creatinina', name: 'Clearence creatinina', instructions: 'N/A' },
+                { id: 'densidad-urinaria', name: 'Densidad urinaria', instructions: 'N/A' },
+                { id: 'estudio-de-calculo-urinario', name: 'Estudio de calculo urinario', instructions: 'N/A' },
+                { id: 'rpc', name: 'Rpc', instructions: 'N/A' },
+                { id: 'relacion-albumina-creatinina', name: 'Relacion albumina/creatinina', instructions: 'N/A' },
+                { id: 'relacion-proteina-creatinina', name: 'Relacion proteina/creatinina', instructions: 'N/A' },
+                { id: 'uroanalisis-completo', name: 'Uroanalisis completo', instructions: 'N/A' },
+                { id: 'urocultivo-y-antibiograma', name: 'Urocultivo y antibiograma', instructions: 'N/A' },
+            ],
+            "Infecciosas y Parasitología": [
+                { id: 'bacteriologico-y-antibiograma', name: 'Bacteriologico y antibiograma', instructions: 'N/A' },
+                { id: 'coprologico-funcional', name: 'Coprologico funcional', instructions: 'N/A' },
+                { id: 'distemper-canino-ac', name: 'Distemper canino (ac)', instructions: 'N/A' },
+                { id: 'distemper-canino-ag', name: 'Distemper canino (ag)', instructions: 'N/A' },
+                { id: 'erlichia-canis', name: 'Erlichia canis', instructions: 'N/A' },
+                { id: 'giardia-duodenalis', name: 'Giardia duodenalis', instructions: 'N/A' },
+                { id: 'inmunodeficiencia-felina', name: 'Inmunodeficiencia felina', instructions: 'N/A' },
+                { id: 'leucemia-felina', name: 'Leucemia felina', instructions: 'N/A' },
+                { id: 'micologico', name: 'Micologico', instructions: 'N/A' },
+                { id: 'panel-respiratorio-felino', name: 'Panel respiratorio felino', instructions: 'N/A' },
+                { id: 'panel-respiratorio-canino', name: 'Panel respiratorio canino', instructions: 'N/A' },
+                { id: 'parvovirus-canino', name: 'Parvovirus canino', instructions: 'N/A' },
+                { id: 'pif', name: 'Pif', instructions: 'N/A' },
+                { id: 'raspado-de-piel', name: 'Raspado de piel', instructions: 'N/A' },
+            ],
+            "Citología e Histopatología": [
+                { id: 'citologia', name: 'Citologia', instructions: 'N/A' },
+                { id: 'histopatologia', name: 'Histopatologia', instructions: 'N/A' },
+            ],
+            "Otros Exámenes": [
+                { id: 'acetilcolinesterasa', name: 'Acetilcolinesterasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+                { id: 'determinacion-de-sexo-por-pcr', name: 'Determinacion de sexo por pcr', instructions: 'N/A' },
+            ]
+        };
         const imagingExams = {
             "Ecografías": [
                 { id: 'eco-abdominal', name: 'Ecografía Abdominal', instructions: 'Ayuno 8–12 h. Rasurado abdominal. No requiere sedación.' },
@@ -2113,6 +2226,12 @@
             document.getElementById('close-vaccine-modal-btn').addEventListener('click', () => hideModal('vaccine'));
             document.getElementById('cancel-vaccine-btn').addEventListener('click', () => hideModal('vaccine'));
 
+            // --- DEWORMING ---
+            document.getElementById('new-deworming-btn').addEventListener('click', openNewDewormingModal);
+            document.getElementById('deworming-form').addEventListener('submit', saveNewDeworming);
+            document.getElementById('close-deworming-modal-btn').addEventListener('click', () => hideModal('deworming'));
+            document.getElementById('cancel-deworming-btn').addEventListener('click', () => hideModal('deworming'));
+
             // --- EXAMS ---
             document.getElementById('new-exam-order-btn').addEventListener('click', openNewExamOrderModal);
             document.getElementById('exam-order-form').addEventListener('submit', saveNewExamOrder);
@@ -2122,15 +2241,15 @@
             document.getElementById('exam-result-form').addEventListener('submit', saveNewExamResult);
             document.getElementById('close-exam-result-modal-btn').addEventListener('click', () => hideModal('examResult'));
             document.getElementById('cancel-exam-result-btn').addEventListener('click', () => hideModal('examResult'));
-            document.querySelectorAll('.exam-tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.exam-tab-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.querySelectorAll('.exam-tab-content').forEach(c => c.classList.remove('active'));
-                    document.getElementById(`exam-tab-${btn.dataset.tab}`).classList.add('active');
-                });
+            const examSelectButton = document.getElementById('exam-select-button');
+            const examSelectDropdown = document.getElementById('exam-select-dropdown');
+            examSelectButton.addEventListener('click', () => examSelectDropdown.classList.toggle('hidden'));
+            document.addEventListener('click', (e) => {
+                if (!examSelectButton.contains(e.target) && !examSelectDropdown.contains(e.target)) {
+                    examSelectDropdown.classList.add('hidden');
+                }
             });
-            // Printable Exam Order listeners
+
             document.querySelector('.back-to-hub-btn-from-exam-order').addEventListener('click', () => openPatientHub(currentPatientId));
             document.getElementById('download-exam-order-pdf-btn').addEventListener('click', () => downloadPDF('exam-order-content-generator', `orden-examen-${currentPatientId}.pdf`));
             document.getElementById('send-exam-order-email-btn').addEventListener('click', () => {
@@ -2172,22 +2291,19 @@
             document.querySelectorAll('#home-buttons a').forEach(link => link.addEventListener('click', handleNavClick));
             document.getElementById('mobile-menu-btn').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
             
-            // Agenda form listeners
             document.getElementById('agenda-tutor-rut').addEventListener('input', (e) => handleRutInput(e, 'agenda-rut-validation-message'));
             document.getElementById('agenda-tutor-rut').addEventListener('blur', checkTutorRutOnBlur);
             document.getElementById('agenda-continue-btn').addEventListener('click', handleAgendaContinue);
 
-            // Contact form listener
             document.getElementById('contact-form').addEventListener('submit', handleContactFormSubmit);
 
-            // FAQ Data and Generation
             const faqs = [
                 { q: '¿Qué hago si mi perro vomita un medicamento?', a: 'No repita la dosis sin consultar. Anote la hora y el medicamento y contacte a su veterinario para recibir instrucciones.' },
                 { q: '¿Cómo saber si mi mascota tiene fiebre?', a: 'La forma más precisa es con un termómetro rectal. La temperatura normal en perros y gatos es de 38°C a 39.2°C. Si no tiene termómetro, observe si sus orejas o nariz están más calientes de lo normal, pero esto no es un método confiable.' },
                 { q: '¿Cuándo debo llevar a mi mascota a un control?', a: 'Se recomienda un control anual para mascotas adultas sanas. Los cachorros, seniors o mascotas con condiciones crónicas necesitan visitas más frecuentes. Siempre consulte ante cualquier cambio de comportamiento o síntoma inusual.' }
             ];
             const faqContainer = document.getElementById('faq-accordion');
-            faqContainer.innerHTML = ''; // Clear existing
+            faqContainer.innerHTML = '';
             faqs.forEach(faq => {
                 const item = document.createElement('div');
                 item.innerHTML = `
@@ -2213,7 +2329,6 @@
 
              document.querySelector('.nav-link[href="#inicio"]').classList.add('active');
              
-            // Service Modal Logic
             const serviceData = {
                 'consulta-general': { title: 'Consulta General', description: 'Evaluación completa del estado de salud de tu mascota, diagnóstico de enfermedades y recomendación de tratamientos.' },
                 'vacunaciones': { title: 'Vacunaciones', description: 'Aplicación de vacunas esenciales para proteger a tu mascota contra enfermedades infecciosas comunes.' },
@@ -2225,7 +2340,7 @@
                 'homenaje-final': { title: 'Acompañamiento y Homenaje Final', description: 'Un servicio compasivo y respetuoso para acompañarte en el difícil momento de la despedida, asegurando un final tranquilo y digno para tu fiel compañero.' }
             };
             const servicesGrid = document.getElementById('services-grid');
-            servicesGrid.innerHTML = ''; // Clear existing
+            servicesGrid.innerHTML = '';
             servicesGrid.innerHTML = Object.keys(serviceData).map(key => {
                 return `
                     <div data-service="${key}" class="service-card bg-[var(--color-surface)] p-6 rounded-xl shadow-lg text-center flex flex-col items-center cursor-pointer hover:shadow-xl transition-shadow">
