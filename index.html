@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pacientes Veterinaria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <script type="module">
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyBrYOiaa_skDuvRDD_zMZvUBknfwmTyDko",
+          authDomain: "ale-veterinaria.firebaseapp.com",
+          projectId: "ale-veterinaria",
+          storageBucket: "ale-veterinaria.appspot.com",
+          messagingSenderId: "87862276548",
+          appId: "1:87862276548:web:a55b3154a31e4c6948b491",
+          measurementId: "G-PNKMJC92K3"
+        };
+
+        // Initialize Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            window.db = db;
+            window.firebase = { collection, addDoc, getDocs, query, where, doc, getDoc, setDoc };
+        } catch (e) {
+            console.error("Firebase initialization error. Please check your firebaseConfig.", e);
+            // Optionally, disable UI elements that require Firebase
+        }
+    </script>
+    <style>
+        body { 
+            font-family: 'Lato', sans-serif;
+            background-color: #F4F7F6; /* Menta muy pálido */
+        }
+        h1, h2, h3, h4, h5, h6, button, .font-poppins { 
+            font-family: 'Poppins', sans-serif; 
+        }
+        .view { display: none; }
+        .view.active { display: block; }
+        .modal-backdrop {
+            background-color: rgba(0,0,0,0.5);
+            transition: opacity 0.3s ease;
+        }
+        /* Custom Colors */
+        .btn-primary {
+            background-color: #FF7F50; /* Coral */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #FF6347; /* Tomato */
+        }
+        .btn-secondary {
+            background-color: #48D1CC; /* MediumTurquoise */
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #20B2AA; /* LightSeaGreen */
+        }
+        .text-accent {
+            color: #20B2AA; /* LightSeaGreen */
+        }
+        .text-accent-dark {
+            color: #008B8B; /* DarkCyan */
+        }
+        .text-highlight {
+            color: #9370DB; /* MediumPurple */
+        }
+        .ring-accent:focus {
+            --tw-ring-color: #48D1CC;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
+
+        <div id="view-dashboard" class="view active">
+            <header class="text-center my-8">
+                <img src="logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-4 rounded-full shadow-lg">
+                <h1 class="text-4xl font-bold text-accent-dark">Sistema de Gestión Clínica</h1>
+                <p class="text-gray-500 mt-2">Dra. Alejandra Cautín Bastías</p>
+            </header>
+
+            <main class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-accent-dark mb-4">Buscar Paciente</h2>
+                    <div class="flex space-x-2">
+                        <input id="search-input" type="text" placeholder="Nº de Ficha o Nombre" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 ring-accent">
+                        <button id="search-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Buscar</button>
+                    </div>
+                    <div id="search-results" class="mt-4"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center justify-center text-center">
+                     <h2 class="text-2xl font-bold text-accent-dark mb-4">Acciones</h2>
+                    <button id="new-patient-btn" class="w-full btn-primary py-3 rounded-lg text-lg font-bold shadow-md transform hover:scale-105 transition-transform">
+                        + Registrar Nuevo Paciente
+                    </button>
+                </div>
+            </main>
+        </div>
+
+        <div id="view-patient-file" class="view">
+            <header class="flex justify-between items-center bg-white p-4 rounded-xl shadow-lg mb-6">
+                <h1 class="text-3xl font-bold text-accent-dark">Ficha Clínica y Receta</h1>
+                <button id="back-to-dashboard-btn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver</button>
+            </header>
+
+            <form id="patient-form">
+                <input type="hidden" id="patient-id">
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+                    <h2 class="text-2xl font-bold text-accent-dark mb-4">Datos del Paciente</h2>
+                    <p class="mb-4 text-lg"><strong>Nº de Ficha:</strong> <span id="ficha-number-display" class="text-highlight font-bold"></span></p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input id="patient-name" type="text" placeholder="Nombre del Paciente" class="px-4 py-2 border rounded-lg" required>
+                        <input id="tutor-name" type="text" placeholder="Tutor Responsable" class="px-4 py-2 border rounded-lg">
+                        <input id="species" type="text" placeholder="Especie" class="px-4 py-2 border rounded-lg">
+                        <input id="breed" type="text" placeholder="Raza" class="px-4 py-2 border rounded-lg">
+                        <input id="age" type="text" placeholder="Edad" class="px-4 py-2 border rounded-lg">
+                        <input id="contact" type="text" placeholder="Contacto (Teléfono/Email)" class="px-4 py-2 border rounded-lg">
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+                    <h2 class="text-2xl font-bold text-accent-dark mb-4">Ficha Clínica (Anamnesis y Examen)</h2>
+                    <textarea id="clinical-notes" rows="10" placeholder="Escriba aquí la anamnesis, examen clínico, diagnósticos diferenciales, plan diagnóstico y terapéutico..." class="w-full px-4 py-2 border rounded-lg"></textarea>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+                    <h2 class="text-2xl font-bold text-accent-dark mb-4">Recetario</h2>
+                    <textarea id="prescription-notes" rows="10" placeholder="Escriba aquí los detalles del tratamiento: nombre del medicamento, dosis, frecuencia, vía de administración, etc." class="w-full px-4 py-2 border rounded-lg"></textarea>
+                </div>
+
+                <div class="flex justify-end items-center space-x-4">
+                     <img src="https://i.postimg.cc/0jK9Z3gH/Whats-App-Image-2024-07-19-at-18-36-23.jpg" alt="Timbre Médico" class="h-20">
+                    <button type="submit" class="btn-primary px-6 py-3 rounded-lg text-lg font-bold shadow-md transform hover:scale-105 transition-transform">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div id="notification-modal" class="fixed inset-0 z-50 items-center justify-center hidden">
+        <div class="modal-backdrop fixed inset-0"></div>
+        <div class="bg-white rounded-xl shadow-xl p-8 m-4 max-w-sm text-center z-10">
+            <p id="notification-message" class="text-lg text-gray-700"></p>
+            <button id="notification-close-btn" class="mt-6 btn-secondary text-white px-5 py-2 rounded-lg font-semibold">Cerrar</button>
+        </div>
+    </div>
+
+
+    <script type="module">
+        // --- App State ---
+        let currentPatientId = null;
+
+        // --- DOM Elements ---
+        const views = {
+            dashboard: document.getElementById('view-dashboard'),
+            patientFile: document.getElementById('view-patient-file'),
+        };
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const searchResults = document.getElementById('search-results');
+        const newPatientBtn = document.getElementById('new-patient-btn');
+        const backToDashboardBtn = document.getElementById('back-to-dashboard-btn');
+        const patientForm = document.getElementById('patient-form');
+        const notificationModal = document.getElementById('notification-modal');
+        const notificationMessage = document.getElementById('notification-message');
+        const notificationCloseBtn = document.getElementById('notification-close-btn');
+
+        // --- Navigation ---
+        function navigateTo(viewName) {
+            Object.values(views).forEach(view => view.classList.remove('active'));
+            if (views[viewName]) {
+                views[viewName].classList.add('active');
+            }
+        }
+
+        // --- Notifications ---
+        function showNotification(message) {
+            notificationMessage.textContent = message;
+            notificationModal.classList.remove('hidden');
+            notificationModal.classList.add('flex');
+        }
+
+        notificationCloseBtn.addEventListener('click', () => {
+            notificationModal.classList.add('hidden');
+            notificationModal.classList.remove('flex');
+        });
+
+        // --- Firebase Functions ---
+        async function savePatientData(event) {
+            event.preventDefault();
+            if (!window.firebase || !window.db) {
+                showNotification("Error: Firebase no está configurado. Revisa tus claves.");
+                return;
+            }
+            const { setDoc, doc, addDoc, collection } = window.firebase;
+            const db = window.db;
+
+            const patientData = {
+                name: document.getElementById('patient-name').value.toLowerCase(), // Save name in lowercase for case-insensitive search
+                tutor: document.getElementById('tutor-name').value,
+                species: document.getElementById('species').value,
+                breed: document.getElementById('breed').value,
+                age: document.getElementById('age').value,
+                contact: document.getElementById('contact').value,
+                clinicalNotes: document.getElementById('clinical-notes').value,
+                prescription: document.getElementById('prescription-notes').value,
+                lastUpdated: new Date()
+            };
+
+            try {
+                if (currentPatientId) {
+                    // Update existing patient
+                    const patientRef = doc(db, "patients", currentPatientId);
+                    await setDoc(patientRef, patientData, { merge: true });
+                    showNotification("Ficha actualizada con éxito.");
+                } else {
+                    // Create new patient
+                    const docRef = await addDoc(collection(db, "patients"), patientData);
+                    currentPatientId = docRef.id;
+                    document.getElementById('patient-id').value = currentPatientId;
+                    document.getElementById('ficha-number-display').textContent = currentPatientId;
+                    showNotification(`Nuevo paciente registrado con éxito. Nº de Ficha: ${currentPatientId}`);
+                }
+            } catch (error) {
+                console.error("Error saving document: ", error);
+                showNotification("Error al guardar los datos.");
+            }
+        }
+        
+        async function searchPatients() {
+            if (!window.firebase || !window.db) {
+                showNotification("Error: Firebase no está configurado. Revisa tus claves.");
+                return;
+            }
+            const { getDocs, collection, query, where } = window.firebase;
+            const db = window.db;
+            const searchTerm = searchInput.value.trim();
+            if (!searchTerm) return;
+
+            searchResults.innerHTML = '<p>Buscando...</p>';
+
+            try {
+                // Search by ID first
+                const docRef = window.firebase.doc(db, "patients", searchTerm);
+                const docSnap = await window.firebase.getDoc(docRef);
+
+                let results = [];
+                if (docSnap.exists()) {
+                    results.push({ id: docSnap.id, ...docSnap.data() });
+                }
+                
+                // Then, search by name (case-insensitive)
+                const searchTermLower = searchTerm.toLowerCase();
+                const q = query(collection(db, "patients"), where("name", ">=", searchTermLower), where("name", "<=", searchTermLower + '\uf8ff'));
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    // Avoid adding duplicates if found by ID and name
+                    if (!results.some(res => res.id === doc.id)) {
+                        results.push({ id: doc.id, ...doc.data() });
+                    }
+                });
+                
+                displaySearchResults(results);
+
+            } catch (error) {
+                console.error("Error searching patients: ", error);
+                searchResults.innerHTML = '<p class="text-red-500">Error al realizar la búsqueda.</p>';
+            }
+        }
+
+        function displaySearchResults(patients) {
+            if (patients.length === 0) {
+                searchResults.innerHTML = '<p>No se encontraron pacientes.</p>';
+                return;
+            }
+
+            searchResults.innerHTML = '';
+            const list = document.createElement('ul');
+            list.className = 'space-y-2';
+            patients.forEach(patient => {
+                const item = document.createElement('li');
+                item.className = 'p-3 border rounded-lg flex justify-between items-center';
+                item.innerHTML = `<span class="capitalize font-semibold text-gray-700">${patient.name} <span class="text-sm text-gray-500 font-normal">(${patient.id})</span></span>`;
+                const viewBtn = document.createElement('button');
+                viewBtn.textContent = 'Ver Ficha';
+                viewBtn.className = 'btn-secondary text-white px-3 py-1 text-sm rounded-md font-semibold';
+                viewBtn.onclick = () => loadPatientFile(patient.id);
+                item.appendChild(viewBtn);
+                list.appendChild(item);
+            });
+            searchResults.appendChild(list);
+        }
+
+        async function loadPatientFile(patientId) {
+            if (!window.firebase || !window.db) {
+                showNotification("Error: Firebase no está configurado. Revisa tus claves.");
+                return;
+            }
+            const { doc, getDoc } = window.firebase;
+            const db = window.db;
+            
+            try {
+                const patientRef = doc(db, "patients", patientId);
+                const docSnap = await getDoc(patientRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    currentPatientId = patientId;
+                    
+                    document.getElementById('patient-id').value = patientId;
+                    document.getElementById('ficha-number-display').textContent = patientId;
+                    document.getElementById('patient-name').value = data.name || '';
+                    document.getElementById('tutor-name').value = data.tutor || '';
+                    document.getElementById('species').value = data.species || '';
+                    document.getElementById('breed').value = data.breed || '';
+                    document.getElementById('age').value = data.age || '';
+                    document.getElementById('contact').value = data.contact || '';
+                    document.getElementById('clinical-notes').value = data.clinicalNotes || '';
+                    document.getElementById('prescription-notes').value = data.prescription || '';
+                    
+                    navigateTo('patientFile');
+                } else {
+                    showNotification("No se encontró la ficha del paciente.");
+                }
+            } catch (error) {
+                console.error("Error loading patient file: ", error);
+                showNotification("Error al cargar la ficha.");
+            }
+        }
+
+        function openNewPatientFile() {
+            patientForm.reset();
+            currentPatientId = null;
+            document.getElementById('patient-id').value = '';
+            document.getElementById('ficha-number-display').textContent = 'Se generará al guardar';
+            navigateTo('patientFile');
+        }
+
+        // --- Event Listeners ---
+        newPatientBtn.addEventListener('click', openNewPatientFile);
+        backToDashboardBtn.addEventListener('click', () => navigateTo('dashboard'));
+        searchBtn.addEventListener('click', searchPatients);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') searchPatients();
+        });
+        patientForm.addEventListener('submit', savePatientData);
+
+        // --- Initial Load ---
+        navigateTo('dashboard');
+    </script>
+
+</body>
+</html>
