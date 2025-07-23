@@ -13,8 +13,6 @@
     <!-- Firebase SDK -->
     <script type="module">
         // --- Firebase Configuration ---
-        // IMPORTANT: Replace with your actual Firebase project configuration.
-        // NOTE: This configuration is for demonstration purposes only.
         const firebaseConfig = {
           apiKey: "AIzaSyBrYOiaa_skDuvRDD_zMZvUBknfwmTyDko",
           authDomain: "ale-veterinaria.firebaseapp.com",
@@ -28,13 +26,20 @@
         // --- Firebase Initialization ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getFirestore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, runTransaction, orderBy, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
         
         try {
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
-            // Make Firebase services globally available for easy access in the script
+            const auth = getAuth(app);
+            // Make Firebase services globally available
             window.db = db;
-            window.firebase = { collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, runTransaction, orderBy, addDoc, deleteDoc };
+            window.auth = auth;
+            window.firebase = { 
+                collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, 
+                runTransaction, orderBy, addDoc, deleteDoc, signInWithEmailAndPassword, 
+                onAuthStateChanged, signOut 
+            };
         } catch (e) {
             console.error("Firebase initialization error. Please check your firebaseConfig.", e);
             alert("No se pudo conectar a la base de datos. Verifique la configuración de Firebase.");
@@ -56,444 +61,314 @@
         .btn-secondary:hover { background-color: #20B2AA; }
         .btn-tertiary { background-color: #9370DB; color: white; transition: background-color 0.3s; }
         .btn-tertiary:hover { background-color: #8A2BE2; }
-        .btn-danger { background-color: #EF4444; color: white; transition: background-color: 0.3s; }
+        .btn-danger { background-color: #EF4444; color: white; transition: background-color 0.3s; }
         .btn-danger:hover { background-color: #DC2626; }
         .text-accent-dark { color: #008B8B; }
         .text-highlight { color: #9370DB; }
         .ring-accent:focus { --tw-ring-color: #48D1CC; }
-        input[type="text"], input[type="date"], input[type="email"], input[type="tel"], textarea, select { border: 1px solid #CBD5E0; border-radius: 0.375rem; padding: 0.5rem 0.75rem; transition: border-color 0.2s, box-shadow 0.2s; width: 100%;}
-        input[type="text"]:focus, textarea:focus, select:focus { border-color: #8FB9A8; box-shadow: 0 0 0 3px rgba(143, 185, 168, 0.3); outline: none; }
+        input[type="text"], input[type="date"], input[type="email"], input[type="tel"], input[type="password"], textarea, select { border: 1px solid #CBD5E0; border-radius: 0.375rem; padding: 0.5rem 0.75rem; transition: border-color 0.2s, box-shadow 0.2s; width: 100%;}
+        input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus { border-color: #8FB9A8; box-shadow: 0 0 0 3px rgba(143, 185, 168, 0.3); outline: none; }
         input[readonly] { background-color: #F3F4F6; cursor: not-allowed; }
         .form-radio, .form-checkbox { color: #8FB9A8; }
         .form-radio:checked, .form-checkbox:checked { background-color: #8FB9A8; border-color: #8FB9A8; }
         .section-header { border-bottom: 2px solid #8FB9A8; padding-bottom: 0.5rem; margin-bottom: 1.5rem; color: #004D40; }
-        
-        /* New Hub Section Button Styles */
-        .hub-section-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            color: #374151; /* gray-700 */
-            background-color: #f3f4f6; /* gray-100 */
-            border: 1px solid transparent;
-            transition: all 0.3s;
-        }
-        .hub-section-btn:hover {
-            background-color: #e5e7eb; /* gray-200 */
-        }
-        .hub-section-btn.active-hub-btn {
-            background-color: #48D1CC; /* btn-secondary color */
-            color: white;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-
-        /* Accordion Styles */
-        .accordion-header {
-            cursor: pointer;
-            padding: 1rem;
-            background-color: #f9fafb; /* gray-50 */
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s;
-        }
-        .accordion-header:hover {
-            background-color: #f3f4f6;
-        }
-        .accordion-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
-            padding: 0 1rem;
-            border-left: 1px solid #e5e7eb;
-            border-right: 1px solid #e5e7eb;
-            border-bottom: 1px solid #e5e7eb;
-            border-bottom-left-radius: 0.5rem;
-            border-bottom-right-radius: 0.5rem;
-            background-color: white;
-        }
-        .accordion-body.expanded {
-            padding: 1.5rem 1rem;
-            max-height: 1500px; /* Large enough to fit content */
-        }
-        .accordion-arrow {
-            transition: transform 0.3s ease-in-out;
-        }
-        .accordion-header.active .accordion-arrow {
-            transform: rotate(90deg);
-        }
-
+        .hub-section-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; color: #374151; background-color: #f3f4f6; border: 1px solid transparent; transition: all 0.3s; }
+        .hub-section-btn:hover { background-color: #e5e7eb; }
+        .hub-section-btn.active-hub-btn { background-color: #48D1CC; color: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .accordion-header { cursor: pointer; padding: 1rem; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.3s; }
+        .accordion-header:hover { background-color: #f3f4f6; }
+        .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; padding: 0 1rem; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; background-color: white; }
+        .accordion-body.expanded { padding: 1.5rem 1rem; max-height: 1500px; }
+        .accordion-arrow { transition: transform 0.3s ease-in-out; }
+        .accordion-header.active .accordion-arrow { transform: rotate(90deg); }
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body class="antialiased">
 
-    <!-- Main Application Container -->
-    <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
-
-        <!-- ===== Dashboard View ===== -->
-        <div id="view-dashboard" class="view active">
-            <header class="text-center my-8">
-                <img src="logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-4 rounded-full shadow-lg">
-                <h1 class="text-4xl font-bold text-accent-dark">Sistema de Gestión Clínica</h1>
-                <p class="text-gray-500 mt-2">Dra. Alejandra Cautín Bastías</p>
-            </header>
-            <main class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-                <!-- Search Patient Card -->
-                <div class="bg-white p-6 rounded-xl shadow-lg">
-                    <h2 class="text-2xl font-bold text-accent-dark mb-4">Buscar Paciente</h2>
-                    <div class="flex space-x-2">
-                        <input id="search-input" type="text" placeholder="Nº de Ficha o Nombre" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ring-accent">
-                        <button id="search-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Buscar</button>
-                    </div>
-                    <div id="search-results" class="mt-4"></div>
-                </div>
-                <!-- Actions Card -->
-                <div class="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center justify-center">
-                    <h2 class="text-2xl font-bold text-accent-dark mb-4">Acciones</h2>
-                    <button id="new-patient-btn" class="w-full btn-primary py-3 rounded-lg text-lg font-bold shadow-md transform hover:scale-105 transition-transform">+ Crear Ficha de Paciente</button>
-                </div>
-            </main>
-        </div>
-
-        <!-- ===== Patient Hub View ===== -->
-        <div id="view-patient-hub" class="view">
-            <header class="flex justify-between items-center bg-white p-4 rounded-xl shadow-lg mb-6">
-                <div>
-                    <h1 id="hub-patient-name" class="text-3xl font-bold text-accent-dark capitalize"></h1>
-                    <p id="hub-patient-id" class="text-gray-500"></p>
-                </div>
-                <button class="back-to-dashboard-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver</button>
-            </header>
-            
-            <!-- Main Data Card -->
-            <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-accent-dark">Datos Principales</h2>
-                    <button id="edit-patient-data-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Editar Datos</button>
-                </div>
-                <div id="hub-patient-summary" class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                    <!-- Patient summary data will be injected here by JavaScript -->
-                </div>
-            </div>
-
-            <!-- Remote Anamnesis Card -->
-            <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-accent-dark">Anamnesis Remota</h2>
-                    <button id="save-hub-anamnesis-btn" class="btn-primary px-4 py-2 rounded-lg font-semibold">Guardar Anamnesis</button>
-                </div>
-                <textarea id="hub-anamnesis-remota" rows="6" class="w-full p-2 border rounded-lg" placeholder="Antecedentes, alergias, historial de enfermedades importantes..."></textarea>
-            </div>
-
-            <!-- Clinical Sections Navigation -->
-            <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
-                <div id="hub-section-buttons" class="flex flex-wrap gap-2">
-                    <button data-section="consultas" class="hub-section-btn">Consultas</button>
-                    <button data-section="vacunas" class="hub-section-btn">Vacunas</button>
-                    <button data-section="desparasitacion" class="hub-section-btn">Desparasitación</button>
-                    <button data-section="examenes" class="hub-section-btn">Exámenes</button>
-                    <button data-section="certificados" class="hub-section-btn">Certificados</button>
-                    <button data-section="recetas" class="hub-section-btn">Recetas</button>
-                </div>
-            </div>
-
-            <!-- Clinical Sections Content Area -->
-            <div id="hub-content-area">
-                <!-- Consultas Section -->
-                <div id="hub-consultas-content" class="hub-section-content">
-                    <div class="bg-white p-6 rounded-xl shadow-lg">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-2xl font-bold text-accent-dark">Historial de Consultas</h2>
-                            <button id="new-consultation-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold text-lg">+ Nueva Consulta</button>
-                        </div>
-                        <div id="consultation-history-list" class="space-y-3">
-                            <!-- Accordion items will be generated here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recetas Section -->
-                <div id="hub-recetas-content" class="hub-section-content hidden">
-                    <div class="bg-white p-6 rounded-xl shadow-lg">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-2xl font-bold text-accent-dark">Historial de Recetas</h2>
-                            <button id="new-prescription-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold text-lg">+ Nueva Receta</button>
-                        </div>
-                        <div id="prescription-history-list" class="space-y-3">
-                            <!-- Prescription history accordions will be generated here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Placeholders for other sections -->
-                <div id="hub-vacunas-content" class="hub-section-content hidden">
-                     <div class="bg-white p-6 rounded-xl shadow-lg text-center">
-                        <h2 class="text-2xl font-bold text-accent-dark mb-4">Control de Vacunas</h2>
-                        <p class="text-gray-500">Esta sección está en desarrollo.</p>
-                    </div>
-                </div>
-                <div id="hub-desparasitacion-content" class="hub-section-content hidden">
-                     <div class="bg-white p-6 rounded-xl shadow-lg text-center">
-                        <h2 class="text-2xl font-bold text-accent-dark mb-4">Control de Desparasitaciones</h2>
-                        <p class="text-gray-500">Esta sección está en desarrollo.</p>
-                    </div>
-                </div>
-                <div id="hub-examenes-content" class="hub-section-content hidden">
-                     <div class="bg-white p-6 rounded-xl shadow-lg text-center">
-                        <h2 class="text-2xl font-bold text-accent-dark mb-4">Resultados de Exámenes</h2>
-                        <p class="text-gray-500">Esta sección está en desarrollo.</p>
-                    </div>
-                </div>
-                <div id="hub-certificados-content" class="hub-section-content hidden">
-                     <div class="bg-white p-6 rounded-xl shadow-lg text-center">
-                        <h2 class="text-2xl font-bold text-accent-dark mb-4">Emisión de Certificados</h2>
-                        <p class="text-gray-500">Esta sección está en desarrollo.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ===== Edit Patient Data View ===== -->
-        <div id="view-edit-patient-data" class="view">
-             <header class="flex justify-between items-center bg-white p-4 rounded-xl shadow-lg mb-6">
-                <h1 class="text-3xl font-bold text-accent-dark">Datos del Paciente</h1>
-                <button id="back-to-hub-btn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
-            </header>
-            <form id="patient-data-form">
-                <!-- Tutor Data Section -->
-                <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
-                    <h2 class="text-2xl font-bold text-accent-dark mb-4">I. Datos del Tutor</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label for="data-tutor-name" class="block text-sm font-medium">Nombre Completo:</label><input type="text" id="data-tutor-name"></div>
-                        <div><label for="data-tutor-rut" class="block text-sm font-medium">Cédula de Identidad/DNI:</label><input type="text" id="data-tutor-rut"></div>
-                        <div><label for="data-tutor-phone" class="block text-sm font-medium">Teléfono Principal:</label><input type="tel" id="data-tutor-phone"></div>
-                        <div><label for="data-tutor-phone2" class="block text-sm font-medium">Teléfono Secundario:</label><input type="tel" id="data-tutor-phone2"></div>
-                        <div><label for="data-tutor-email" class="block text-sm font-medium">Correo Electrónico:</label><input type="email" id="data-tutor-email"></div>
-                        <div><label for="data-tutor-city" class="block text-sm font-medium">Ciudad/Comuna:</label><input type="text" id="data-tutor-city"></div>
-                        <div class="md:col-span-2"><label for="data-tutor-address" class="block text-sm font-medium">Dirección Completa:</label><input type="text" id="data-tutor-address"></div>
-                    </div>
-                </div>
-                <!-- Patient Data Section -->
-                <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
-                    <h2 class="text-2xl font-bold text-accent-dark mb-4">II. Datos del Paciente</h2>
-                    <p class="mb-4 text-lg"><strong>Nº de Ficha:</strong> <span id="data-ficha-number" class="text-highlight font-bold"></span></p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                        <div><label for="data-patient-name" class="block text-sm font-medium">Nombre del Paciente:</label><input type="text" id="data-patient-name" required></div>
-                        <div><label for="data-breed" class="block text-sm font-medium">Raza:</label><input type="text" id="data-breed"></div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1">Especie:</label>
-                            <div class="flex items-center gap-4">
-                                <label><input type="radio" name="species" value="Canina" class="form-radio"> Canina</label>
-                                <label><input type="radio" name="species" value="Felina" class="form-radio"> Felina</label>
-                            </div>
+    <!-- ===== Landing Page / Public View ===== -->
+    <div id="view-landing" class="view active">
+        <div class="min-h-screen bg-gray-50">
+            <nav class="bg-white shadow-sm">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center h-16">
+                        <div class="flex-shrink-0 font-bold text-accent-dark">
+                            Veterinaria Dra. A. Cautín
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-1">Sexo:</label>
-                            <div class="flex items-center gap-4">
-                                <label><input type="radio" name="sex" value="Macho" class="form-radio"> Macho</label>
-                                <label><input type="radio" name="sex" value="Hembra" class="form-radio"> Hembra</label>
-                            </div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium mb-1">Estado Reproductivo:</label>
-                            <div class="flex items-center gap-4">
-                                <label><input type="radio" name="reproductiveStatus" value="Entero" class="form-radio"> Entero</label>
-                                <label><input type="radio" name="reproductiveStatus" value="Castrado" class="form-radio"> Castrado</label>
-                                <label><input type="radio" name="reproductiveStatus" value="Esterilizada" class="form-radio"> Esterilizada</label>
-                            </div>
-                        </div>
-                        <div><label for="data-birth-date" class="block text-sm font-medium">Fecha de Nacimiento (Estimada):</label><input type="date" id="data-birth-date"></div>
-                        <div><label for="data-age" class="block text-sm font-medium">Edad Actual:</label><input type="text" id="data-age" readonly class="bg-gray-100"></div>
-                        <div><label for="data-color-markings" class="block text-sm font-medium">Color/Señas Particulares:</label><input type="text" id="data-color-markings"></div>
-                        <div><label for="data-microchip" class="block text-sm font-medium">Microchip (N°):</label><input type="text" id="data-microchip"></div>
-                        <div><label for="data-weight" class="block text-sm font-medium">Peso Actual (kg):</label><input type="text" id="data-weight"></div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium mb-1">Origen:</label>
-                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-                                <label><input type="radio" name="origin" value="Criadero" class="form-radio"> Criadero</label>
-                                <label><input type="radio" name="origin" value="Refugio" class="form-radio"> Refugio</label>
-                                <label><input type="radio" name="origin" value="Rescate" class="form-radio"> Rescate</label>
-                                <label><input type="radio" name="origin" value="Particular" class="form-radio"> Particular</label>
-                                <label class="flex items-center gap-2"><input type="radio" name="origin" value="Otro" class="form-radio"> Otro: <input type="text" id="data-origin-other" class="p-1 text-sm"></label>
-                            </div>
+                            <button id="show-login-modal-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Iniciar Sesión</button>
                         </div>
                     </div>
                 </div>
-                <div class="flex justify-between items-center gap-4">
-                    <button type="button" id="delete-patient-btn" class="btn-danger px-6 py-3 rounded-lg text-lg font-bold">Eliminar Paciente</button>
-                    <button type="submit" class="btn-primary px-6 py-3 rounded-lg text-lg font-bold">Guardar Datos</button>
-                </div>
-            </form>
+            </nav>
+            <div class="py-10">
+                <header class="text-center">
+                    <img src="logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-4 rounded-full shadow-lg">
+                    <h1 class="text-5xl font-bold text-accent-dark">Sistema de Gestión Clínica</h1>
+                    <p class="text-gray-500 mt-2 text-lg">Una herramienta moderna para el cuidado integral de sus pacientes.</p>
+                </header>
+            </div>
         </div>
+    </div>
 
-        <!-- ===== Prescription View (Generator) ===== -->
-        <div id="view-prescription" class="view">
-            <header class="flex justify-between items-center mb-4 no-print">
-                 <h1 class="text-3xl font-bold text-accent-dark">Generar Nueva Receta</h1>
-                <button class="back-to-hub-btn-from-rx bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
-            </header>
-            <div id="prescription-content-generator" class="bg-white p-8 rounded-xl shadow-lg">
-                <header class="text-center pb-4 border-b-2 border-gray-100">
-                    <img src="logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4">
-                    <h1 class="text-2xl font-bold text-accent-dark">Dra. Alejandra Cautín Bastías</h1>
-                    <p class="text-gray-500">Médica Veterinaria</p>
-                    <p class="text-xs italic mt-2">"Cuidar no es solo curar, es acompañar con conciencia."</p>
+    <!-- Main Application Container (Authenticated Users) -->
+    <div id="app-container" class="hidden">
+        <header class="bg-white shadow-md p-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-accent-dark">Gestión Clínica Veterinaria</h1>
+            <button id="logout-btn" class="btn-danger px-4 py-2 rounded-lg font-semibold">Cerrar Sesión</button>
+        </header>
+
+        <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
+            <!-- ===== Dashboard View ===== -->
+            <div id="view-dashboard" class="view">
+                <main class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+                    <!-- Search Patient Card -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h2 class="text-2xl font-bold text-accent-dark mb-4">Buscar Paciente</h2>
+                        <div class="flex space-x-2">
+                            <input id="search-input" type="text" placeholder="Nº de Ficha o Nombre" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ring-accent">
+                            <button id="search-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Buscar</button>
+                        </div>
+                        <div id="search-results" class="mt-4"></div>
+                    </div>
+                    <!-- Actions Card -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center justify-center">
+                        <h2 class="text-2xl font-bold text-accent-dark mb-4">Acciones</h2>
+                        <button id="new-patient-btn" class="w-full btn-primary py-3 rounded-lg text-lg font-bold shadow-md transform hover:scale-105 transition-transform">+ Crear Ficha de Paciente</button>
+                    </div>
+                </main>
+            </div>
+
+            <!-- ===== Patient Hub View ===== -->
+            <div id="view-patient-hub" class="view">
+                <header class="flex justify-between items-center bg-white p-4 rounded-xl shadow-lg mb-6">
+                    <div>
+                        <h1 id="hub-patient-name" class="text-3xl font-bold text-accent-dark capitalize"></h1>
+                        <p id="hub-patient-id" class="text-gray-500"></p>
+                    </div>
+                    <button class="back-to-dashboard-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver</button>
                 </header>
                 
-                <div class="my-6 p-4 bg-gray-50 rounded-lg no-print">
-                    <label for="rx-email" class="block text-sm font-medium mb-1">Correo del Tutor para envío:</label>
-                    <div class="flex items-center gap-2">
-                        <input type="email" id="rx-email" placeholder="correo@example.com" class="w-full">
-                        <button type="button" id="send-email-btn" class="btn-tertiary px-4 py-2 rounded-lg font-semibold text-sm">Enviar</button>
+                <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-accent-dark">Datos Principales</h2>
+                        <button id="edit-patient-data-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Editar Datos</button>
+                    </div>
+                    <div id="hub-patient-summary" class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm"></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-accent-dark">Anamnesis Remota</h2>
+                        <button id="save-hub-anamnesis-btn" class="btn-primary px-4 py-2 rounded-lg font-semibold">Guardar Anamnesis</button>
+                    </div>
+                    <textarea id="hub-anamnesis-remota" rows="6" class="w-full p-2 border rounded-lg" placeholder="Antecedentes, alergias, historial de enfermedades importantes..."></textarea>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
+                    <div id="hub-section-buttons" class="flex flex-wrap gap-2">
+                        <button data-section="consultas" class="hub-section-btn">Consultas</button>
+                        <button data-section="vacunas" class="hub-section-btn">Vacunas</button>
+                        <button data-section="desparasitacion" class="hub-section-btn">Desparasitación</button>
+                        <button data-section="examenes" class="hub-section-btn">Exámenes</button>
+                        <button data-section="certificados" class="hub-section-btn">Certificados</button>
+                        <button data-section="recetas" class="hub-section-btn">Recetas</button>
                     </div>
                 </div>
 
-                <section class="my-6 p-4 bg-gray-50 rounded-lg">
-                    <h2 class="text-xl font-bold text-accent-dark mb-4 text-center">Recetario Terapéutico Personalizado</h2>
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                        <div><strong>Nº Ficha:</strong> <span id="rx-ficha-id"></span></div>
-                        <div><strong>Tutor Responsable:</strong> <span id="rx-tutor-name"></span></div>
-                        <div><strong>Paciente:</strong> <span id="rx-patient-name" class="capitalize"></span></div>
-                        <div><strong>RUT:</strong> <span id="rx-tutor-rut"></span></div>
-                        <div><strong>Especie:</strong> <span id="rx-species"></span></div>
-                        <div><strong>Fecha:</strong> <span id="rx-date"></span></div>
-                        <div><strong>Raza:</strong> <span id="rx-breed"></span></div>
-                        <div><strong>Edad:</strong> <span id="rx-age"></span></div>
-                    </div>
-                </section>
-
-                <p class="text-sm text-gray-600 my-6 text-center">Este recetario fue elaborado de forma personalizada tras la evaluación clínica de su mascota. Cada indicación fue explicada detalladamente. Ante cualquier duda, <strong>no modifique la dosis ni el tratamiento sin consultar previamente</strong>.</p>
-                
-                <form id="prescription-form">
-                    <div class="mb-6">
-                        <h3 class="text-lg font-bold text-accent-dark mb-2 border-b pb-1">Tratamiento Indicado</h3>
-                        <textarea id="rx-treatment-notes" rows="10" class="w-full p-2 border rounded-lg" placeholder="Medicamento, dosis, frecuencia..."></textarea>
-                    </div>
-                    <div class="mb-6">
-                        <h3 class="text-lg font-bold text-accent-dark mb-2 border-b pb-1">Indicaciones Adicionales</h3>
-                        <textarea id="rx-indications-notes" rows="6" class="w-full p-2 border rounded-lg" placeholder="Dieta, cuidados, próximo control..."></textarea>
-                    </div>
-
-                    <div class="my-6 p-4 bg-gray-50 rounded-lg">
-                        <h3 class="text-lg font-bold text-accent-dark mb-2">¿Qué hacer si...?</h3>
-                        <ul class="list-disc list-inside text-sm space-y-1">
-                            <li><strong>Olvida una dosis:</strong> Adminístrela tan pronto lo recuerde, a menos que ya sea casi la hora de la siguiente. En ese caso, omita la dosis olvidada y continúe con el horario regular. <strong>Nunca duplique la dosis.</strong></li>
-                            <li><strong>Su mascota vomita la medicina:</strong> No repita la dosis sin consultar. Anote la hora y el medicamento y contacte a su veterinario.</li>
-                            <li><strong>Nota efectos secundarios:</strong> Observe los síntomas (ej: letargo, diarrea, picazón) y contacte a su veterinario de inmediato.</li>
-                        </ul>
-                    </div>
-
-                    <footer class="text-center mt-8 pt-8 border-t">
-                        <p class="text-sm italic text-gray-600 mb-4">Cuidar es un viaje, no un destino. Si necesita orientación, cuente conmigo.</p>
-                        <div class="text-xs text-gray-500 mb-8 space-y-1">
-                            <p>📞 <strong>WhatsApp:</strong> +56 9 7604 0797</p>
-                            <p>📧 <strong>Correo:</strong> avmveterinaria@gmail.com</p>
-                            <p>📸 <strong>Instagram:</strong> @AleVeterinaria | Santiago, Chile</p>
+                <div id="hub-content-area">
+                    <div id="hub-consultas-content" class="hub-section-content">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-accent-dark">Historial de Consultas</h2>
+                                <button id="new-consultation-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold text-lg">+ Nueva Consulta</button>
+                            </div>
+                            <div id="consultation-history-list" class="space-y-3"></div>
                         </div>
-                        <div class="grid grid-cols-2 gap-8 text-left mt-12">
+                    </div>
+                    <div id="hub-recetas-content" class="hub-section-content hidden">
+                        <div class="bg-white p-6 rounded-xl shadow-lg">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-accent-dark">Historial de Recetas</h2>
+                                <button id="new-prescription-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold text-lg">+ Nueva Receta</button>
+                            </div>
+                            <div id="prescription-history-list" class="space-y-3"></div>
+                        </div>
+                    </div>
+                    <div id="hub-vacunas-content" class="hub-section-content hidden"><div class="bg-white p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-accent-dark mb-4">Control de Vacunas</h2><p class="text-gray-500">Esta sección está en desarrollo.</p></div></div>
+                    <div id="hub-desparasitacion-content" class="hub-section-content hidden"><div class="bg-white p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-accent-dark mb-4">Control de Desparasitaciones</h2><p class="text-gray-500">Esta sección está en desarrollo.</p></div></div>
+                    <div id="hub-examenes-content" class="hub-section-content hidden"><div class="bg-white p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-accent-dark mb-4">Resultados de Exámenes</h2><p class="text-gray-500">Esta sección está en desarrollo.</p></div></div>
+                    <div id="hub-certificados-content" class="hub-section-content hidden"><div class="bg-white p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-accent-dark mb-4">Emisión de Certificados</h2><p class="text-gray-500">Esta sección está en desarrollo.</p></div></div>
+                </div>
+            </div>
+
+            <!-- ===== Edit Patient Data View ===== -->
+            <div id="view-edit-patient-data" class="view">
+                 <header class="flex justify-between items-center bg-white p-4 rounded-xl shadow-lg mb-6">
+                    <h1 class="text-3xl font-bold text-accent-dark">Datos del Paciente</h1>
+                    <button id="back-to-hub-btn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
+                </header>
+                <form id="patient-data-form">
+                    <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+                        <h2 class="text-2xl font-bold text-accent-dark mb-4">I. Datos del Tutor</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label for="data-tutor-name" class="block text-sm font-medium">Nombre Completo:</label><input type="text" id="data-tutor-name"></div>
+                            <div><label for="data-tutor-rut" class="block text-sm font-medium">Cédula de Identidad/DNI:</label><input type="text" id="data-tutor-rut"></div>
+                            <div><label for="data-tutor-phone" class="block text-sm font-medium">Teléfono Principal:</label><input type="tel" id="data-tutor-phone"></div>
+                            <div><label for="data-tutor-phone2" class="block text-sm font-medium">Teléfono Secundario:</label><input type="tel" id="data-tutor-phone2"></div>
+                            <div><label for="data-tutor-email" class="block text-sm font-medium">Correo Electrónico:</label><input type="email" id="data-tutor-email"></div>
+                            <div><label for="data-tutor-city" class="block text-sm font-medium">Ciudad/Comuna:</label><input type="text" id="data-tutor-city"></div>
+                            <div class="md:col-span-2"><label for="data-tutor-address" class="block text-sm font-medium">Dirección Completa:</label><input type="text" id="data-tutor-address"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+                        <h2 class="text-2xl font-bold text-accent-dark mb-4">II. Datos del Paciente</h2>
+                        <p class="mb-4 text-lg"><strong>Nº de Ficha:</strong> <span id="data-ficha-number" class="text-highlight font-bold"></span></p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div><label for="data-patient-name" class="block text-sm font-medium">Nombre del Paciente:</label><input type="text" id="data-patient-name" required></div>
+                            <div><label for="data-breed" class="block text-sm font-medium">Raza:</label><input type="text" id="data-breed"></div>
                             <div>
-                                <p class="font-bold text-gray-700 mb-2">Timbre Médico:</p>
-                                <div class="h-24 border border-gray-300 border-dashed rounded-md flex items-center justify-center">
-                                    <img id="rx-timbre" src="timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2">
-                                </div>
+                                <label class="block text-sm font-medium mb-1">Especie:</label>
+                                <div class="flex items-center gap-4"><label><input type="radio" name="species" value="Canina" class="form-radio"> Canina</label><label><input type="radio" name="species" value="Felina" class="form-radio"> Felina</label></div>
                             </div>
                             <div>
-                                <p class="font-bold text-gray-700 mb-2">Firma del Médico:</p>
-                                <div class="h-24 border-b-2 border-gray-500 flex flex-col justify-end items-center">
-                                    <p class="font-semibold">Dra. Alejandra Cautín Bastías</p>
-                                </div>
+                                <label class="block text-sm font-medium mb-1">Sexo:</label>
+                                <div class="flex items-center gap-4"><label><input type="radio" name="sex" value="Macho" class="form-radio"> Macho</label><label><input type="radio" name="sex" value="Hembra" class="form-radio"> Hembra</label></div>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium mb-1">Estado Reproductivo:</label>
+                                <div class="flex items-center gap-4"><label><input type="radio" name="reproductiveStatus" value="Entero" class="form-radio"> Entero</label><label><input type="radio" name="reproductiveStatus" value="Castrado" class="form-radio"> Castrado</label><label><input type="radio" name="reproductiveStatus" value="Esterilizada" class="form-radio"> Esterilizada</label></div>
+                            </div>
+                            <div><label for="data-birth-date" class="block text-sm font-medium">Fecha de Nacimiento (Estimada):</label><input type="date" id="data-birth-date"></div>
+                            <div><label for="data-age" class="block text-sm font-medium">Edad Actual:</label><input type="text" id="data-age" readonly class="bg-gray-100"></div>
+                            <div><label for="data-color-markings" class="block text-sm font-medium">Color/Señas Particulares:</label><input type="text" id="data-color-markings"></div>
+                            <div><label for="data-microchip" class="block text-sm font-medium">Microchip (N°):</label><input type="text" id="data-microchip"></div>
+                            <div><label for="data-weight" class="block text-sm font-medium">Peso Actual (kg):</label><input type="text" id="data-weight"></div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium mb-1">Origen:</label>
+                                <div class="flex flex-wrap items-center gap-x-4 gap-y-2"><label><input type="radio" name="origin" value="Criadero" class="form-radio"> Criadero</label><label><input type="radio" name="origin" value="Refugio" class="form-radio"> Refugio</label><label><input type="radio" name="origin" value="Rescate" class="form-radio"> Rescate</label><label><input type="radio" name="origin" value="Particular" class="form-radio"> Particular</label><label class="flex items-center gap-2"><input type="radio" name="origin" value="Otro" class="form-radio"> Otro: <input type="text" id="data-origin-other" class="p-1 text-sm"></label></div>
                             </div>
                         </div>
-                    </footer>
-                    <div class="flex justify-end items-center gap-4 mt-8 no-print">
-                        <button type="button" id="download-pdf-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Descargar PDF</button>
-                        <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Receta</button>
+                    </div>
+                    <div class="flex justify-between items-center gap-4">
+                        <button type="button" id="delete-patient-btn" class="btn-danger px-6 py-3 rounded-lg text-lg font-bold">Eliminar Paciente</button>
+                        <button type="submit" class="btn-primary px-6 py-3 rounded-lg text-lg font-bold">Guardar Datos</button>
                     </div>
                 </form>
+            </div>
+
+            <!-- ===== Prescription View (Generator) ===== -->
+            <div id="view-prescription" class="view">
+                <header class="flex justify-between items-center mb-4 no-print">
+                     <h1 class="text-3xl font-bold text-accent-dark">Generar Nueva Receta</h1>
+                    <button class="back-to-hub-btn-from-rx bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
+                </header>
+                <div id="prescription-content-generator" class="bg-white p-8 rounded-xl shadow-lg">
+                    <header class="text-center pb-4 border-b-2 border-gray-100">
+                        <img src="logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4">
+                        <h1 class="text-2xl font-bold text-accent-dark">Dra. Alejandra Cautín Bastías</h1>
+                        <p class="text-gray-500">Médica Veterinaria</p>
+                        <p class="text-xs italic mt-2">"Cuidar no es solo curar, es acompañar con conciencia."</p>
+                    </header>
+                    
+                    <div class="my-6 p-4 bg-gray-50 rounded-lg no-print">
+                        <label for="rx-email" class="block text-sm font-medium mb-1">Correo del Tutor para envío:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="email" id="rx-email" placeholder="correo@example.com" class="w-full">
+                            <button type="button" id="send-email-btn" class="btn-tertiary px-4 py-2 rounded-lg font-semibold text-sm">Enviar</button>
+                        </div>
+                    </div>
+
+                    <section class="my-6 p-4 bg-gray-50 rounded-lg">
+                        <h2 class="text-xl font-bold text-accent-dark mb-4 text-center">Recetario Terapéutico Personalizado</h2>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                            <div><strong>Nº Ficha:</strong> <span id="rx-ficha-id"></span></div>
+                            <div><strong>Tutor Responsable:</strong> <span id="rx-tutor-name"></span></div>
+                            <div><strong>Paciente:</strong> <span id="rx-patient-name" class="capitalize"></span></div>
+                            <div><strong>RUT:</strong> <span id="rx-tutor-rut"></span></div>
+                            <div><strong>Especie:</strong> <span id="rx-species"></span></div>
+                            <div><strong>Fecha:</strong> <span id="rx-date"></span></div>
+                            <div><strong>Raza:</strong> <span id="rx-breed"></span></div>
+                            <div><strong>Edad:</strong> <span id="rx-age"></span></div>
+                        </div>
+                    </section>
+
+                    <p class="text-sm text-gray-600 my-6 text-center">Este recetario fue elaborado de forma personalizada tras la evaluación clínica de su mascota. Cada indicación fue explicada detalladamente. Ante cualquier duda, <strong>no modifique la dosis ni el tratamiento sin consultar previamente</strong>.</p>
+                    
+                    <form id="prescription-form">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-accent-dark mb-2 border-b pb-1">Tratamiento Indicado</h3>
+                            <textarea id="rx-treatment-notes" rows="10" class="w-full p-2 border rounded-lg" placeholder="Medicamento, dosis, frecuencia..."></textarea>
+                        </div>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-accent-dark mb-2 border-b pb-1">Indicaciones Adicionales</h3>
+                            <textarea id="rx-indications-notes" rows="6" class="w-full p-2 border rounded-lg" placeholder="Dieta, cuidados, próximo control..."></textarea>
+                        </div>
+
+                        <div class="my-6 p-4 bg-gray-50 rounded-lg">
+                            <h3 class="text-lg font-bold text-accent-dark mb-2">¿Qué hacer si...?</h3>
+                            <ul class="list-disc list-inside text-sm space-y-1">
+                                <li><strong>Olvida una dosis:</strong> Adminístrela tan pronto lo recuerde, a menos que ya sea casi la hora de la siguiente. En ese caso, omita la dosis olvidada y continúe con el horario regular. <strong>Nunca duplique la dosis.</strong></li>
+                                <li><strong>Su mascota vomita la medicina:</strong> No repita la dosis sin consultar. Anote la hora y el medicamento y contacte a su veterinario.</li>
+                                <li><strong>Nota efectos secundarios:</strong> Observe los síntomas (ej: letargo, diarrea, picazón) y contacte a su veterinario de inmediato.</li>
+                            </ul>
+                        </div>
+
+                        <footer class="text-center mt-8 pt-8 border-t">
+                            <p class="text-sm italic text-gray-600 mb-4">Cuidar es un viaje, no un destino. Si necesita orientación, cuente conmigo.</p>
+                            <div class="text-xs text-gray-500 mb-8 space-y-1">
+                                <p>📞 <strong>WhatsApp:</strong> +56 9 7604 0797</p>
+                                <p>📧 <strong>Correo:</strong> avmveterinaria@gmail.com</p>
+                                <p>📸 <strong>Instagram:</strong> @AleVeterinaria | Santiago, Chile</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-8 text-left mt-12">
+                                <div>
+                                    <p class="font-bold text-gray-700 mb-2">Timbre Médico:</p>
+                                    <div class="h-24 border border-gray-300 border-dashed rounded-md flex items-center justify-center">
+                                        <img id="rx-timbre" src="timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2">
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-700 mb-2">Firma del Médico:</p>
+                                    <div class="h-24 border-b-2 border-gray-500 flex flex-col justify-end items-center">
+                                        <p class="font-semibold">Dra. Alejandra Cautín Bastías</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </footer>
+                        <div class="flex justify-end items-center gap-4 mt-8 no-print">
+                            <button type="button" id="download-pdf-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Descargar PDF</button>
+                            <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Receta</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- ===== Modals ===== -->
-    <!-- Notification Modal -->
-    <div id="notification-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50">
-        <div class="bg-white rounded-xl shadow-xl p-8 m-4 max-w-sm text-center">
-            <p id="notification-message" class="text-lg text-gray-700"></p>
-            <button id="notification-close-btn" class="mt-6 btn-secondary text-white px-5 py-2 rounded-lg font-semibold">Cerrar</button>
-        </div>
-    </div>
-    <!-- Delete Confirmation Modal -->
-    <div id="delete-confirmation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50">
-        <div class="bg-white rounded-xl shadow-xl p-8 m-4 max-w-sm text-center">
-            <h3 class="text-xl font-bold text-gray-800">Confirmar Eliminación</h3>
-            <p id="delete-confirmation-message" class="text-gray-600 my-4"></p>
-            <p class="text-sm text-red-600 font-semibold">Esta acción no se puede deshacer.</p>
-            <div class="flex justify-center gap-4 mt-6">
-                <button id="cancel-delete-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
-                <button id="confirm-delete-btn" class="btn-danger px-5 py-2 rounded-lg font-semibold">Eliminar Permanentemente</button>
-            </div>
-        </div>
-    </div>
-    <!-- Consultation Modal -->
-    <div id="consultation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 overflow-y-auto p-4">
-        <div class="bg-white rounded-xl shadow-xl p-6 m-4 max-w-4xl w-full">
-            <h2 class="text-2xl font-bold text-accent-dark mb-4">Nueva Consulta</h2>
-            <form id="consultation-form" class="space-y-6 max-h-[80vh] overflow-y-auto pr-4">
-                <section>
-                    <h3 class="text-lg font-medium text-accent-dark mb-2">Anamnesis Remota (Editable)</h3>
-                     <textarea id="modal-anamnesis-remota" rows="4" class="w-full p-2 border rounded-lg"></textarea>
-                </section>
-                <section>
-                    <h3 class="text-lg font-medium section-header">III. Historial Médico</h3>
-                    <h4 class="text-md font-semibold text-gray-700 mb-2">A. Motivo de Consulta (MC)</h4>
-                    <div class="grid grid-cols-1 gap-4">
-                        <div><label for="modal-mc-fecha" class="block text-sm">Fecha de Consulta:</label><input type="date" id="modal-mc-fecha"></div>
-                        <div><label for="modal-mc-sintomas" class="block text-sm">Síntomas Principales y Duración:</label><textarea id="modal-mc-sintomas" rows="2"></textarea></div>
-                    </div>
-                    <h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">B. Anamnesis (de la consulta)</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label for="modal-anamnesis-sintomas" class="block text-sm">Síntomas Adicionales:</label><textarea id="modal-anamnesis-sintomas" rows="2"></textarea></div>
-                        <div><label for="modal-anamnesis-cambios" class="block text-sm">Cambios Recientes:</label><textarea id="modal-anamnesis-cambios" rows="2"></textarea></div>
-                        <div><label for="modal-anamnesis-medicamentos" class="block text-sm">Medicamentos Actuales:</label><input type="text" id="modal-anamnesis-medicamentos"></div>
-                        <div><label for="modal-anamnesis-historial" class="block text-sm">Historial Enfermedades/Cirugías:</label><textarea id="modal-anamnesis-historial" rows="2"></textarea></div>
-                        <div><label for="modal-anamnesis-alergias" class="block text-sm">Alergias Conocidas:</label><input type="text" id="modal-anamnesis-alergias"></div>
-                        <div><label for="modal-anamnesis-habitos" class="block text-sm">Hábitos de Eliminación:</label><input type="text" id="modal-anamnesis-habitos"></div>
-                        <div><label for="modal-anamnesis-dieta" class="block text-sm">Dieta Actual:</label><input type="text" id="modal-anamnesis-dieta"></div>
-                        <div><label for="modal-anamnesis-actividad" class="block text-sm">Nivel de Actividad:</label><input type="text" id="modal-anamnesis-actividad"></div>
-                        <div class="md:col-span-2"><label for="modal-anamnesis-ambiente" class="block text-sm">Ambiente:</label><input type="text" id="modal-anamnesis-ambiente"></div>
-                    </div>
-                </section>
-                <section>
-                    <h3 class="text-lg font-medium section-header">IV. Examen Físico General</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div><label for="modal-efg-temp" class="block text-sm">Temp:</label><input type="text" id="modal-efg-temp"></div>
-                        <div><label for="modal-efg-fc" class="block text-sm">FC:</label><input type="text" id="modal-efg-fc"></div>
-                        <div><label for="modal-efg-fr" class="block text-sm">FR:</label><input type="text" id="modal-efg-fr"></div>
-                        <div><label for="modal-efg-trc" class="block text-sm">TRC:</label><input type="text" id="modal-efg-trc"></div>
-                    </div>
-                    <div class="mt-4"><label for="modal-efg-hallazgos" class="block text-sm">Hallazgos Examen Físico:</label><textarea id="modal-efg-hallazgos" rows="4"></textarea></div>
-                </section>
-                <section>
-                    <h3 class="text-lg font-medium section-header">V. Diagnóstico y Plan</h3>
-                    <div><label for="modal-diag-presuntivo" class="block text-sm">Diagnóstico Presuntivo:</label><textarea id="modal-diag-presuntivo" rows="2"></textarea></div>
-                    <div class="mt-4"><label for="modal-diag-diferencial" class="block text-sm">Diagnóstico Diferencial:</label><textarea id="modal-diag-diferencial" rows="2"></textarea></div>
-                    <div class="mt-4"><label for="modal-plan-terapeutico" class="block text-sm">Plan Terapéutico:</label><textarea id="modal-plan-terapeutico" rows="3"></textarea></div>
-                </section>
-                <section>
-                    <h3 class="text-lg font-medium section-header">VI. Notas Adicionales y Seguimiento</h3>
-                    <div><label for="modal-notas-adicionales" class="block text-sm">Observaciones Veterinarias:</label><textarea id="modal-notas-adicionales" rows="3"></textarea></div>
-                    <div class="mt-4"><label for="modal-proxima-cita" class="block text-sm">Próxima Cita/Revisión:</label><input type="text" id="modal-proxima-cita"></div>
-                </section>
-                <div class="flex justify-end gap-4 mt-4">
-                    <button id="cancel-consultation-btn" type="button" class="bg-gray-300 px-4 py-2 rounded-lg">Cancelar</button>
-                    <button id="save-consultation-btn" type="submit" class="btn-primary px-4 py-2 rounded-lg">Guardar Consulta</button>
+    <div id="login-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md m-4 relative">
+            <button id="close-login-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center text-gray-700 mb-6">Iniciar Sesión</h2>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="login-email" class="block text-sm font-medium text-gray-600 mb-1">Correo Electrónico</label>
+                    <input id="login-email" type="email" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ring-accent">
                 </div>
+                <div class="mb-6">
+                    <label for="login-password" class="block text-sm font-medium text-gray-600 mb-1">Contraseña</label>
+                    <input id="login-password" type="password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ring-accent">
+                </div>
+                <button id="login-btn" type="submit" class="w-full btn-secondary py-3 rounded-lg text-lg font-bold shadow-md transform hover:scale-105 transition-transform">Ingresar</button>
             </form>
         </div>
     </div>
+    <div id="notification-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-white rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><p id="notification-message" class="text-lg text-gray-700"></p><button id="notification-close-btn" class="mt-6 btn-secondary text-white px-5 py-2 rounded-lg font-semibold">Cerrar</button></div></div>
+    <div id="delete-confirmation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-white rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><h3 class="text-xl font-bold text-gray-800">Confirmar Eliminación</h3><p id="delete-confirmation-message" class="text-gray-600 my-4"></p><p class="text-sm text-red-600 font-semibold">Esta acción no se puede deshacer.</p><div class="flex justify-center gap-4 mt-6"><button id="cancel-delete-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button><button id="confirm-delete-btn" class="btn-danger px-5 py-2 rounded-lg font-semibold">Eliminar Permanentemente</button></div></div></div>
+    <div id="consultation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 overflow-y-auto p-4"><div class="bg-white rounded-xl shadow-xl p-6 m-4 max-w-4xl w-full"><h2 class="text-2xl font-bold text-accent-dark mb-4">Nueva Consulta</h2><form id="consultation-form" class="space-y-6 max-h-[80vh] overflow-y-auto pr-4"><section><h3 class="text-lg font-medium text-accent-dark mb-2">Anamnesis Remota (Editable)</h3><textarea id="modal-anamnesis-remota" rows="4" class="w-full p-2 border rounded-lg"></textarea></section><section><h3 class="text-lg font-medium section-header">III. Historial Médico</h3><h4 class="text-md font-semibold text-gray-700 mb-2">A. Motivo de Consulta (MC)</h4><div class="grid grid-cols-1 gap-4"><div><label for="modal-mc-fecha" class="block text-sm">Fecha de Consulta:</label><input type="date" id="modal-mc-fecha"></div><div><label for="modal-mc-sintomas" class="block text-sm">Síntomas Principales y Duración:</label><textarea id="modal-mc-sintomas" rows="2"></textarea></div></div><h4 class="text-md font-semibold text-gray-700 mt-4 mb-2">B. Anamnesis (de la consulta)</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="modal-anamnesis-sintomas" class="block text-sm">Síntomas Adicionales:</label><textarea id="modal-anamnesis-sintomas" rows="2"></textarea></div><div><label for="modal-anamnesis-cambios" class="block text-sm">Cambios Recientes:</label><textarea id="modal-anamnesis-cambios" rows="2"></textarea></div><div><label for="modal-anamnesis-medicamentos" class="block text-sm">Medicamentos Actuales:</label><input type="text" id="modal-anamnesis-medicamentos"></div><div><label for="modal-anamnesis-historial" class="block text-sm">Historial Enfermedades/Cirugías:</label><textarea id="modal-anamnesis-historial" rows="2"></textarea></div><div><label for="modal-anamnesis-alergias" class="block text-sm">Alergias Conocidas:</label><input type="text" id="modal-anamnesis-alergias"></div><div><label for="modal-anamnesis-habitos" class="block text-sm">Hábitos de Eliminación:</label><input type="text" id="modal-anamnesis-habitos"></div><div><label for="modal-anamnesis-dieta" class="block text-sm">Dieta Actual:</label><input type="text" id="modal-anamnesis-dieta"></div><div><label for="modal-anamnesis-actividad" class="block text-sm">Nivel de Actividad:</label><input type="text" id="modal-anamnesis-actividad"></div><div class="md:col-span-2"><label for="modal-anamnesis-ambiente" class="block text-sm">Ambiente:</label><input type="text" id="modal-anamnesis-ambiente"></div></div></section><section><h3 class="text-lg font-medium section-header">IV. Examen Físico General</h3><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div><label for="modal-efg-temp" class="block text-sm">Temp:</label><input type="text" id="modal-efg-temp"></div><div><label for="modal-efg-fc" class="block text-sm">FC:</label><input type="text" id="modal-efg-fc"></div><div><label for="modal-efg-fr" class="block text-sm">FR:</label><input type="text" id="modal-efg-fr"></div><div><label for="modal-efg-trc" class="block text-sm">TRC:</label><input type="text" id="modal-efg-trc"></div></div><div class="mt-4"><label for="modal-efg-hallazgos" class="block text-sm">Hallazgos Examen Físico:</label><textarea id="modal-efg-hallazgos" rows="4"></textarea></div></section><section><h3 class="text-lg font-medium section-header">V. Diagnóstico y Plan</h3><div><label for="modal-diag-presuntivo" class="block text-sm">Diagnóstico Presuntivo:</label><textarea id="modal-diag-presuntivo" rows="2"></textarea></div><div class="mt-4"><label for="modal-diag-diferencial" class="block text-sm">Diagnóstico Diferencial:</label><textarea id="modal-diag-diferencial" rows="2"></textarea></div><div class="mt-4"><label for="modal-plan-terapeutico" class="block text-sm">Plan Terapéutico:</label><textarea id="modal-plan-terapeutico" rows="3"></textarea></div></section><section><h3 class="text-lg font-medium section-header">VI. Notas Adicionales y Seguimiento</h3><div><label for="modal-notas-adicionales" class="block text-sm">Observaciones Veterinarias:</label><textarea id="modal-notas-adicionales" rows="3"></textarea></div><div class="mt-4"><label for="modal-proxima-cita" class="block text-sm">Próxima Cita/Revisión:</label><input type="text" id="modal-proxima-cita"></div></section><div class="flex justify-end gap-4 mt-4"><button id="cancel-consultation-btn" type="button" class="bg-gray-300 px-4 py-2 rounded-lg">Cancelar</button><button id="save-consultation-btn" type="submit" class="btn-primary px-4 py-2 rounded-lg">Guardar Consulta</button></div></form></div></div>
     
     <!-- Main Application Logic -->
     <script type="module">
@@ -502,12 +377,15 @@
 
         // --- DOM Element References ---
         const views = {
+            landing: document.getElementById('view-landing'),
             dashboard: document.getElementById('view-dashboard'),
             patientHub: document.getElementById('view-patient-hub'),
             editPatientData: document.getElementById('view-edit-patient-data'),
             prescription: document.getElementById('view-prescription'),
         };
+        const appContainer = document.getElementById('app-container');
         const modals = { 
+            login: document.getElementById('login-modal'),
             notification: document.getElementById('notification-modal'),
             consultation: document.getElementById('consultation-modal'),
             deleteConfirmation: document.getElementById('delete-confirmation-modal')
@@ -517,13 +395,23 @@
         function navigateTo(viewName, patientId = null) {
             currentPatientId = patientId;
             Object.values(views).forEach(v => v.classList.remove('active'));
-            if (views[viewName]) views[viewName].classList.add('active');
+            if (views[viewName]) {
+                views[viewName].classList.add('active');
+            } else if (viewName !== 'landing') {
+                views.dashboard.classList.add('active');
+            }
         }
         function showModal(modalName) { if(modals[modalName]) modals[modalName].classList.add('active'); }
         function hideModal(modalName) { if(modals[modalName]) modals[modalName].classList.remove('active'); }
 
-        function showNotification(message) {
-            modals.notification.querySelector('#notification-message').textContent = message;
+        function showNotification(message, isError = false) {
+            const modal = modals.notification;
+            modal.querySelector('#notification-message').textContent = message;
+            if (isError) {
+                 modal.querySelector('#notification-message').classList.add('text-red-600');
+            } else {
+                 modal.querySelector('#notification-message').classList.remove('text-red-600');
+            }
             showModal('notification');
         }
 
@@ -551,7 +439,6 @@
                     <div><strong>Email:</strong> ${data.tutorEmail || 'N/A'}</div>
                 `;
                 
-                // Reset to the 'consultas' tab view by default
                 document.querySelectorAll('.hub-section-btn').forEach(btn => btn.classList.remove('active-hub-btn'));
                 document.querySelector('.hub-section-btn[data-section="consultas"]').classList.add('active-hub-btn');
                 document.querySelectorAll('.hub-section-content').forEach(content => content.classList.add('hidden'));
@@ -577,7 +464,7 @@
                 }, { merge: true });
                 showNotification("Anamnesis remota guardada.");
             } catch (error) {
-                showNotification("Error al guardar la anamnesis.");
+                showNotification("Error al guardar la anamnesis.", true);
                 console.error("Error saving remote anamnesis:", error);
             }
         }
@@ -641,7 +528,6 @@
                     historyList.appendChild(accordionItem);
                 });
 
-                // Add event listeners for the new accordions
                 historyList.querySelectorAll('.accordion-header').forEach(header => {
                     header.addEventListener('click', () => {
                         const body = header.nextElementSibling;
@@ -758,7 +644,7 @@
                     openPatientHub(currentPatientId);
                 }
             } catch (error) {
-                showNotification("Error al guardar datos.");
+                showNotification("Error al guardar datos.", true);
                 console.error("Error saving patient data:", error);
             }
         }
@@ -768,7 +654,6 @@
             const { doc, deleteDoc, collection, getDocs } = window.firebase;
             const db = window.db;
 
-            // Helper function to delete all documents in a subcollection
             async function deleteSubcollection(patientId, subcollectionName) {
                 const subcollectionRef = collection(db, "patients", patientId, subcollectionName);
                 const snapshot = await getDocs(subcollectionRef);
@@ -780,33 +665,26 @@
             }
 
             try {
-                // Delete subcollections first
                 await deleteSubcollection(currentPatientId, 'consultations');
                 await deleteSubcollection(currentPatientId, 'prescriptions');
-
-                // Delete the main patient document
                 await deleteDoc(doc(db, "patients", currentPatientId));
-
                 hideModal('deleteConfirmation');
                 showNotification("Paciente eliminado correctamente.");
                 document.getElementById('search-input').value = '';
                 document.getElementById('search-results').innerHTML = '';
                 navigateTo('dashboard');
-
             } catch (error) {
                 hideModal('deleteConfirmation');
-                showNotification("Error al eliminar el paciente.");
+                showNotification("Error al eliminar el paciente.", true);
                 console.error("Error deleting patient:", error);
             }
         }
-
 
         // --- New Consultation Modal Logic ---
         function openNewConsultationModal() {
             const consultationForm = modals.consultation.querySelector('form');
             if(consultationForm) consultationForm.reset();
             
-            // Set current date in the consultation form
             const today = new Date().toISOString().split('T')[0];
             modals.consultation.querySelector('#modal-mc-fecha').value = today;
 
@@ -856,7 +734,7 @@
                 loadConsultationHistory(currentPatientId); // Refresh history list
                 showNotification("Nueva consulta guardada.");
             } catch (error) {
-                showNotification("Error al guardar la consulta.");
+                showNotification("Error al guardar la consulta.", true);
                 console.error("Error saving new consultation:", error);
             }
         }
@@ -865,7 +743,6 @@
         async function openPrescriptionView(patientId) {
             if (!patientId) return;
             
-            // Clear the form for a new prescription
             document.getElementById('rx-treatment-notes').value = '';
             document.getElementById('rx-indications-notes').value = '';
 
@@ -900,9 +777,9 @@
             try {
                 await addDoc(collection(db, "patients", currentPatientId, "prescriptions"), dataToSave);
                 showNotification("Receta guardada con éxito.");
-                openPatientHub(currentPatientId); // Go back to the hub to see the new entry
+                openPatientHub(currentPatientId);
             } catch (error) {
-                showNotification("Error al guardar la receta.");
+                showNotification("Error al guardar la receta.", true);
                 console.error("Error saving prescription:", error);
             }
         }
@@ -952,7 +829,6 @@
                     historyList.appendChild(accordionItem);
                 });
 
-                // Add event listeners for the new prescription accordions
                 historyList.querySelectorAll('.accordion-header').forEach(header => {
                     header.addEventListener('click', () => {
                         const body = header.nextElementSibling;
@@ -1000,13 +876,11 @@
             searchResultsEl.innerHTML = '<p>Buscando...</p>';
             let results = [];
             try {
-                // Search by patient ID (Ficha)
                 const docRef = doc(db, "patients", searchTerm);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     results.push({ id: docSnap.id, ...docSnap.data() });
                 }
-                // Search by patient name (case-insensitive)
                 const q = query(collection(db, "patients"), where("name", ">=", searchTerm.toLowerCase()), where("name", "<=", searchTerm.toLowerCase() + '\uf8ff'));
                 const querySnapshot = await getDocs(q);
                 querySnapshot.forEach((doc) => {
@@ -1063,8 +937,56 @@
             }
         }
 
+        // --- Auth Logic ---
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const { signInWithEmailAndPassword } = window.firebase;
+            const auth = window.auth;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                hideModal('login');
+            } catch (error) {
+                console.error("Login failed:", error);
+                showNotification("Correo o contraseña incorrectos.", true);
+            }
+        }
+
+        async function handleLogout() {
+            const { signOut } = window.firebase;
+            const auth = window.auth;
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Logout failed:", error);
+                showNotification("Error al cerrar sesión.", true);
+            }
+        }
+
         // --- Initial Load & Event Listeners ---
         function initializeApp() {
+            const { onAuthStateChanged } = window.firebase;
+            const auth = window.auth;
+
+            onAuthStateChanged(auth, user => {
+                if (user) {
+                    appContainer.classList.remove('hidden');
+                    views.landing.classList.remove('active');
+                    views.landing.classList.add('hidden');
+                    navigateTo('dashboard');
+                } else {
+                    appContainer.classList.add('hidden');
+                    views.landing.classList.remove('hidden');
+                    views.landing.classList.add('active');
+                }
+            });
+
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            document.getElementById('show-login-modal-btn').addEventListener('click', () => showModal('login'));
+            document.getElementById('close-login-modal-btn').addEventListener('click', () => hideModal('login'));
+
             document.getElementById('search-btn').addEventListener('click', searchPatients);
             document.getElementById('search-input').addEventListener('keyup', e => e.key === 'Enter' && searchPatients());
             document.getElementById('new-patient-btn').addEventListener('click', () => openPatientDataForm(null));
@@ -1084,7 +1006,6 @@
             document.getElementById('data-birth-date').addEventListener('change', calculateAge);
             document.getElementById('new-prescription-btn').addEventListener('click', () => openPrescriptionView(currentPatientId));
             
-            // Delete patient listeners
             document.getElementById('delete-patient-btn').addEventListener('click', () => {
                 const patientName = document.getElementById('hub-patient-name').textContent || 'este paciente';
                 document.getElementById('delete-confirmation-message').textContent = `¿Estás seguro de que deseas eliminar a ${patientName}?`;
@@ -1093,17 +1014,11 @@
             document.getElementById('cancel-delete-btn').addEventListener('click', () => hideModal('deleteConfirmation'));
             document.getElementById('confirm-delete-btn').addEventListener('click', handleDeletePatient);
 
-
-            // Add event listeners for the hub section buttons
             document.querySelectorAll('.hub-section-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     const section = button.dataset.section;
-
-                    // Deactivate all buttons and hide all content sections
                     document.querySelectorAll('.hub-section-btn').forEach(btn => btn.classList.remove('active-hub-btn'));
                     document.querySelectorAll('.hub-section-content').forEach(content => content.classList.add('hidden'));
-
-                    // Activate the clicked button and show its corresponding content
                     button.classList.add('active-hub-btn');
                     const activeContent = document.getElementById(`hub-${section}-content`);
                     if (activeContent) {
@@ -1111,13 +1026,9 @@
                     }
                 });
             });
-
-            navigateTo('dashboard');
         }
         
-        // Wait for the DOM to be fully loaded before initializing the app
         document.addEventListener('DOMContentLoaded', initializeApp);
-
     </script>
 </body>
 </html>
