@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Pacientes Veterinaria</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Firebase SDK -->
     <script type="module">
         // --- Firebase Configuration ---
         const firebaseConfig = {
-        apiKey: "AIzaSyBrYOiaa_skDuvRDD_zMZvUBknfwmTyDko",
+        apiKey: "AIzaSyBrYOiaa_skDuvRDD_zMZvUBknfwmTyDko", // Reemplaza con tu configuración real
         authDomain: "ale-veterinaria.firebaseapp.com",
         projectId: "ale-veterinaria",
         storageBucket: "ale-veterinaria.appspot.com",
@@ -46,9 +43,7 @@
             console.error("Firebase initialization error. Please check your firebaseConfig.", e);
         }
     </script>
-    <!-- html2pdf.js for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Custom Styles -->
     <style>
         :root {
             --color-background: #F9F5EF;
@@ -112,7 +107,6 @@
 </head>
 <body class="antialiased">
 
-    <!-- ===== Landing Page / Public View ===== -->
     <div id="view-landing" class="view active">
         <div class="min-h-screen bg-[var(--color-surface)]">
             <nav class="bg-[var(--color-surface)] shadow-sm sticky top-0 z-40">
@@ -147,11 +141,10 @@
             </nav>
             
             <main id="public-main-content">
-                <!-- Inicio Section -->
                 <section id="page-inicio" class="page-section active">
                     <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                            <img src="logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/A3CBB2/FFFFFF?text=Logo';">
+                            <img src="https://alecautin8.github.io/AleVeterinaria/assets/logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/A3CBB2/FFFFFF?text=Logo';">
                             <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] font-poppins">Dra. Alejandra Cautin Bastias</h1>
                             <p class="mt-4 text-lg text-[var(--text-muted)] max-w-3xl mx-auto">Medica Veterinaria a domicilio, para cuidar con calidez y respeto lo que más amas.</p>
                              <div class="mt-10 flex flex-wrap justify-center gap-4" id="home-buttons">
@@ -166,7 +159,6 @@
                     </div>
                 </section>
 
-                <!-- Quién soy Section -->
                 <section id="page-quien-soy" class="page-section">
                      <div class="py-20 bg-[var(--color-surface)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-12 items-center">
@@ -182,19 +174,16 @@
                     </div>
                 </section>
 
-                <!-- Servicios Section -->
                 <section id="page-servicios" class="page-section">
                     <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                             <h2 class="text-3xl font-bold text-center text-[var(--text-main)] font-poppins mb-12">Mis Servicios</h2>
                             <div id="services-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                                <!-- Service cards will be injected here by JS -->
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- Agenda Section -->
                 <section id="page-agenda" class="page-section">
                     <div class="py-20 bg-[var(--color-surface)]">
                         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -250,19 +239,16 @@
                     </div>
                 </section>
 
-                <!-- Recursos Section -->
                 <section id="page-recursos" class="page-section">
                      <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                             <h2 class="text-3xl font-bold text-center text-[var(--text-main)] font-poppins mb-12">Recursos y Preguntas Frecuentes</h2>
                             <div id="faq-accordion" class="space-y-4">
-                                <!-- FAQ items will be inserted here by JS -->
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- Contacto Section -->
                 <section id="page-contacto" class="page-section">
                     <div class="py-20 bg-[var(--color-surface)]">
                         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -291,7 +277,6 @@
         </div>
     </div>
 
-    <!-- Main Application Container (Authenticated Users) -->
     <div id="app-container" class="hidden">
         <header class="bg-[#FFFFFF] shadow-md p-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-[#4A4A4A]">Gestión Clínica Veterinaria</h1>
@@ -299,7 +284,6 @@
         </header>
 
         <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
-            <!-- ===== Dashboard View ===== -->
             <div id="view-dashboard" class="view">
                 <main class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
                     <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
@@ -317,7 +301,6 @@
                 </main>
             </div>
 
-            <!-- ===== Patient Hub View ===== -->
             <div id="view-patient-hub" class="view">
                 <header class="flex justify-between items-center bg-[#FFFFFF] p-4 rounded-xl shadow-lg mb-6">
                     <div>
@@ -382,7 +365,6 @@
                             <div id="vaccine-history-table" class="overflow-x-auto"></div>
                         </div>
                     </div>
-                    <!-- IMPROVEMENT: Desparasitacion section implemented -->
                     <div id="hub-desparasitacion-content" class="hub-section-content hidden">
                         <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
                             <div class="flex justify-between items-center mb-4">
@@ -404,11 +386,22 @@
                             <div id="exam-history-list" class="space-y-3"></div>
                         </div>
                     </div>
-                    <div id="hub-certificados-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Emisión de Certificados</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
+                    <div id="hub-certificados-content" class="hub-section-content hidden">
+                        <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
+                            <h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Emisión de Certificados</h2>
+                            <p class="text-gray-600 mb-6">Selecciona una plantilla para comenzar a generar un certificado.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <button data-template="salud" class="certificate-template-btn btn-tertiary p-4 rounded-lg font-semibold text-center">Certificado de Salud</button>
+                                <button data-template="viaje-nacional" class="certificate-template-btn btn-tertiary p-4 rounded-lg font-semibold text-center">Viaje Nacional</button>
+                                <button data-template="viaje-internacional" class="certificate-template-btn btn-tertiary p-4 rounded-lg font-semibold text-center">Viaje Internacional</button>
+                                <button data-template="implantacion-chip" class="certificate-template-btn btn-tertiary p-4 rounded-lg font-semibold text-center">Implantación de Chip</button>
+                                <button data-template="validacion-chip" class="certificate-template-btn btn-tertiary p-4 rounded-lg font-semibold text-center">Validación de Chip</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- ===== Edit Patient Data View ===== -->
             <div id="view-edit-patient-data" class="view">
                  <header class="flex justify-between items-center bg-[#FFFFFF] p-4 rounded-xl shadow-lg mb-6">
                     <h1 class="text-3xl font-bold text-[#4A4A4A]">Datos del Paciente</h1>
@@ -442,10 +435,20 @@
                         <p class="mb-4 text-lg"><strong>Nº de Ficha:</strong> <span id="data-ficha-number" class="text-highlight font-bold"></span></p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                             <div><label for="data-patient-name" class="block text-sm font-medium">Nombre del Paciente:</label><input type="text" id="data-patient-name" required></div>
-                            <div><label for="data-breed" class="block text-sm font-medium">Raza:</label><input type="text" id="data-breed"></div>
                             <div>
                                 <label class="block text-sm font-medium mb-1">Especie:</label>
-                                <div class="flex items-center gap-4"><label><input type="radio" name="species" value="Canina" class="form-radio"> Canina</label><label><input type="radio" name="species" value="Felina" class="form-radio"> Felina</label></div>
+                                <div class="flex items-center gap-4">
+                                    <label><input type="radio" name="species" value="Canina" class="form-radio"> Canina</label>
+                                    <label><input type="radio" name="species" value="Felina" class="form-radio"> Felina</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="data-breed" class="block text-sm font-medium">Raza:</label>
+                                <select id="data-breed"></select>
+                            </div>
+                            <div id="data-breed-other-container" class="hidden">
+                                <label for="data-breed-other" class="block text-sm font-medium">Especificar Raza:</label>
+                                <input type="text" id="data-breed-other">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium mb-1">Sexo:</label>
@@ -473,7 +476,6 @@
                 </form>
             </div>
 
-            <!-- ===== Prescription View (Generator) ===== -->
             <div id="view-prescription" class="view">
                 <header class="flex justify-between items-center mb-4 no-print">
                      <h1 class="text-3xl font-bold text-[#4A4A4A]">Generar Nueva Receta</h1>
@@ -481,7 +483,7 @@
                 </header>
                 <div id="prescription-content-generator" class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg">
                     <header class="text-center pb-4 border-b-2 border-gray-100">
-                        <img src="logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/200x100/A3CBB2/FFFFFF?text=Logo';">
+                        <img src="https://alecautin8.github.io/AleVeterinaria/assets/logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/200x100/A3CBB2/FFFFFF?text=Logo';">
                         <h1 class="text-2xl font-bold text-[#4A4A4A]">Dra. Alejandra Cautín Bastías</h1>
                         <p class="text-[#7F8B96]">Médica Veterinaria</p>
                         <p class="text-xs italic mt-2">"Cuidar no es solo curar, es acompañar con conciencia."</p>
@@ -541,7 +543,7 @@
                                 <div>
                                     <p class="font-bold text-[#4A4A4A] mb-2">Timbre Médico:</p>
                                     <div class="h-24 border border-gray-300 border-dashed rounded-md flex items-center justify-center">
-                                        <img id="rx-timbre" src="timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
+                                        <img id="rx-timbre" src="https://alecautin8.github.io/AleVeterinaria/assets/timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
                                     </div>
                                 </div>
                                 <div>
@@ -560,7 +562,6 @@
                 </div>
             </div>
             
-            <!-- NEW: Printable Exam Order View -->
             <div id="view-exam-order-printable" class="view">
                  <header class="flex justify-between items-center mb-4 no-print">
                      <h1 class="text-3xl font-bold text-[#4A4A4A]">Orden de Examen</h1>
@@ -568,7 +569,7 @@
                 </header>
                 <div id="exam-order-content-generator" class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg">
                     <header class="text-center pb-4 border-b-2 border-gray-100">
-                        <img src="logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/200x100/A3CBB2/FFFFFF?text=Logo';">
+                        <img src="https://alecautin8.github.io/AleVeterinaria/assets/logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/200x100/A3CBB2/FFFFFF?text=Logo';">
                         <h1 class="text-2xl font-bold text-[#4A4A4A]">Dra. Alejandra Cautín Bastías</h1>
                         <p class="text-[#7F8B96]">Médica Veterinaria</p>
                     </header>
@@ -607,7 +608,7 @@
                             <div>
                                 <p class="font-bold text-[#4A4A4A] mb-2">Timbre Médico:</p>
                                 <div class="h-24 border border-gray-300 border-dashed rounded-md flex items-center justify-center">
-                                    <img src="timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
+                                    <img src="https://alecautin8.github.io/AleVeterinaria/assets/timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
                                 </div>
                             </div>
                             <div>
@@ -621,10 +622,53 @@
                     </div>
                 </div>
             </div>
+            <div id="view-certificate-generator" class="view">
+                 <header class="flex justify-between items-center mb-4 no-print">
+                     <h1 id="certificate-generator-title" class="text-3xl font-bold text-[#4A4A4A]"></h1>
+                    <button class="back-to-hub-btn-from-certificate bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
+                </header>
+                <div id="certificate-content-generator" class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg">
+                    <header class="text-center pb-4 border-b-2 border-gray-100">
+                        <img src="https://alecautin8.github.io/AleVeterinaria/assets/logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/200x100/A3CBB2/FFFFFF?text=Logo';">
+                        <h1 class="text-2xl font-bold text-[#4A4A4A]">Dra. Alejandra Cautín Bastías</h1>
+                        <p class="text-[#7F8B96]">Médica Veterinaria</p>
+                    </header>
+                    
+                    <div class="my-6 p-4 bg-[#E0F5F0] rounded-lg no-print">
+                        <label for="certificate-email" class="block text-sm font-medium mb-1">Correo del Tutor para envío:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="email" id="certificate-email" placeholder="correo@example.com" class="w-full">
+                            <button type="button" id="send-certificate-email-btn" class="btn-tertiary px-4 py-2 rounded-lg font-semibold text-sm">Enviar</button>
+                        </div>
+                    </div>
+
+                    <h2 id="certificate-title" class="text-2xl font-bold text-center my-6"></h2>
+                    
+                    <div id="certificate-body" class="text-justify space-y-4 leading-relaxed">
+                        </div>
+
+                    <footer class="text-center mt-12 pt-8 border-t">
+                        <div class="grid grid-cols-2 gap-8 text-left mt-12">
+                            <div>
+                                <p class="font-bold text-[#4A4A4A] mb-2">Timbre Médico:</p>
+                                <div class="h-24 border border-gray-300 border-dashed rounded-md flex items-center justify-center">
+                                    <img src="https://alecautin8.github.io/AleVeterinaria/assets/timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-[#4A4A4A] mb-2">Firma del Médico:</p>
+                                <div class="h-24 border-b-2 border-gray-500"></div>
+                            </div>
+                        </div>
+                    </footer>
+                    <div class="flex justify-end items-center gap-4 mt-8 no-print">
+                        <button type="button" id="download-certificate-pdf-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Descargar PDF</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- ===== Modals ===== -->
     <div id="login-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
         <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-md m-4 relative">
             <button id="close-login-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
@@ -677,7 +721,6 @@
             </form>
         </div>
     </div>
-    <!-- IMPROVEMENT: New Deworming Modal -->
     <div id="deworming-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
         <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
             <button id="close-deworming-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
@@ -711,7 +754,6 @@
             </form>
         </div>
     </div>
-    <!-- IMPROVEMENT: Custom dropdown for exam selection -->
     <div id="exam-order-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60 p-4">
         <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-2xl m-4 relative flex flex-col modal-content">
             <button id="close-exam-order-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
@@ -725,14 +767,24 @@
                 </div>
                 
                 <div class="flex-grow flex flex-col min-h-0 space-y-4">
-                    <div class="relative">
-                        <label class="block text-sm font-medium text-[#7F8B96] mb-1">Seleccionar Exámenes</label>
-                        <button type="button" id="exam-select-button" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-left flex justify-between items-center">
-                            <span id="exam-select-placeholder" class="text-gray-500">Haz click para seleccionar...</span>
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div id="exam-select-dropdown" class="absolute z-10 w-full bg-white border rounded-lg mt-1 hidden max-h-60 overflow-y-auto">
-                            <!-- Checkbox list will be populated here -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="relative">
+                            <label class="block text-sm font-medium text-[#7F8B96] mb-1">Exámenes de Laboratorio</label>
+                            <button type="button" id="lab-exam-select-button" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-left flex justify-between items-center">
+                                <span id="lab-exam-select-placeholder" class="text-gray-500">Seleccionar...</span>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="lab-exam-select-dropdown" class="absolute z-10 w-full bg-white border rounded-lg mt-1 hidden max-h-60 overflow-y-auto">
+                                </div>
+                        </div>
+                        <div class="relative">
+                            <label class="block text-sm font-medium text-[#7F8B96] mb-1">Exámenes de Imágenes</label>
+                            <button type="button" id="imaging-exam-select-button" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-left flex justify-between items-center">
+                                <span id="imaging-exam-select-placeholder" class="text-gray-500">Seleccionar...</span>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="imaging-exam-select-dropdown" class="absolute z-10 w-full bg-white border rounded-lg mt-1 hidden max-h-60 overflow-y-auto">
+                                </div>
                         </div>
                     </div>
                     <div>
@@ -790,13 +842,31 @@
             <p id="service-modal-description" class="text-[#7F8B96]"></p>
         </div>
     </div>
+    <div id="certificate-details-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
+            <button id="close-certificate-details-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 id="certificate-modal-title" class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Detalles del Certificado</h2>
+            <form id="certificate-details-form" class="space-y-4">
+                <div id="certificate-form-destination-container" class="hidden">
+                    <label for="certificate-destination" class="block text-sm font-medium text-[#7F8B96] mb-1">Destino del Viaje</label>
+                    <input id="certificate-destination" type="text" class="w-full">
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="cancel-certificate-details-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
+                    <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Generar Certificado</button>
+                </div>
+            </form>
+        </div>
+    </div>
     
-    <!-- Main Application Logic -->
     <script type="module">
         // --- Application State ---
         let currentPatientId = null;
         let currentPatientSpecies = null;
         let currentPatientData = null;
+        let currentCertificateTemplate = null;
 
         // --- DOM Element References ---
         const views = {
@@ -806,6 +876,7 @@
             editPatientData: document.getElementById('view-edit-patient-data'),
             prescription: document.getElementById('view-prescription'),
             examOrderPrintable: document.getElementById('view-exam-order-printable'),
+            certificateGenerator: document.getElementById('view-certificate-generator'),
         };
         const appContainer = document.getElementById('app-container');
         const modals = { 
@@ -818,6 +889,7 @@
             examOrder: document.getElementById('exam-order-modal'),
             examResult: document.getElementById('exam-result-modal'),
             serviceDetail: document.getElementById('service-detail-modal'),
+            certificateDetails: document.getElementById('certificate-details-modal'),
         };
         
         // --- Navigation & Modal Functions ---
@@ -840,6 +912,110 @@
             messageEl.textContent = message;
             messageEl.classList.toggle('text-red-600', isError);
             showModal('notification');
+        }
+        
+        // --- FUNCIÓN AÑADIDA Y CORREGIDA ---
+        // Se encarga de poblar el selector de razas dinámicamente.
+        function updateBreedDropdown(species, selectedBreed = '') {
+            const breedSelect = document.getElementById('data-breed');
+            const otherBreedContainer = document.getElementById('data-breed-other-container');
+            const otherBreedInput = document.getElementById('data-breed-other');
+            breedSelect.innerHTML = '';
+
+            const canineBreeds = [
+                "Mestizo", "Affenpinscher", "Aidi", "Airedale Terrier", "Akita Inu", "Akita Americano", "Alano Español",
+                "Alaskan Klee Kai", "Alaskan Malamute", "American Bully", "American Foxhound", "American Pit Bull Terrier",
+                "American Staffordshire Terrier", "Antiguo Perro Pastor Inglés (Bobtail)", "Appenzeller", "Ariegeois",
+                "Artois", "Australian Cattle Dog (Boyero Australiano)", "Australian Shepherd (Pastor Australiano)",
+                "Australian Silky Terrier", "Australian Stumpy Tail Cattle Dog", "Azawakh",
+                "Balkan Hound", "Basenji", "Basset Azul de Gascuña", "Basset Hound", "Basset Leonado de Bretaña",
+                "Beagle", "Beagle Harrier", "Bearded Collie", "Beauceron", "Bedlington Terrier", "Bergamasco",
+                "Bichon Boloñés", "Bichon Frisé", "Bichon Habanero", "Billy", "Black and Tan Coonhound",
+                "Bloodhound (Perro de San Huberto)", "Boerboel", "Border Collie", "Border Terrier", "Borzoi",
+                "Boston Terrier", "Bouvier de Flandes", "Boxer", "Boyero de Appenzell", "Boyero de Berna",
+                "Boyero de Entlebuch", "Braco Alemán de Pelo Corto", "Braco Alemán de Pelo Duro", "Braco de Auvernia",
+                "Braco de Weimar", "Braco Francés", "Braco Húngaro (Vizsla)", "Braco Italiano", "Bull Terrier",
+                "Bulldog Americano", "Bulldog Francés", "Bulldog Inglés", "Bullmastiff",
+                "Cairn Terrier", "Cane Corso", "Caniche (Poodle)", "Cavalier King Charles Spaniel", "Chihuahua",
+                "Chin Japonés", "Chow Chow", "Cirneco del Etna", "Clumber Spaniel", "Cocker Spaniel Americano",
+                "Cocker Spaniel Inglés", "Collie de Pelo Corto", "Collie de Pelo Largo", "Coton de Tulear",
+                "Curly Coated Retriever",
+                "Dálmata", "Dandie Dinmont Terrier", "Deerhound", "Doberman", "Dogo Argentino", "Dogo de Burdeos",
+                "Dogo del Tíbet", "Drentse Patrijshond",
+                "Elkhound Noruego", "Epagneul Bretón", "Eurasier",
+                "Field Spaniel", "Fila Brasileiro", "Flat-Coated Retriever", "Fox Terrier de Pelo Duro",
+                "Fox Terrier de Pelo Liso", "Foxhound Inglés",
+                "Galgo Afgano", "Galgo Español", "Galgo Húngaro (Magyar Agár)", "Galgo Inglés (Greyhound)",
+                "Galgo Italiano", "Galgo Persa (Saluki)", "Gascon Saintongeois", "Golden Retriever", "Gordon Setter",
+                "Gran Danés (Dogo Alemán)", "Gran Gascón de Saintonge", "Gran Munsterlander", "Gran Perro Japonés",
+                "Grifón Azul de Gascuña", "Grifón de Bruselas", "Grifón Vendeano",
+                "Harrier", "Hovawart", "Husky Siberiano",
+                "Ibizan Hound (Podenco Ibicenco)", "Irish Soft Coated Wheaten Terrier", "Irish Terrier",
+                "Irish Water Spaniel", "Irish Wolfhound (Lobero Irlandés)",
+                "Jack Russell Terrier",
+                "Keeshond", "Kerry Blue Terrier", "Komondor", "Kooikerhondje", "Kuvasz",
+                "Labrador Retriever", "Lagotto Romagnolo", "Lakeland Terrier", "Landseer", "Lebrel Húngaro",
+                "Leonberger", "Lhasa Apso", "Lowchen",
+                "Maltés", "Manchester Terrier", "Mastín Español", "Mastín Inglés", "Mastín Napolitano",
+                "Mastín Tibetano", "Mudi",
+                "Nova Scotia Duck Tolling Retriever",
+                "Otterhound",
+                "Papillón", "Parson Russell Terrier", "Pastor Alemán", "Pastor Australiano", "Pastor Belga Groenendael",
+                "Pastor Belga Laekenois", "Pastor Belga Malinois", "Pastor Belga Tervueren", "Pastor Blanco Suizo",
+                "Pastor Catalán", "Pastor de Anatolia", "Pastor de los Pirineos", "Pastor de Shetland (Sheltie)",
+                "Pastor Polaco de las Llanuras", "Pastor Vasco", "Pekinés", "Pequeño Lebrel Italiano",
+                "Perdiguero de Burgos", "Perdiguero Portugués", "Perro de Agua Americano", "Perro de Agua Español",
+                "Perro de Agua Irlandés", "Perro de Agua Portugués", "Perro de Montaña de los Pirineos",
+                "Perro Lobo Checoslovaco", "Perro Lobo de Saarloos", "Pharaoh Hound", "Pinscher Alemán",
+                "Pinscher Miniatura", "Podenco Canario", "Podenco Ibicenco", "Podenco Portugués", "Pointer",
+                "Porcelaine", "Pudelpointer", "Pug (Carlino)", "Puli", "Pumi",
+                "Rafeiro do Alentejo", "Ratón de Praga", "Ratonero Bodeguero Andaluz", "Rhodesian Ridgeback",
+                "Rottweiler",
+                "Sabueso Español", "Sabueso Finlandés", "Sabueso Suizo", "Saluki", "Samoyedo", "San Bernardo",
+                "Schapendoes", "Schnauzer Gigante", "Schnauzer Mediano", "Schnauzer Miniatura", "Scottish Terrier",
+                "Sealyham Terrier", "Setter Gordon", "Setter Inglés", "Setter Irlandés", "Shar Pei", "Shiba Inu",
+                "Shih Tzu", "Shikoku", "Skye Terrier", "Sloughi", "Smousholland", "Spinone Italiano",
+                "Spitz Alemán", "Spitz Finlandés", "Spitz Japonés", "Staffordshire Bull Terrier", "Sussex Spaniel",
+                "Teckel (Dachshund)", "Terranova", "Terrier Australiano", "Terrier Brasileño", "Terrier Chileno",
+                "Terrier Checo", "Terrier de Airedale", "Terrier Escocés", "Terrier Galés", "Terrier Irlandés",
+                "Terrier Japonés", "Terrier Negro Ruso", "Terrier Tibetano", "Tosa Inu",
+                "Volpino Italiano",
+                "Weimaraner", "Welsh Corgi Cardigan", "Welsh Corgi Pembroke", "Welsh Springer Spaniel",
+                "Welsh Terrier", "West Highland White Terrier", "Whippet",
+                "Xoloitzcuintle",
+                "Yorkshire Terrier",
+                "Otro"
+            ];
+
+            const felineBreeds = [
+                "Doméstico de Pelo Corto", "Doméstico de Pelo Largo", "Abisinio", "American Bobtail", "American Curl", "American Shorthair", "American Wirehair",
+                "Azul Ruso", "Balinés", "Bengalí (Bengala)", "Birmano", "Bombay", "Bosque de Noruega", "British Shorthair", "Burmés", "Burmilla",
+                "Chartreux", "Chausie", "Cornish Rex", "Devon Rex", "Don Sphynx", "Exótico de Pelo Corto", "Gato de Angora Turco", "Gato Europeo",
+                "Habana Brown", "Himalayo", "Javanés", "Korat", "Khao Manee", "LaPerm", "Lykoi", "Maine Coon", "Manx",
+                "Ocicat", "Oriental de Pelo Corto", "Oriental de Pelo Largo", "Persa", "Peterbald", "Pixie-bob",
+                "Ragamuffin", "Ragdoll", "Sagrado de Birmania", "Savannah", "Scottish Fold", "Selkirk Rex", "Siamés", "Siberiano", "Singapura",
+                "Snowshoe", "Somalí", "Sphynx (Gato Esfinge)", "Tonkinés", "Toyger", "Van Turco", "Otro"
+            ];
+
+            const breeds = (species === 'Felina') ? felineBreeds : canineBreeds;
+
+            breeds.forEach(breed => {
+                const option = document.createElement('option');
+                option.value = breed;
+                option.textContent = breed;
+                breedSelect.appendChild(option);
+            });
+
+            if (selectedBreed && !breeds.includes(selectedBreed)) {
+                breedSelect.value = 'Otro';
+                otherBreedInput.value = selectedBreed;
+                otherBreedContainer.classList.remove('hidden');
+            } else if (selectedBreed) {
+                breedSelect.value = selectedBreed;
+                otherBreedContainer.classList.add('hidden');
+            } else {
+                otherBreedContainer.classList.add('hidden');
+            }
         }
 
         // --- Patient Hub Logic ---
@@ -992,6 +1168,10 @@
                 }
             } else {
                 document.getElementById('data-ficha-number').textContent = 'Se generará al guardar';
+                // --- CORRECCIÓN ---
+                // Inicia con Canina por defecto y actualiza las razas
+                document.querySelector('input[name="species"][value="Canina"]').checked = true;
+                updateBreedDropdown('Canina');
             }
             navigateTo('editPatientData', patientId);
         }
@@ -1006,8 +1186,13 @@
             document.getElementById('data-tutor-city').value = data.tutorCity || '';
             document.getElementById('data-tutor-address').value = data.tutorAddress || '';
             document.getElementById('data-patient-name').value = data.name || '';
-            if(data.species) document.querySelector(`#view-edit-patient-data input[name="species"][value="${data.species}"]`).checked = true;
-            document.getElementById('data-breed').value = data.breed || '';
+            
+            // --- CORRECCIÓN ---
+            // Carga la especie y luego actualiza el dropdown de razas con la raza guardada
+            const species = data.species || 'Canina';
+            document.querySelector(`#view-edit-patient-data input[name="species"][value="${species}"]`).checked = true;
+            updateBreedDropdown(species, data.breed);
+
             if(data.sex) document.querySelector(`#view-edit-patient-data input[name="sex"][value="${data.sex}"]`).checked = true;
             if(data.reproductiveStatus) document.querySelector(`#view-edit-patient-data input[name="reproductiveStatus"][value="${data.reproductiveStatus}"]`).checked = true;
             document.getElementById('data-birth-date').value = data.birthDate || '';
@@ -1037,6 +1222,11 @@
                 originValue = document.getElementById('data-origin-other').value;
             }
 
+            let breedValue = document.getElementById('data-breed').value;
+            if (breedValue === 'Otro') {
+                breedValue = document.getElementById('data-breed-other').value;
+            }
+
             const data = {
                 name: document.getElementById('data-patient-name').value.toLowerCase(),
                 tutorName: document.getElementById('data-tutor-name').value,
@@ -1047,7 +1237,7 @@
                 tutorCity: document.getElementById('data-tutor-city').value,
                 tutorAddress: document.getElementById('data-tutor-address').value,
                 species: getRadioValue('species'),
-                breed: document.getElementById('data-breed').value,
+                breed: breedValue,
                 sex: getRadioValue('sex'),
                 reproductiveStatus: getRadioValue('reproductiveStatus'),
                 birthDate: document.getElementById('data-birth-date').value,
@@ -1106,6 +1296,7 @@
                 await deleteSubcollection(currentPatientId, 'vaccines');
                 await deleteSubcollection(currentPatientId, 'deworming');
                 await deleteSubcollection(currentPatientId, 'exams');
+                await deleteSubcollection(currentPatientId, 'certificates');
                 await deleteDoc(doc(db, "patients", currentPatientId));
                 hideModal('deleteConfirmation');
                 showNotification("Paciente eliminado correctamente.");
@@ -1474,29 +1665,35 @@
         // --- Exam Logic ---
         function openNewExamOrderModal() {
             document.getElementById('exam-order-form').reset();
-            const dropdown = document.getElementById('exam-select-dropdown');
-            dropdown.innerHTML = '';
             
-            const allExams = { ...labExams, ...imagingExams };
-
-            Object.keys(allExams).forEach(category => {
-                const categoryDiv = document.createElement('div');
-                categoryDiv.className = 'p-2';
-                categoryDiv.innerHTML = `<h3 class="font-bold text-sm text-gray-500 sticky top-0 bg-gray-100 px-2 py-1">${category}</h3>`;
-                
-                allExams[category].forEach(exam => {
-                    const label = document.createElement('label');
-                    label.className = 'flex items-center space-x-2 p-2 hover:bg-gray-50 cursor-pointer';
-                    label.innerHTML = `
-                        <input type="checkbox" value="${exam.name}" data-instructions="${exam.instructions}" class="form-checkbox exam-checkbox">
-                        <span>${exam.name}</span>
-                    `;
-                    categoryDiv.appendChild(label);
+            const labDropdown = document.getElementById('lab-exam-select-dropdown');
+            const imagingDropdown = document.getElementById('imaging-exam-select-dropdown');
+            labDropdown.innerHTML = ''; 
+            imagingDropdown.innerHTML = '';
+            
+            const createDropdownContent = (examData, container) => {
+                Object.keys(examData).forEach(category => {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'p-2';
+                    categoryDiv.innerHTML = `<h3 class="font-bold text-sm text-gray-500 sticky top-0 bg-gray-100 px-2 py-1">${category}</h3>`;
+                    
+                    examData[category].forEach(exam => {
+                        const label = document.createElement('label');
+                        label.className = 'flex items-center space-x-2 p-2 hover:bg-gray-50 cursor-pointer';
+                        label.innerHTML = `
+                            <input type="checkbox" value="${exam.name}" data-instructions="${exam.instructions}" class="form-checkbox exam-checkbox">
+                            <span>${exam.name}</span>
+                        `;
+                        categoryDiv.appendChild(label);
+                    });
+                    container.appendChild(categoryDiv);
                 });
-                dropdown.appendChild(categoryDiv);
-            });
+            };
+
+            createDropdownContent(labExams, labDropdown);
+            createDropdownContent(imagingExams, imagingDropdown);
             
-            dropdown.querySelectorAll('.exam-checkbox').forEach(checkbox => {
+            document.querySelectorAll('.exam-checkbox').forEach(checkbox => {
                 checkbox.addEventListener('change', () => {
                     updateSelectedExamsDisplay();
                     updateExamInstructions();
@@ -1509,18 +1706,22 @@
         }
         
         function updateSelectedExamsDisplay() {
-            const checkboxes = document.querySelectorAll('#exam-select-dropdown .exam-checkbox:checked');
+            const checkboxes = document.querySelectorAll('.exam-checkbox:checked');
             const container = document.getElementById('selected-exams-container');
-            const placeholder = document.getElementById('exam-select-placeholder');
+            const labPlaceholder = document.getElementById('lab-exam-select-placeholder');
+            const imagingPlaceholder = document.getElementById('imaging-exam-select-placeholder');
             container.innerHTML = '';
+
+            let labCount = 0;
+            let imagingCount = 0;
             
             if (checkboxes.length === 0) {
                 container.innerHTML = '<p class="text-sm text-gray-400">Ningún examen seleccionado.</p>';
-                placeholder.textContent = 'Haz click para seleccionar...';
+                labPlaceholder.textContent = 'Seleccionar...';
+                imagingPlaceholder.textContent = 'Seleccionar...';
                 return;
             }
 
-            placeholder.textContent = `${checkboxes.length} examen(es) seleccionado(s)`;
             checkboxes.forEach(checkbox => {
                 const tag = document.createElement('span');
                 tag.className = 'bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center';
@@ -1529,12 +1730,22 @@
                     <button type="button" data-value="${checkbox.value}" class="ml-2 text-blue-600 hover:text-blue-800 remove-exam-tag">&times;</button>
                 `;
                 container.appendChild(tag);
+
+                // Update placeholders
+                if (document.getElementById('lab-exam-select-dropdown').contains(checkbox)) {
+                    labCount++;
+                } else {
+                    imagingCount++;
+                }
             });
+
+            labPlaceholder.textContent = labCount > 0 ? `${labCount} seleccionado(s)` : 'Seleccionar...';
+            imagingPlaceholder.textContent = imagingCount > 0 ? `${imagingCount} seleccionado(s)` : 'Seleccionar...';
 
             container.querySelectorAll('.remove-exam-tag').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const valueToRemove = e.target.dataset.value;
-                    const checkboxToUncheck = document.querySelector(`#exam-select-dropdown .exam-checkbox[value="${valueToRemove}"]`);
+                    const checkboxToUncheck = document.querySelector(`.exam-checkbox[value="${valueToRemove}"]`);
                     if (checkboxToUncheck) {
                         checkboxToUncheck.checked = false;
                         updateSelectedExamsDisplay();
@@ -1546,7 +1757,7 @@
         
         function updateExamInstructions() {
             const instructionsTextarea = document.getElementById('exam-order-instructions');
-            const selectedCheckboxes = document.querySelectorAll('#exam-select-dropdown .exam-checkbox:checked');
+            const selectedCheckboxes = document.querySelectorAll('.exam-checkbox:checked');
             let instructions = new Set();
             let maxAyuno = 0;
 
@@ -1584,7 +1795,7 @@
             const { collection, addDoc, serverTimestamp } = window.firebase;
             const db = window.db;
 
-            const selectedExams = Array.from(document.querySelectorAll('#exam-select-dropdown .exam-checkbox:checked')).map(cb => cb.value);
+            const selectedExams = Array.from(document.querySelectorAll('.exam-checkbox:checked')).map(cb => cb.value);
 
             const examData = {
                 date: document.getElementById('exam-order-date').value || new Date().toISOString().split('T')[0],
@@ -1735,11 +1946,11 @@
         function downloadPDF(elementId, fileName) {
             const element = document.getElementById(elementId);
             const opt = {
-              margin: [0.5, 0.5, 0.5, 0.5],
-              filename: fileName,
-              image: { type: 'jpeg', quality: 0.98 },
-              html2canvas: { scale: 2, useCORS: true },
-              jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: fileName,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
             html2pdf().from(element).set(opt).save();
         }
@@ -2006,6 +2217,102 @@
             window.location.href = mailtoLink;
         }
 
+        // --- FUNCIÓN AÑADIDA ---
+        // Lógica para manejar la creación de certificados
+        function openCertificateDetailsModal(template) {
+            currentCertificateTemplate = template;
+            const form = document.getElementById('certificate-details-form');
+            form.reset();
+
+            const destinationContainer = document.getElementById('certificate-form-destination-container');
+            if (template.includes('viaje')) {
+                destinationContainer.classList.remove('hidden');
+            } else {
+                destinationContainer.classList.add('hidden');
+            }
+
+            const templateTitles = {
+                'salud': 'Certificado de Salud',
+                'viaje-nacional': 'Certificado de Viaje Nacional',
+                'viaje-internacional': 'Certificado de Viaje Internacional',
+                'implantacion-chip': 'Certificado de Implantación de Chip',
+                'validacion-chip': 'Certificado de Validación de Chip'
+            };
+
+            document.getElementById('certificate-modal-title').textContent = `Detalles para: ${templateTitles[template] || template}`;
+            showModal('certificateDetails');
+        }
+        
+        // --- FUNCIÓN AÑADIDA ---
+        function handleCertificateGeneration(e) {
+            e.preventDefault();
+            hideModal('certificateDetails');
+            const destination = document.getElementById('certificate-destination').value;
+            generateCertificate(currentCertificateTemplate, { destination });
+        }
+        
+        // --- FUNCIÓN AÑADIDA ---
+        function generateCertificate(template, details) {
+            if (!currentPatientData) {
+                showNotification("No hay datos del paciente cargados.", true);
+                return;
+            }
+            const data = currentPatientData;
+            const certTitleEl = document.getElementById('certificate-title');
+            const certBodyEl = document.getElementById('certificate-body');
+            const generatorTitleEl = document.getElementById('certificate-generator-title');
+            document.getElementById('certificate-email').value = data.tutorEmail || '';
+            
+            const commonInfo = `
+                <div class="space-y-3 mb-6">
+                    <p>Por medio del presente, yo, <strong>Dra. Alejandra Cautín Bastías</strong>, Médico Veterinario, certifico que he examinado al paciente que se detalla a continuación:</p>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-left bg-gray-50 p-4 rounded-lg">
+                        <div><strong>Paciente:</strong> <span class="capitalize">${data.name}</span></div>
+                        <div><strong>Nº Ficha:</strong> ${data.id}</div>
+                        <div><strong>Especie:</strong> ${data.species}</div>
+                        <div><strong>Raza:</strong> ${data.breed}</div>
+                        <div><strong>Sexo:</strong> ${data.sex}</div>
+                        <div><strong>Fecha de Nacimiento:</strong> ${data.birthDate}</div>
+                        <div><strong>Color y Señas:</strong> ${data.colorMarkings}</div>
+                        <div><strong>Microchip:</strong> ${data.microchip || 'No posee'}</div>
+                        <div><strong>Tutor:</strong> ${data.tutorName}</div>
+                        <div><strong>RUT Tutor:</strong> ${data.tutorRut ? formatRut(data.tutorRut) : ''}</div>
+                    </div>
+                </div>
+            `;
+
+            let content = '';
+            const today = new Date().toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
+            switch (template) {
+                case 'salud':
+                    generatorTitleEl.textContent = "Generar Certificado de Salud";
+                    certTitleEl.textContent = "CERTIFICADO DE SALUD";
+                    content = `<p>Al momento del examen clínico realizado el día ${today}, el paciente se encuentra en buen estado de salud, sin presentar signos de enfermedades infectocontagiosas y con sus controles sanitarios al día.</p>
+                               <p class="mt-4">Este certificado se extiende a solicitud del tutor para los fines que estime convenientes y tiene una validez de 10 días a partir de esta fecha.</p>`;
+                    break;
+                case 'viaje-nacional':
+                    generatorTitleEl.textContent = "Generar Certificado de Viaje Nacional";
+                    certTitleEl.textContent = "CERTIFICADO DE SALUD PARA VIAJE NACIONAL";
+                    content = `<p>Al momento del examen clínico realizado el día ${today}, el paciente se encuentra clínicamente sano, sin signos de enfermedades infecciosas y apto para viajar dentro del territorio nacional.</p>
+                               <p>El destino del viaje es: <strong>${details.destination || 'No especificado'}</strong>.</p>
+                               <p class="mt-4">Este certificado tiene una validez de 10 días a partir de esta fecha.</p>`;
+                    break;
+                case 'implantacion-chip':
+                    generatorTitleEl.textContent = "Generar Certificado de Implantación de Chip";
+                    certTitleEl.textContent = "CERTIFICADO DE IMPLANTACIÓN DE MICROCHIP";
+                    content = `<p>Se certifica que el día ${today}, se ha implantado un microchip de identificación al paciente. El número del dispositivo es <strong>${data.microchip || '[INGRESAR NÚMERO DE CHIP EN FICHA]'}</strong>.</p>
+                               <p class="mt-4">La implantación se realizó bajo condiciones de asepsia y el paciente se encuentra en buen estado post-procedimiento.</p>`;
+                    break;
+                default:
+                     generatorTitleEl.textContent = "Generar Certificado";
+                     certTitleEl.textContent = "CERTIFICADO";
+                     content = `<p>Contenido del certificado no definido para esta plantilla.</p>`;
+            }
+
+            certBodyEl.innerHTML = commonInfo + content + `<p class="mt-8">Se extiende el presente certificado en Santiago, a ${today}.</p>`;
+            navigateTo('certificateGenerator', data.id);
+        }
+
         // --- Data for Modals ---
         const labExams = {
             "Perfiles y Hematología": [
@@ -2135,7 +2442,7 @@
                 { id: 'rm-Lumbosacro', name: 'RM Lumbosacro', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
                 { id: 'rm-Rodilla', name: 'RM Rodilla', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
                 { id: 'rm-Oído', name: 'RM Oído', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
-                { id: 'rm-Cavidad nasal', name: 'RM Cavidad nasal', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },                
+                { id: 'rm-Cavidad nasal', name: 'RM Cavidad nasal', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },               
             ],
             "Endoscopías": [
                 { id: 'endoscopia-digestiva', name: 'Endoscopía digestiva (alta / baja)', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria.' },
@@ -2188,6 +2495,21 @@
             document.getElementById('cancel-delete-btn').addEventListener('click', () => hideModal('deleteConfirmation'));
             document.getElementById('confirm-delete-btn').addEventListener('click', handleDeletePatient);
             
+            // --- CORRECCIÓN: Event listeners para el selector de razas ---
+            document.getElementById('data-breed').addEventListener('change', (e) => {
+                const otherBreedContainer = document.getElementById('data-breed-other-container');
+                if (e.target.value === 'Otro') {
+                    otherBreedContainer.classList.remove('hidden');
+                } else {
+                    otherBreedContainer.classList.add('hidden');
+                }
+            });
+            document.querySelectorAll('input[name="species"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    updateBreedDropdown(e.target.value);
+                });
+            });
+
             // --- PATIENT HUB ---
             document.getElementById('edit-patient-data-btn').addEventListener('click', () => openPatientDataForm(currentPatientId));
             document.getElementById('back-to-hub-btn').addEventListener('click', () => openPatientHub(currentPatientId));
@@ -2241,12 +2563,21 @@
             document.getElementById('exam-result-form').addEventListener('submit', saveNewExamResult);
             document.getElementById('close-exam-result-modal-btn').addEventListener('click', () => hideModal('examResult'));
             document.getElementById('cancel-exam-result-btn').addEventListener('click', () => hideModal('examResult'));
-            const examSelectButton = document.getElementById('exam-select-button');
-            const examSelectDropdown = document.getElementById('exam-select-dropdown');
-            examSelectButton.addEventListener('click', () => examSelectDropdown.classList.toggle('hidden'));
+            
+            const labExamSelectButton = document.getElementById('lab-exam-select-button');
+            const labExamSelectDropdown = document.getElementById('lab-exam-select-dropdown');
+            const imagingExamSelectButton = document.getElementById('imaging-exam-select-button');
+            const imagingExamSelectDropdown = document.getElementById('imaging-exam-select-dropdown');
+
+            labExamSelectButton.addEventListener('click', () => labExamSelectDropdown.classList.toggle('hidden'));
+            imagingExamSelectButton.addEventListener('click', () => imagingExamSelectDropdown.classList.toggle('hidden'));
+
             document.addEventListener('click', (e) => {
-                if (!examSelectButton.contains(e.target) && !examSelectDropdown.contains(e.target)) {
-                    examSelectDropdown.classList.add('hidden');
+                if (!labExamSelectButton.contains(e.target) && !labExamSelectDropdown.contains(e.target)) {
+                    labExamSelectDropdown.classList.add('hidden');
+                }
+                if (!imagingExamSelectButton.contains(e.target) && !imagingExamSelectDropdown.contains(e.target)) {
+                    imagingExamSelectDropdown.classList.add('hidden');
                 }
             });
 
@@ -2256,6 +2587,25 @@
                 const email = document.getElementById('exam-order-email').value;
                 const subject = `Orden de Examen para Ficha Nº ${currentPatientId}`;
                 const body = 'Estimado/a,\n\nAdjunto la orden de examen para su mascota.\n\nSaludos cordiales,\nDra. Alejandra Cautín Bastías';
+                sendEmail(email, subject, body);
+            });
+
+            // --- CERTIFICATES ---
+            document.querySelectorAll('.certificate-template-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const template = e.target.dataset.template;
+                    openCertificateDetailsModal(template);
+                });
+            });
+            document.getElementById('certificate-details-form').addEventListener('submit', handleCertificateGeneration);
+            document.getElementById('close-certificate-details-modal-btn').addEventListener('click', () => hideModal('certificateDetails'));
+            document.getElementById('cancel-certificate-details-btn').addEventListener('click', () => hideModal('certificateDetails'));
+            document.querySelector('.back-to-hub-btn-from-certificate').addEventListener('click', () => openPatientHub(currentPatientId));
+            document.getElementById('download-certificate-pdf-btn').addEventListener('click', () => downloadPDF('certificate-content-generator', `certificado-${currentCertificateTemplate}-${currentPatientId}.pdf`));
+            document.getElementById('send-certificate-email-btn').addEventListener('click', () => {
+                const email = document.getElementById('certificate-email').value;
+                const subject = `Certificado para paciente con Ficha Nº ${currentPatientId}`;
+                const body = 'Estimado/a,\n\nAdjunto el certificado para su mascota.\n\nSaludos cordiales,\nDra. Alejandra Cautín Bastías';
                 sendEmail(email, subject, body);
             });
 
@@ -2309,7 +2659,7 @@
                 item.innerHTML = `
                     <div class="accordion-header">
                         <h3 class="font-semibold text-lg text-gray-700">${faq.q}</h3>
-                        <svg class="accordion-arrow w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="accordion-arrow w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
                     <div class="accordion-body">
                         <p class="text-gray-600">${faq.a}</p>
@@ -2317,13 +2667,13 @@
                 `;
                 faqContainer.appendChild(item);
             });
+            
+            // --- CORRECCIÓN: Se simplificó la lógica del acordeón de FAQs ---
             faqContainer.querySelectorAll('.accordion-header').forEach(header => {
                 header.addEventListener('click', () => {
                     const body = header.nextElementSibling;
-                    const arrow = header.querySelector('.accordion-arrow');
                     header.classList.toggle('active');
                     body.classList.toggle('expanded');
-                    arrow.style.transform = body.classList.contains('expanded') ? 'rotate(180deg)' : 'rotate(0deg)';
                 });
             });
 
