@@ -110,7 +110,10 @@
         .exam-tab-content { display: none; }
         .exam-tab-content.active { display: block; }
 
-        @media print { .no-print { display: none !important; } }
+        @media print { 
+            .no-print { display: none !important; } 
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
         /* IMPROVEMENT: Responsive modal styles */
         .modal-content {
              max-height: 90vh;
@@ -394,7 +397,15 @@
                             <div id="vaccine-history-table" class="overflow-x-auto"></div>
                         </div>
                     </div>
-                    <div id="hub-desparasitacion-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Control de Desparasitaciones</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
+                    <div id="hub-desparasitacion-content" class="hub-section-content hidden">
+                        <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
+                             <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-[#4A4A4A]">Control de Desparasitaciones</h2>
+                                <button id="new-deworming-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold text-lg">+ Nuevo Registro</button>
+                            </div>
+                            <div id="deworming-history-table" class="overflow-x-auto"></div>
+                        </div>
+                    </div>
                     <div id="hub-examenes-content" class="hub-section-content hidden">
                         <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
                              <div class="flex justify-between items-center mb-4">
@@ -407,7 +418,15 @@
                             <div id="exam-history-list" class="space-y-3"></div>
                         </div>
                     </div>
-                    <div id="hub-certificados-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Emisión de Certificados</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
+                    <div id="hub-certificados-content" class="hub-section-content hidden">
+                        <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-[#4A4A4A]">Certificados</h2>
+                                <button id="new-certificate-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold text-lg">+ Generar Certificado</button>
+                            </div>
+                            <div id="certificate-history-list" class="space-y-3"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -630,6 +649,49 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ===== Certificate Generator View ===== -->
+            <div id="view-certificate-generator" class="view">
+                <header class="flex justify-between items-center mb-4 no-print">
+                    <h1 id="certificate-title" class="text-3xl font-bold text-[#4A4A4A]">Generar Certificado</h1>
+                    <button class="back-to-hub-btn-from-cert bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
+                </header>
+                <div id="certificate-content-generator" class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg">
+                    <header class="text-center pb-4 border-b-2 border-gray-100">
+                        <img src="logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/200x100/A3CBB2/FFFFFF?text=Logo';">
+                        <h1 class="text-2xl font-bold text-[#4A4A4A]">Dra. Alejandra Cautín Bastías</h1>
+                        <p class="text-[#7F8B96]">Médica Veterinaria</p>
+                    </header>
+                    
+                    <h2 id="certificate-header-title" class="text-xl font-bold text-[#4A4A4A] my-6 text-center"></h2>
+
+                    <div id="certificate-specific-content" class="my-6">
+                        <!-- Dynamic content for each certificate type will be injected here -->
+                    </div>
+
+                    <footer class="text-center mt-8 pt-8 border-t">
+                        <p id="certificate-issue-date" class="text-sm text-gray-600 mb-12"></p>
+                        <div class="grid grid-cols-2 gap-8 text-left mt-12">
+                            <div>
+                                <p class="font-bold text-[#4A4A4A] mb-2">Timbre Médico:</p>
+                                <div class="h-24 border border-gray-300 border-dashed rounded-md flex items-center justify-center">
+                                    <img src="timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-bold text-[#4A4A4A] mb-2">Firma del Médico:</p>
+                                <div class="h-24 border-b-2 border-gray-500 flex flex-col justify-end items-center">
+                                    <p class="font-semibold">Dra. Alejandra Cautín Bastías</p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+                <div class="flex justify-end items-center gap-4 mt-8 no-print">
+                    <button type="button" id="download-certificate-pdf-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Descargar PDF</button>
+                    <button type="button" id="save-certificate-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Certificado</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -683,6 +745,40 @@
                 <div class="flex justify-end gap-4 pt-4">
                     <button type="button" id="cancel-vaccine-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
                     <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Vacuna</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- NEW: Deworming Modal -->
+    <div id="deworming-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
+            <button id="close-deworming-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Registrar Desparasitación</h2>
+            <form id="deworming-form" class="space-y-4">
+                <div>
+                    <label for="deworming-date" class="block text-sm font-medium text-[#7F8B96] mb-1">Fecha de Aplicación</label>
+                    <input id="deworming-date" type="date" required class="w-full">
+                </div>
+                <div>
+                    <label for="deworming-type" class="block text-sm font-medium text-[#7F8B96] mb-1">Tipo de Antiparasitario</label>
+                    <select id="deworming-type" required class="w-full">
+                        <option value="Interno">Interno</option>
+                        <option value="Externo">Externo</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="deworming-product" class="block text-sm font-medium text-[#7F8B96] mb-1">Producto y Lote</label>
+                    <input id="deworming-product" type="text" placeholder="Ej: Bravecto, Lote 12345" class="w-full">
+                </div>
+                <div>
+                    <label for="deworming-next-dose" class="block text-sm font-medium text-[#7F8B96] mb-1">Próxima Dosis</label>
+                    <input id="deworming-next-dose" type="date" class="w-full">
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="cancel-deworming-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
+                    <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Registro</button>
                 </div>
             </form>
         </div>
@@ -765,6 +861,20 @@
             <p id="service-modal-description" class="text-[#7F8B96]"></p>
         </div>
     </div>
+     <!-- NEW: Certificate Selection Modal -->
+    <div id="certificate-selection-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-md m-4 relative">
+            <button id="close-certificate-selection-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Seleccionar Plantilla de Certificado</h2>
+            <div class="space-y-4">
+                <button data-type="health" class="w-full btn-tertiary py-3 rounded-lg text-lg font-semibold certificate-type-btn">Certificado de Salud</button>
+                <button data-type="travel" class="w-full btn-tertiary py-3 rounded-lg text-lg font-semibold certificate-type-btn">Certificado de Viaje/Exportación</button>
+                <button data-type="microchip" class="w-full btn-tertiary py-3 rounded-lg text-lg font-semibold certificate-type-btn">Certificado de Microchip</button>
+            </div>
+        </div>
+    </div>
     
     <!-- Main Application Logic -->
     <script type="module">
@@ -772,6 +882,7 @@
         let currentPatientId = null;
         let currentPatientSpecies = null;
         let currentPatientData = null; // Store full patient data for reuse
+        let currentCertificateType = null;
 
         // --- DOM Element References ---
         const views = {
@@ -780,7 +891,8 @@
             patientHub: document.getElementById('view-patient-hub'),
             editPatientData: document.getElementById('view-edit-patient-data'),
             prescription: document.getElementById('view-prescription'),
-            examOrderPrintable: document.getElementById('view-exam-order-printable'), // NEW
+            examOrderPrintable: document.getElementById('view-exam-order-printable'),
+            certificateGenerator: document.getElementById('view-certificate-generator'), // NEW
         };
         const appContainer = document.getElementById('app-container');
         const modals = { 
@@ -789,9 +901,11 @@
             consultation: document.getElementById('consultation-modal'),
             deleteConfirmation: document.getElementById('delete-confirmation-modal'),
             vaccine: document.getElementById('vaccine-modal'),
+            deworming: document.getElementById('deworming-modal'),
             examOrder: document.getElementById('exam-order-modal'),
             examResult: document.getElementById('exam-result-modal'),
             serviceDetail: document.getElementById('service-detail-modal'),
+            certificateSelection: document.getElementById('certificate-selection-modal'), // NEW
         };
         
         // --- Navigation & Modal Functions ---
@@ -849,7 +963,9 @@
                 loadConsultationHistory(patientId);
                 loadPrescriptionHistory(patientId);
                 loadVaccineHistory(patientId);
+                loadDewormingHistory(patientId);
                 loadExamHistory(patientId);
+                loadCertificateHistory(patientId); // NEW
                 navigateTo('patientHub', patientId);
             } else {
                 showNotification(`No se encontró el paciente con Ficha Nº ${patientId}.`, true);
@@ -1078,7 +1194,9 @@
                 await deleteSubcollection(currentPatientId, 'consultations');
                 await deleteSubcollection(currentPatientId, 'prescriptions');
                 await deleteSubcollection(currentPatientId, 'vaccines');
+                await deleteSubcollection(currentPatientId, 'deworming');
                 await deleteSubcollection(currentPatientId, 'exams');
+                await deleteSubcollection(currentPatientId, 'certificates'); // NEW
                 await deleteDoc(doc(db, "patients", currentPatientId));
                 hideModal('deleteConfirmation');
                 showNotification("Paciente eliminado correctamente.");
@@ -1361,6 +1479,90 @@
                 console.error("Error loading vaccine history:", error);
             }
         }
+        
+        // --- Deworming Logic ---
+        function openNewDewormingModal() {
+            const form = document.getElementById('deworming-form');
+            form.reset();
+            showModal('deworming');
+        }
+
+        async function saveNewDeworming(e) {
+            e.preventDefault();
+            if (!currentPatientId) return;
+
+            const { collection, addDoc, serverTimestamp } = window.firebase;
+            const db = window.db;
+
+            const dewormingData = {
+                date: document.getElementById('deworming-date').value,
+                type: document.getElementById('deworming-type').value,
+                product: document.getElementById('deworming-product').value,
+                nextDose: document.getElementById('deworming-next-dose').value,
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "patients", currentPatientId, "deworming"), dewormingData);
+                hideModal('deworming');
+                loadDewormingHistory(currentPatientId);
+                showNotification("Registro de desparasitación guardado con éxito.");
+            } catch (error) {
+                showNotification("Error al guardar el registro.", true);
+                console.error("Error saving deworming record:", error);
+            }
+        }
+        
+        async function loadDewormingHistory(patientId) {
+            const container = document.getElementById('deworming-history-table');
+            container.innerHTML = '<p>Cargando historial de desparasitaciones...</p>';
+            
+            const { collection, query, getDocs, orderBy } = window.firebase;
+            const db = window.db;
+
+            try {
+                const q = query(collection(db, "patients", patientId, "deworming"), orderBy("date", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="text-center text-gray-500">No hay desparasitaciones registradas.</p>';
+                    return;
+                }
+
+                let tableHTML = `
+                    <table class="min-w-full bg-white text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="py-2 px-4 text-left">Fecha</th>
+                                <th class="py-2 px-4 text-left">Tipo</th>
+                                <th class="py-2 px-4 text-left">Producto/Lote</th>
+                                <th class="py-2 px-4 text-left">Próxima Dosis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    tableHTML += `
+                        <tr class="border-b">
+                            <td class="py-2 px-4">${data.date || 'N/A'}</td>
+                            <td class="py-2 px-4">${data.type || 'N/A'}</td>
+                            <td class="py-2 px-4">${data.product || 'N/A'}</td>
+                            <td class="py-2 px-4">${data.nextDose || 'N/A'}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `</tbody></table>`;
+                container.innerHTML = tableHTML;
+
+            } catch (error) {
+                container.innerHTML = '<p class="text-center text-red-500">Error al cargar el historial de desparasitaciones.</p>';
+                console.error("Error loading deworming history:", error);
+            }
+        }
+
 
         // --- Exam Logic ---
         function openNewExamOrderModal() {
@@ -1618,26 +1820,213 @@
             
             navigateTo('examOrderPrintable', currentPatientId);
         }
-        
-        function downloadPDF(elementId, fileName) {
-            const element = document.getElementById(elementId);
-            const opt = {
-              margin: [0.5, 0.5, 0.5, 0.5],
-              filename: fileName,
-              image: { type: 'jpeg', quality: 0.98 },
-              html2canvas: { scale: 2, useCORS: true },
-              jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(opt).save();
-        }
 
-        function sendEmail(email, subject, body) {
-            if (!email) {
-                showNotification("Por favor, ingrese un correo electrónico.", true);
-                return;
+        // --- Certificate Logic (NEW & UPDATED) ---
+        async function openCertificateGenerator(type) {
+            if (!currentPatientData) return;
+            currentCertificateType = type;
+            
+            hideModal('certificateSelection');
+            
+            const titleEl = document.getElementById('certificate-title');
+            const headerTitleEl = document.getElementById('certificate-header-title');
+            const contentEl = document.getElementById('certificate-specific-content');
+            
+            let contentHTML = '';
+            
+            const { name, species, sex, breed, age, microchip, tutorName, tutorRut } = currentPatientData;
+            const patientDescription = `${species || ''}, ${sex || ''}, de raza ${breed || 'Mestizo'}, de ${age || 'edad desconocida'}.`;
+            
+            switch(type) {
+                case 'health':
+                    titleEl.textContent = 'Generar Certificado de Salud';
+                    headerTitleEl.textContent = 'CERTIFICADO DE SALUD';
+                    contentHTML = `
+                        <p class="text-justify mb-4">Yo, Alejandra Cautín Bastías, Médico Veterinario, certifico que he examinado al paciente individualizado a continuación:</p>
+                        <div class="bg-gray-50 p-4 rounded-lg space-y-2 text-sm mb-4">
+                            <p><strong>Nombre:</strong> <span class="capitalize">${name}</span></p>
+                            <p><strong>Especie/Sexo/Raza/Edad:</strong> ${patientDescription}</p>
+                            <p><strong>N° Microchip:</strong> ${microchip || 'No posee'}</p>
+                            <p><strong>Tutor:</strong> ${tutorName || ''} / <strong>RUT:</strong> ${tutorRut ? formatRut(tutorRut) : ''}</p>
+                        </div>
+                        <p class="text-justify mb-4">Al momento del examen clínico, el paciente se encuentra en buen estado de salud, sin presentar signos de enfermedades infectocontagiosas y apto para su traslado.</p>
+                        <label class="block text-sm font-medium no-print">Observaciones adicionales (editable):</label>
+                        <textarea id="cert-health-obs" class="w-full mt-1 no-print" rows="4"></textarea>
+                    `;
+                    break;
+                case 'travel':
+                    titleEl.textContent = 'Generar Certificado de Viaje';
+                    headerTitleEl.textContent = 'CERTIFICADO SANITARIO PARA VIAJE';
+                    
+                    // --- Auto-populate declarations ---
+                    const { collection, query, getDocs, orderBy } = window.firebase;
+                    const db = window.db;
+                    let declarationsText = '';
+
+                    // Fetch Vaccines
+                    const vaccinesQuery = query(collection(db, "patients", currentPatientId, "vaccines"), orderBy("date", "desc"));
+                    const vaccineSnapshot = await getDocs(vaccinesQuery);
+                    if (!vaccineSnapshot.empty) {
+                        declarationsText += 'Vacunación Vigente:\n';
+                        vaccineSnapshot.forEach(doc => {
+                            const data = doc.data();
+                            declarationsText += `- ${data.type} (${data.brand || 'N/A'}), aplicada el ${data.date}. Próxima dosis: ${data.nextDose || 'N/A'}.\n`;
+                        });
+                        declarationsText += '\n';
+                    }
+
+                    // Fetch Deworming
+                    const dewormingQuery = query(collection(db, "patients", currentPatientId, "deworming"), orderBy("date", "desc"));
+                    const dewormingSnapshot = await getDocs(dewormingQuery);
+                     if (!dewormingSnapshot.empty) {
+                        declarationsText += 'Desparasitación Vigente:\n';
+                        dewormingSnapshot.forEach(doc => {
+                            const data = doc.data();
+                            declarationsText += `- ${data.type}: ${data.product}, aplicada el ${data.date}. Próxima dosis: ${data.nextDose || 'N/A'}.\n`;
+                        });
+                    }
+                    // --- End auto-populate ---
+
+                     contentHTML = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
+                            <div><label class="font-bold">País de Origen:</label><input type="text" id="cert-travel-origin" value="Chile" class="mt-1"></div>
+                            <div><label class="font-bold">País de Destino:</label><input type="text" id="cert-travel-destination" class="mt-1"></div>
+                            <div class="md:col-span-2"><label class="font-bold">Medio de Transporte:</label><input type="text" id="cert-travel-transport" placeholder="Aéreo, terrestre, etc." class="mt-1"></div>
+                        </div>
+                        <p class="text-justify mb-4">Datos del paciente:</p>
+                        <div class="bg-gray-50 p-4 rounded-lg space-y-2 text-sm mb-4">
+                            <p><strong>Nombre:</strong> <span class="capitalize">${name}</span></p>
+                            <p><strong>Especie/Sexo/Raza/Edad:</strong> ${patientDescription}</p>
+                            <p><strong>N° Microchip:</strong> ${microchip || 'No posee'}</p>
+                            <p><strong>Tutor:</strong> ${tutorName || ''} / <strong>RUT:</strong> ${tutorRut ? formatRut(tutorRut) : ''}</p>
+                        </div>
+                        <p class="text-justify mb-4">Certifico que el paciente antes mencionado ha sido examinado y se encuentra clínicamente sano, sin evidencia de enfermedades infecciosas o parasitarias transmisibles. Cumple con los requisitos sanitarios para su traslado.</p>
+                        <label class="block text-sm font-medium no-print">Declaraciones adicionales (vacunas, desparasitaciones, etc.):</label>
+                        <textarea id="cert-travel-declarations" class="w-full mt-1 no-print" rows="8">${declarationsText.trim()}</textarea>
+                    `;
+                    break;
+                case 'microchip':
+                    titleEl.textContent = 'Generar Certificado de Microchip';
+                    headerTitleEl.textContent = 'CERTIFICADO DE IMPLANTACIÓN/VERIFICACIÓN DE MICROCHIP';
+                    contentHTML = `
+                        <div class="text-center mb-4 no-print">
+                            <label class="mr-4"><input type="radio" name="chip-action" value="implantado" class="form-radio" checked> Implantación</label>
+                            <label><input type="radio" name="chip-action" value="verificado" class="form-radio"> Verificación</label>
+                        </div>
+                        <p class="text-justify mb-4">Certifico que el día de hoy, se ha <span id="chip-action-text">implantado</span> un microchip de identificación al paciente:</p>
+                        <div class="bg-gray-50 p-4 rounded-lg space-y-2 text-sm mb-4">
+                            <p><strong>Nombre:</strong> <span class="capitalize">${name}</span></p>
+                            <p><strong>Especie/Sexo/Raza/Edad:</strong> ${patientDescription}</p>
+                            <p><strong>Tutor:</strong> ${tutorName || ''} / <strong>RUT:</strong> ${tutorRut ? formatRut(tutorRut) : ''}</p>
+                        </div>
+                        <div class="space-y-4 text-sm">
+                            <div><label class="font-bold">N° de Microchip:</label><input type="text" id="cert-chip-number" value="${microchip || ''}" class="mt-1"></div>
+                            <div><label class="font-bold">Fecha de Implantación:</label><input type="date" id="cert-chip-date" value="${new Date().toISOString().split('T')[0]}" class="mt-1"></div>
+                            <div><label class="font-bold">Posición del Implante:</label><input type="text" id="cert-chip-position" value="Interescapular izquierdo" class="mt-1"></div>
+                        </div>
+                    `;
+                    break;
             }
-            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            window.location.href = mailtoLink;
+            contentEl.innerHTML = contentHTML;
+            
+            if (type === 'microchip') {
+                document.querySelectorAll('input[name="chip-action"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        document.getElementById('chip-action-text').textContent = e.target.value;
+                    });
+                });
+            }
+            
+            document.getElementById('certificate-issue-date').textContent = `Emitido en Las Condes, a ${new Date().toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+            
+            navigateTo('certificateGenerator', currentPatientId);
+        }
+        
+        async function saveCertificate() {
+            if (!currentPatientId || !currentCertificateType) return;
+            
+            const { collection, addDoc, serverTimestamp } = window.firebase;
+            const db = window.db;
+            
+            let details = {};
+            const titleMap = {
+                health: 'Certificado de Salud',
+                travel: 'Certificado de Viaje/Exportación',
+                microchip: 'Certificado de Microchip'
+            };
+
+            switch(currentCertificateType) {
+                case 'health':
+                    details.observations = document.getElementById('cert-health-obs')?.value || '';
+                    break;
+                case 'travel':
+                    details.origin = document.getElementById('cert-travel-origin')?.value || '';
+                    details.destination = document.getElementById('cert-travel-destination')?.value || '';
+                    details.transport = document.getElementById('cert-travel-transport')?.value || '';
+                    details.declarations = document.getElementById('cert-travel-declarations')?.value || '';
+                    break;
+                case 'microchip':
+                    details.action = document.querySelector('input[name="chip-action"]:checked')?.value || 'implantado';
+                    details.chipNumber = document.getElementById('cert-chip-number')?.value || '';
+                    details.chipDate = document.getElementById('cert-chip-date')?.value || '';
+                    details.chipPosition = document.getElementById('cert-chip-position')?.value || '';
+                    break;
+            }
+
+            const certificateData = {
+                type: currentCertificateType,
+                typeName: titleMap[currentCertificateType],
+                date: new Date().toISOString().split('T')[0],
+                details: details,
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "patients", currentPatientId, "certificates"), certificateData);
+                showNotification("Certificado guardado con éxito.");
+                openPatientHub(currentPatientId);
+            } catch (error) {
+                showNotification("Error al guardar el certificado.", true);
+                console.error("Error saving certificate:", error);
+            }
+        }
+        
+        async function loadCertificateHistory(patientId) {
+            const container = document.getElementById('certificate-history-list');
+            container.innerHTML = '<p>Cargando historial de certificados...</p>';
+            
+            const { collection, query, getDocs, orderBy } = window.firebase;
+            const db = window.db;
+
+            try {
+                const q = query(collection(db, "patients", patientId, "certificates"), orderBy("date", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="text-center text-gray-500">No hay certificados registrados.</p>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                querySnapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const card = document.createElement('div');
+                    card.className = 'bg-gray-50 p-4 rounded-lg border';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-md text-[#4A4A4A]">${data.date || 'N/A'}</p>
+                                <p class="font-semibold text-sm text-gray-600">${data.typeName || 'Certificado'}</p>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                container.innerHTML = '<p class="text-center text-red-500">Error al cargar el historial.</p>';
+                console.error("Error loading certificate history:", error);
+            }
         }
 
         // --- Search Logic ---
@@ -2112,6 +2501,12 @@
             document.getElementById('vaccine-form').addEventListener('submit', saveNewVaccine);
             document.getElementById('close-vaccine-modal-btn').addEventListener('click', () => hideModal('vaccine'));
             document.getElementById('cancel-vaccine-btn').addEventListener('click', () => hideModal('vaccine'));
+            
+            // --- DEWORMING ---
+            document.getElementById('new-deworming-btn').addEventListener('click', openNewDewormingModal);
+            document.getElementById('deworming-form').addEventListener('submit', saveNewDeworming);
+            document.getElementById('close-deworming-modal-btn').addEventListener('click', () => hideModal('deworming'));
+            document.getElementById('cancel-deworming-btn').addEventListener('click', () => hideModal('deworming'));
 
             // --- EXAMS ---
             document.getElementById('new-exam-order-btn').addEventListener('click', openNewExamOrderModal);
@@ -2130,7 +2525,6 @@
                     document.getElementById(`exam-tab-${btn.dataset.tab}`).classList.add('active');
                 });
             });
-            // Printable Exam Order listeners
             document.querySelector('.back-to-hub-btn-from-exam-order').addEventListener('click', () => openPatientHub(currentPatientId));
             document.getElementById('download-exam-order-pdf-btn').addEventListener('click', () => downloadPDF('exam-order-content-generator', `orden-examen-${currentPatientId}.pdf`));
             document.getElementById('send-exam-order-email-btn').addEventListener('click', () => {
@@ -2138,6 +2532,19 @@
                 const subject = `Orden de Examen para Ficha Nº ${currentPatientId}`;
                 const body = 'Estimado/a,\n\nAdjunto la orden de examen para su mascota.\n\nSaludos cordiales,\nDra. Alejandra Cautín Bastías';
                 sendEmail(email, subject, body);
+            });
+
+            // --- CERTIFICATES (NEW) ---
+            document.getElementById('new-certificate-btn').addEventListener('click', () => showModal('certificateSelection'));
+            document.getElementById('close-certificate-selection-modal-btn').addEventListener('click', () => hideModal('certificateSelection'));
+            document.querySelectorAll('.certificate-type-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => openCertificateGenerator(e.target.dataset.type));
+            });
+            document.querySelector('.back-to-hub-btn-from-cert').addEventListener('click', () => openPatientHub(currentPatientId));
+            document.getElementById('save-certificate-btn').addEventListener('click', saveCertificate);
+            document.getElementById('download-certificate-pdf-btn').addEventListener('click', () => {
+                const fileName = `certificado-${currentCertificateType}-${currentPatientId}.pdf`;
+                downloadPDF('certificate-content-generator', fileName);
             });
 
             // --- PUBLIC LANDING PAGE ---
