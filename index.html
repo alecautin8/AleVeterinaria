@@ -13,31 +13,32 @@
     <!-- Firebase SDK -->
     <script type="module">
         // --- Firebase Configuration ---
-        // IMPORTANTE: Reemplaza esto con la configuración de tu propio proyecto de Firebase.
         const firebaseConfig = {
-            apiKey: "AIzaSyBrYOiaa_skDuvRDD_zMZvUBknfwmTyDko",
-            authDomain: "ale-veterinaria.firebaseapp.com",
-            projectId: "ale-veterinaria",
-            storageBucket: "ale-veterinaria.appspot.com",
-            messagingSenderId: "87862276548",
-            appId: "1:87862276548:web:a55b3154a31e4c6948b491",
-            measurementId: "G-PNKMJC92K3"
+          apiKey: "AIzaSyBrYOiaa_skDuvRDD_zMZvUBknfwmTyDko",
+          authDomain: "ale-veterinaria.firebaseapp.com",
+          projectId: "ale-veterinaria",
+          storageBucket: "ale-veterinaria.appspot.com",
+          messagingSenderId: "87862276548",
+          appId: "1:87862276548:web:a55b3154a31e4c6948b491",
+          measurementId: "G-PNKMJC92K3"
         };
         
         // --- Firebase Initialization ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getFirestore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, runTransaction, orderBy, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+        // IMPROVEMENT: Import Firebase Storage modules
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
         
         try {
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
             const auth = getAuth(app);
-            const storage = getStorage(app);
+            const storage = getStorage(app); // IMPROVEMENT: Initialize Storage
+            // Make Firebase services globally available
             window.db = db;
             window.auth = auth;
-            window.storage = storage;
+            window.storage = storage; // Make storage available globally
             window.firebase = { 
                 collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, 
                 runTransaction, orderBy, addDoc, deleteDoc, updateDoc, signInWithEmailAndPassword, 
@@ -45,6 +46,8 @@
             };
         } catch (e) {
             console.error("Firebase initialization error. Please check your firebaseConfig.", e);
+            // Use a custom modal instead of alert
+            // alert("No se pudo conectar a la base de datos. Verifique la configuración de Firebase.");
         }
     </script>
     <!-- html2pdf.js for PDF generation -->
@@ -103,26 +106,15 @@
         .page-section { display: none; }
         .page-section.active { display: block; }
         .nav-link.active { color: var(--text-main); font-weight: 600; }
-        
-        /* Estilos para certificados */
-        .cert-section { margin-bottom: 1.5rem; }
-        .cert-section h2 { font-size: 1.125rem; font-weight: 700; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; margin-bottom: 1rem; }
-        .cert-field { display: flex; align-items: baseline; margin-bottom: 0.5rem; }
-        .cert-field strong { min-width: 180px; font-weight: 600; }
-        .cert-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.8rem; }
-        .cert-table th, .cert-table td { border: 1px solid #ccc; padding: 6px; text-align: left; }
-        .cert-table th { background-color: #f2f2f2; font-weight: 600; }
-        .checkbox-label { display: flex; align-items: center; margin-right: 1rem; }
-        .checkbox-symbol { font-family: monospace; font-size: 1.2em; line-height: 1; margin-right: 0.5rem;}
+        .exam-tab-btn.active { background-color: var(--color-primary); color: var(--text-contrast); }
+        .exam-tab-content { display: none; }
+        .exam-tab-content.active { display: block; }
 
-        @media print { 
-            .no-print { display: none !important; } 
-            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .printable-cert { box-shadow: none !important; border: 1px solid #ccc; }
-        }
+        @media print { .no-print { display: none !important; } }
+        /* IMPROVEMENT: Responsive modal styles */
         .modal-content {
-            max-height: 90vh;
-            overflow-y: auto;
+             max-height: 90vh;
+             overflow-y: auto;
         }
     </style>
 </head>
@@ -167,7 +159,8 @@
                 <section id="page-inicio" class="page-section active">
                     <div class="py-20 bg-[var(--color-background)]">
                         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                            <img src="https://alecautin8.github.io/AleVeterinaria/assets/logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/A3CBB2/FFFFFF?text=Logo';">
+                            <!-- IMPROVEMENT: Use hosted image -->
+                            <img src="logo1.png" alt="Logo de la clínica veterinaria" class="w-32 h-32 mx-auto mb-6 rounded-full shadow-lg" onerror="this.onerror=null; this.src='https://placehold.co/128x128/A3CBB2/FFFFFF?text=Logo';">
                             <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] font-poppins">Dra. Alejandra Cautin Bastias</h1>
                             <p class="mt-4 text-lg text-[var(--text-muted)] max-w-3xl mx-auto">Medica Veterinaria a domicilio, para cuidar con calidez y respeto lo que más amas.</p>
                              <div class="mt-10 flex flex-wrap justify-center gap-4" id="home-buttons">
@@ -216,6 +209,7 @@
                         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                             <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-8">Agenda tu Cita</h2>
                             <p class="text-[var(--text-muted)] mb-6">Completa tus datos para continuar con el agendamiento en Calendly.</p>
+                            <!-- IMPROVEMENT: Restructured Agenda Form for better UX -->
                             <form id="agenda-form" class="space-y-4 text-left">
                                 <div>
                                     <label for="agenda-tutor-name" class="block text-sm font-medium text-[var(--text-muted)]">Nombre completo del tutor</label>
@@ -231,6 +225,7 @@
                                     <input type="text" id="agenda-tutor-commune" required class="mt-1">
                                 </div>
                                 
+                                <!-- Step 2: Pet Selection (Initially hidden) -->
                                 <div id="agenda-step-2" class="hidden space-y-4 pt-4 border-t">
                                     <div id="existing-pets-container" class="hidden p-4 bg-green-50 border border-green-200 rounded-lg">
                                         <p class="font-semibold mb-2">Hemos encontrado estas mascotas asociadas a tu RUT. ¿Para cuál deseas agendar?</p>
@@ -283,6 +278,7 @@
                     <div class="py-20 bg-[var(--color-surface)]">
                         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                             <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-8">Contáctame</h2>
+                            <!-- IMPROVEMENT: Functional contact form -->
                             <form id="contact-form" class="space-y-4">
                                 <input type="text" id="contact-name" placeholder="Tu Nombre" required class="w-full p-3 rounded-lg border">
                                 <input type="email" id="contact-email" placeholder="Tu Correo Electrónico" required class="w-full p-3 rounded-lg border">
@@ -309,7 +305,7 @@
 
     <!-- Main Application Container (Authenticated Users) -->
     <div id="app-container" class="hidden">
-        <header class="bg-[#FFFFFF] shadow-md p-4 flex justify-between items-center no-print">
+        <header class="bg-[#FFFFFF] shadow-md p-4 flex justify-between items-center">
             <h1 class="text-xl font-bold text-[#4A4A4A]">Gestión Clínica Veterinaria</h1>
             <button id="logout-btn" class="btn-danger px-4 py-2 rounded-lg font-semibold">Cerrar Sesión</button>
         </header>
@@ -398,15 +394,7 @@
                             <div id="vaccine-history-table" class="overflow-x-auto"></div>
                         </div>
                     </div>
-                    <div id="hub-desparasitacion-content" class="hub-section-content hidden">
-                        <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
-                            <div class="flex justify-between items-center mb-4">
-                                <h2 class="text-2xl font-bold text-[#4A4A4A]">Control de Desparasitaciones</h2>
-                                <button id="new-deworming-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold text-lg">+ Nueva Desparasitación</button>
-                            </div>
-                            <div id="deworming-history-table" class="overflow-x-auto"></div>
-                        </div>
-                    </div>
+                    <div id="hub-desparasitacion-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Control de Desparasitaciones</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
                     <div id="hub-examenes-content" class="hub-section-content hidden">
                         <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
                              <div class="flex justify-between items-center mb-4">
@@ -419,19 +407,7 @@
                             <div id="exam-history-list" class="space-y-3"></div>
                         </div>
                     </div>
-                    <div id="hub-certificados-content" class="hub-section-content hidden">
-                        <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
-                            <h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Emisión de Certificados</h2>
-                            <p class="text-gray-600 mb-6">Selecciona una plantilla para comenzar a generar un certificado.</p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <button data-template="salud" class="certificate-template-btn btn-tertiary p-4 rounded-lg font-semibold text-center">Certificado de Salud</button>
-                                <button data-template="viaje-nacional" class="certificate-template-btn btn-tertiary p-4 rounded-lg font-semibold text-center">Viaje Nacional</button>
-                                <button data-template="viaje-internacional" class="certificate-template-btn btn-tertiary p-4 rounded-lg font-semibold text-center">Viaje Internacional (Exportación)</button>
-                                <button data-template="implantacion-chip" class="certificate-template-btn btn-tertiary p-4 rounded-lg font-semibold text-center">Implantación de Chip</button>
-                                <button data-template="validacion-chip" class="certificate-template-btn btn-tertiary p-4 rounded-lg font-semibold text-center">Validación de Chip</button>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="hub-certificados-content" class="hub-section-content hidden"><div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg text-center"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Emisión de Certificados</h2><p class="text-[#7F8B96]">Esta sección está en desarrollo.</p></div></div>
                 </div>
             </div>
 
@@ -444,6 +420,7 @@
                 <form id="patient-data-form">
                     <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg mb-6">
                         <h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">I. Datos del Tutor</h2>
+                        <!-- IMPROVEMENT: Responsive grid -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><label for="data-tutor-name" class="block text-sm font-medium">Nombre Completo:</label><input type="text" id="data-tutor-name"></div>
                             <div>
@@ -467,23 +444,13 @@
                     <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg mb-6">
                         <h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">II. Datos del Paciente</h2>
                         <p class="mb-4 text-lg"><strong>Nº de Ficha:</strong> <span id="data-ficha-number" class="text-highlight font-bold"></span></p>
+                        <!-- IMPROVEMENT: Responsive grid -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                             <div><label for="data-patient-name" class="block text-sm font-medium">Nombre del Paciente:</label><input type="text" id="data-patient-name" required></div>
+                            <div><label for="data-breed" class="block text-sm font-medium">Raza:</label><input type="text" id="data-breed"></div>
                             <div>
                                 <label class="block text-sm font-medium mb-1">Especie:</label>
-                                <div class="flex items-center gap-4">
-                                    <label><input type="radio" name="species" value="Canina" class="form-radio"> Canina</label>
-                                    <label><input type="radio" name="species" value="Felina" class="form-radio"> Felina</label>
-                                    <label><input type="radio" name="species" value="Hurón" class="form-radio"> Hurón</label>
-                                </div>
-                            </div>
-                            <div>
-                                <label for="data-breed" class="block text-sm font-medium">Raza:</label>
-                                <select id="data-breed"></select>
-                            </div>
-                            <div id="data-breed-other-container" class="hidden">
-                                <label for="data-breed-other" class="block text-sm font-medium">Especificar Raza:</label>
-                                <input type="text" id="data-breed-other">
+                                <div class="flex items-center gap-4"><label><input type="radio" name="species" value="Canina" class="form-radio"> Canina</label><label><input type="radio" name="species" value="Felina" class="form-radio"> Felina</label></div>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium mb-1">Sexo:</label>
@@ -513,180 +480,154 @@
 
             <!-- ===== Prescription View (Generator) ===== -->
             <div id="view-prescription" class="view">
-                <!-- ... (Contenido sin cambios) ... -->
-            </div>
-            
-            <!-- ===== Printable Exam Order View ===== -->
-            <div id="view-exam-order-printable" class="view">
-                <!-- ... (Contenido sin cambios) ... -->
-            </div>
-
-            <!-- ===== Simple Certificate Generator View ===== -->
-            <div id="view-certificate-generator" class="view">
-                <!-- ... (Contenido sin cambios) ... -->
-            </div>
-
-            <!-- ===== Certificado de Viaje Internacional View ===== -->
-            <div id="view-international-travel-certificate" class="view">
-                 <header class="flex justify-between items-center mb-4 no-print">
-                    <h1 class="text-3xl font-bold text-[#4A4A4A]">Certificado de Salud para Exportación</h1>
-                    <div class="flex gap-2">
-                        <button id="download-international-cert-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Descargar PDF</button>
-                        <button class="back-to-hub-btn-from-cert bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
-                    </div>
+                <header class="flex justify-between items-center mb-4 no-print">
+                     <h1 class="text-3xl font-bold text-[#4A4A4A]">Generar Nueva Receta</h1>
+                    <button class="back-to-hub-btn-from-rx bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
                 </header>
-                <div id="international-cert-content" class="bg-white p-8 rounded-xl shadow-lg printable-cert">
-                    <h1 class="text-center font-bold text-lg mb-6">CERTIFICADO DE SALUD PARA LA EXPORTACIÓN DE ANIMALES DE COMPAÑÍA (PERROS, GATOS O HURONES)</h1>
+                <div id="prescription-content-generator" class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg">
+                    <header class="text-center pb-4 border-b-2 border-gray-100">
+                        <!-- IMPROVEMENT: Use hosted image -->
+                        <img src="logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/200x100/A3CBB2/FFFFFF?text=Logo';">
+                        <h1 class="text-2xl font-bold text-[#4A4A4A]">Dra. Alejandra Cautín Bastías</h1>
+                        <p class="text-[#7F8B96]">Médica Veterinaria</p>
+                        <p class="text-xs italic mt-2">"Cuidar no es solo curar, es acompañar con conciencia."</p>
+                    </header>
                     
-                    <section class="cert-section">
-                        <h2>1) Identificación del animal de compañía:</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                            <div class="cert-field"><strong>Nombre:</strong> <span id="cert-animal-nombre" class="ml-2"></span></div>
-                            <div class="cert-field"><strong>Especie:</strong> <span id="cert-animal-especie" class="ml-2"></span></div>
-                            <div class="cert-field"><strong>Raza:</strong> <span id="cert-animal-raza" class="ml-2"></span></div>
-                            <div class="cert-field"><strong>Sexo:</strong> <span id="cert-animal-sexo" class="ml-2"></span></div>
-                            <div class="cert-field"><strong>Color:</strong> <span id="cert-animal-color" class="ml-2"></span></div>
-                            <div class="cert-field"><strong>Fecha de nacimiento o edad:</strong> <span id="cert-animal-edad" class="ml-2"></span></div>
-                            <div class="cert-field"><strong>N° de microchip:</strong> <span id="cert-animal-microchip" class="ml-2"></span></div>
+                    <div class="my-6 p-4 bg-[#E0F5F0] rounded-lg no-print">
+                        <label for="rx-email" class="block text-sm font-medium mb-1">Correo del Tutor para envío:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="email" id="rx-email" placeholder="correo@example.com" class="w-full">
+                            <button type="button" id="send-email-btn" class="btn-tertiary px-4 py-2 rounded-lg font-semibold text-sm">Enviar</button>
                         </div>
-                    </section>
-            
-                    <section class="cert-section">
-                        <h2>2) Identificación del Dueño:</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                            <div class="cert-field"><strong>Nombre:</strong> <span id="cert-dueno-nombre" class="ml-2"></span></div>
-                            <div class="cert-field"><strong>RUN/RUT:</strong> <span id="cert-dueno-rut" class="ml-2"></span></div>
-                            <div class="cert-field"><strong>Teléfono:</strong> <span id="cert-dueno-telefono" class="ml-2"></span></div>
-                            <div class="cert-field md:col-span-2"><strong>Dirección:</strong> <span id="cert-dueno-direccion" class="ml-2"></span></div>
+                    </div>
+
+                    <section class="my-6 p-4 bg-[#E0F5F0] rounded-lg">
+                        <h2 class="text-xl font-bold text-[#4A4A4A] mb-4 text-center">Recetario Terapéutico Personalizado</h2>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                            <div><strong>Nº Ficha:</strong> <span id="rx-ficha-id"></span></div>
+                            <div><strong>Tutor Responsable:</strong> <span id="rx-tutor-name"></span></div>
+                            <div><strong>Paciente:</strong> <span id="rx-patient-name" class="capitalize"></span></div>
+                            <div><strong>RUT:</strong> <span id="rx-tutor-rut"></span></div>
+                            <div><strong>Especie:</strong> <span id="rx-species"></span></div>
+                            <div><strong>Fecha:</strong> <span id="rx-date"></span></div>
+                            <div><strong>Raza:</strong> <span id="rx-breed"></span></div>
+                            <div><strong>Edad:</strong> <span id="rx-age"></span></div>
                         </div>
-                    </section>
-            
-                    <section class="cert-section">
-                        <h2>3) El médico veterinario que suscribe certifica que el animal de compañía:</h2>
-                        <ul class="list-disc list-inside text-sm space-y-2">
-                            <li>Se encuentra clínicamente sano al examen físico, sin presentar tumoraciones, heridas frescas o en proceso de cicatrización, ni signo alguno de enfermedades infectocontagiosas, cuarentenables o transmisibles, ni presencia de parásitos externos y ha sido tratado contra estos últimos.</li>
-                            <li>Se encuentra inscrito o se ha solicitado su inscripción en el Registro Nacional de Mascotas.</li>
-                        </ul>
                     </section>
 
-                    <div id="cert-anexo-container"></div>
-            
-                    <section class="cert-section mt-8">
-                        <h2>4) Datos del médico veterinario firmante:</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                            <div class="cert-field"><strong>Nombre:</strong> <span class="ml-2">Alejandra Cautín Bastías</span></div>
-                            <div class="cert-field"><strong>RUN/RUT:</strong> <span class="ml-2">12.345.678-9</span></div>
-                            <div class="cert-field"><strong>Teléfono:</strong> <span class="ml-2">+56 9 7604 0797</span></div>
-                            <div class="cert-field md:col-span-2"><strong>Dirección:</strong> <span class="ml-2">Santiago, Chile</span></div>
-                            <div class="cert-field md:col-span-2">
-                                <strong>Fecha de la inspección física:</strong> 
-                                <span id="cert-fecha-inspeccion" class="ml-2"></span>
-                                <em class="ml-4 text-xs text-gray-500">*No debe ser mayor a 10 días previos a la fecha del embarque.</em>
-                            </div>
+                    <p class="text-sm text-[#7F8B96] my-6 text-center">Este recetario fue elaborado de forma personalizada tras la evaluación clínica de su mascota. Cada indicación fue explicada detalladamente. Ante cualquier duda, <strong>no modifique la dosis ni el tratamiento sin consultar previamente</strong>.</p>
+                    
+                    <form id="prescription-form">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-[#4A4A4A] mb-2 border-b pb-1">Tratamiento Indicado</h3>
+                            <textarea id="rx-treatment-notes" rows="10" class="w-full p-2 border rounded-lg" placeholder="Medicamento, dosis, frecuencia..."></textarea>
                         </div>
-                    </section>
-                     <p class="text-xs text-gray-600 mt-6">Nota: Los requisitos específicos según el destino deben adjuntarse a este certificado.</p>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-[#4A4A4A] mb-2 border-b pb-1">Indicaciones Adicionales</h3>
+                            <textarea id="rx-indications-notes" rows="6" class="w-full p-2 border rounded-lg" placeholder="Dieta, cuidados, próximo control..."></textarea>
+                        </div>
+
+                        <div class="my-6 p-4 bg-[#E0F5F0] rounded-lg">
+                            <h3 class="text-lg font-bold text-[#4A4A4A] mb-2">¿Qué hacer si...?</h3>
+                            <ul class="list-disc list-inside text-sm space-y-1">
+                                <li><strong>Olvida una dosis:</strong> Adminístrela tan pronto lo recuerde, a menos que ya sea casi la hora de la siguiente. En ese caso, omita la dosis olvidada y continúe con el horario regular. <strong>Nunca duplique la dosis.</strong></li>
+                                <li><strong>Su mascota vomita la medicina:</strong> No repita la dosis sin consultar. Anote la hora y el medicamento y contacte a su veterinario.</li>
+                                <li><strong>Nota efectos secundarios:</strong> Observe los síntomas (ej: letargo, diarrea, picazón) y contacte a su veterinario de inmediato.</li>
+                            </ul>
+                        </div>
+
+                        <footer class="text-center mt-8 pt-8 border-t">
+                            <p class="text-sm italic text-[#7F8B96] mb-4">Cuidar es un viaje, no un destino. Si necesita orientación, cuente conmigo.</p>
+                            <div class="text-xs text-[#7F8B96] mb-8 space-y-1">
+                                <p>📞 <strong>WhatsApp:</strong> +56 9 7604 0797</p>
+                                <p>📧 <strong>Correo:</strong> avmveterinaria@gmail.com</p>
+                                <p>📸 <strong>Instagram:</strong> @AleVeterinaria | Santiago, Chile</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-8 text-left mt-12">
+                                <div>
+                                    <p class="font-bold text-[#4A4A4A] mb-2">Timbre Médico:</p>
+                                    <div class="h-24 border border-gray-300 border-dashed rounded-md flex items-center justify-center">
+                                        <!-- IMPROVEMENT: Use hosted image -->
+                                        <img id="rx-timbre" src="timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-[#4A4A4A] mb-2">Firma del Médico:</p>
+                                    <div class="h-24 border-b-2 border-gray-500 flex flex-col justify-end items-center">
+                                        <p class="font-semibold">Dra. Alejandra Cautín Bastías</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </footer>
+                        <div class="flex justify-end items-center gap-4 mt-8 no-print">
+                            <button type="button" id="download-pdf-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Descargar PDF</button>
+                            <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Receta</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-
-            <!-- Comprobante de Microchip View -->
-            <div id="view-microchip-certificate" class="view">
-                <header class="flex justify-between items-center mb-4 no-print">
-                    <h1 class="text-3xl font-bold text-[#4A4A4A]">Comprobante de Existencia de Microchip</h1>
-                    <div class="flex gap-2">
-                        <button id="download-microchip-cert-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Descargar PDF</button>
-                        <button class="back-to-hub-btn-from-cert bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
-                    </div>
+            
+            <!-- NEW: Printable Exam Order View -->
+            <div id="view-exam-order-printable" class="view">
+                 <header class="flex justify-between items-center mb-4 no-print">
+                     <h1 class="text-3xl font-bold text-[#4A4A4A]">Orden de Examen</h1>
+                    <button class="back-to-hub-btn-from-exam-order bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
                 </header>
-                <div id="microchip-cert-content" class="bg-white p-8 rounded-xl shadow-lg printable-cert font-sans">
-                    <header class="flex justify-between items-center pb-4 border-b">
-                        <div>
-                            <h2 class="font-bold text-xl">Comprobante de Existencia para registro con microchip</h2>
-                            <p class="text-sm">Mascotas y Animales de Compañía</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-bold text-lg">SUBDERE</p>
-                            <p class="text-xs">Gobierno de Chile</p>
-                        </div>
+                <div id="exam-order-content-generator" class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg">
+                    <!-- Header similar to prescription -->
+                    <header class="text-center pb-4 border-b-2 border-gray-100">
+                        <img src="logo1.png" alt="Logo" class="w-40 h-auto mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/200x100/A3CBB2/FFFFFF?text=Logo';">
+                        <h1 class="text-2xl font-bold text-[#4A4A4A]">Dra. Alejandra Cautín Bastías</h1>
+                        <p class="text-[#7F8B96]">Médica Veterinaria</p>
                     </header>
-        
-                    <div class="grid grid-cols-4 gap-6 mt-6">
-                        <div class="col-span-3">
-                            <section class="mb-6">
-                                <h3 class="font-bold border-b pb-1 mb-2">DATOS ANIMAL</h3>
-                                <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                                    <p><strong>Nombre:</strong> <span id="mc-animal-nombre"></span></p>
-                                    <div class="flex items-center">
-                                        <strong class="mr-2">Especie:</strong>
-                                        <div class="checkbox-label"><span id="mc-animal-especie-perro" class="checkbox-symbol">☐</span> Perro</div>
-                                        <div class="checkbox-label"><span id="mc-animal-especie-gato" class="checkbox-symbol">☐</span> Gato</div>
-                                    </div>
-                                    <p><strong>Raza:</strong> <span id="mc-animal-raza"></span></p>
-                                    <div class="flex items-center">
-                                        <strong class="mr-2">Sexo:</strong>
-                                        <div class="checkbox-label"><span id="mc-animal-sexo-macho" class="checkbox-symbol">☐</span> Macho</div>
-                                        <div class="checkbox-label"><span id="mc-animal-sexo-hembra" class="checkbox-symbol">☐</span> Hembra</div>
-                                    </div>
-                                    <p><strong>Color:</strong> <span id="mc-animal-color"></span></p>
-                                    <div class="flex items-center">
-                                        <strong class="mr-2">Esterilizado:</strong>
-                                        <div class="checkbox-label"><span id="mc-animal-esterilizado-si" class="checkbox-symbol">☐</span> Sí</div>
-                                        <div class="checkbox-label"><span id="mc-animal-esterilizado-no" class="checkbox-symbol">☐</span> No</div>
-                                    </div>
-                                    <p><strong>Fecha nacimiento:</strong> <span id="mc-animal-fecha-nacimiento"></span></p>
-                                </div>
-                            </section>
-                        </div>
-                        <div class="col-span-1">
-                            <div class="border-2 border-dashed h-full flex items-center justify-center p-2 text-center text-gray-500 text-sm">
-                                Pegue aquí la etiqueta del microchip
-                            </div>
+                    
+                    <div class="my-6 p-4 bg-[#E0F5F0] rounded-lg no-print">
+                        <label for="exam-order-email" class="block text-sm font-medium mb-1">Correo del Tutor para envío:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="email" id="exam-order-email" placeholder="correo@example.com" class="w-full">
+                            <button type="button" id="send-exam-order-email-btn" class="btn-tertiary px-4 py-2 rounded-lg font-semibold text-sm">Enviar</button>
                         </div>
                     </div>
-        
-                    <section class="grid grid-cols-3 gap-4 text-sm mb-6">
-                        <div>
-                            <h3 class="font-bold mb-1">Tipo de procedimiento:</h3>
-                            <div class="checkbox-label"><span id="mc-proc-implantacion" class="checkbox-symbol">☐</span> Implantación</div>
-                            <div class="checkbox-label"><span id="mc-proc-verificacion" class="checkbox-symbol">☐</span> Verificación</div>
-                        </div>
-                        <div>
-                            <h3 class="font-bold mb-1">Modo de obtención:</h3>
-                            <div class="checkbox-label"><span id="mc-obt-recogido" class="checkbox-symbol">☐</span> Recogido</div>
-                            <div class="checkbox-label"><span id="mc-obt-reubicacion" class="checkbox-symbol">☐</span> Reubicación</div>
-                            <div class="checkbox-label"><span id="mc-obt-regalo" class="checkbox-symbol">☐</span> Regalo</div>
-                            <div class="checkbox-label"><span id="mc-obt-nacido" class="checkbox-symbol">☐</span> Nacido en casa</div>
-                            <div class="checkbox-label"><span id="mc-obt-compra" class="checkbox-symbol">☐</span> Compra</div>
-                        </div>
-                        <div>
-                            <h3 class="font-bold mb-1">Razón Tenencia:</h3>
-                            <div class="checkbox-label"><span id="mc-ten-compania" class="checkbox-symbol">☐</span> Compañía</div>
-                            <div class="checkbox-label"><span id="mc-ten-asistencia" class="checkbox-symbol">☐</span> Asistencia</div>
-                            <div class="checkbox-label"><span id="mc-ten-terapia" class="checkbox-symbol">☐</span> Terapia</div>
+
+                    <section class="my-6 p-4 bg-[#E0F5F0] rounded-lg">
+                        <h2 class="text-xl font-bold text-[#4A4A4A] mb-4 text-center">Orden de Examen</h2>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                            <div><strong>Nº Ficha:</strong> <span id="exam-order-ficha-id"></span></div>
+                            <div><strong>Tutor:</strong> <span id="exam-order-tutor-name"></span></div>
+                            <div><strong>Paciente:</strong> <span id="exam-order-patient-name" class="capitalize"></span></div>
+                            <div><strong>RUT:</strong> <span id="exam-order-tutor-rut"></span></div>
+                            <div><strong>Especie:</strong> <span id="exam-order-species"></span></div>
+                            <div><strong>Fecha Orden:</strong> <span id="exam-order-printable-date"></span></div>
                         </div>
                     </section>
-        
-                    <section class="mb-6">
-                        <h3 class="font-bold border-b pb-1 mb-2">DATOS MÉDICO VETERINARIO</h3>
-                         <p class="text-xs text-gray-500 mb-2">*En el caso del Tipo de procedimiento 'Verificación', los datos pueden ser de un Técnico Veterinario.</p>
-                        <div class="grid grid-cols-2 gap-4 text-sm">
-                            <p><strong>Nombres:</strong> <span>Alejandra</span></p>
-                            <p><strong>Apellidos:</strong> <span>Cautín Bastías</span></p>
-                            <p><strong>Rut:</strong> <span>12.345.678-9</span></p>
-                            <p><strong>Comuna:</strong> <span>Santiago</span></p>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-bold text-[#4A4A4A] mb-2 border-b pb-1">Exámenes Solicitados</h3>
+                        <p id="exam-order-details" class="whitespace-pre-wrap p-2 bg-gray-50 rounded-lg"></p>
+                    </div>
+                    <div class="mb-6">
+                        <h3 class="text-lg font-bold text-[#4A4A4A] mb-2 border-b pb-1">Indicaciones para el Tutor</h3>
+                        <p id="exam-order-printable-instructions" class="whitespace-pre-wrap p-2 bg-gray-50 rounded-lg"></p>
+                    </div>
+
+                    <footer class="text-center mt-8 pt-8 border-t">
+                        <!-- Footer similar to prescription -->
+                        <div class="grid grid-cols-2 gap-8 text-left mt-12">
                             <div>
-                                <strong class="mr-2">Calidad:</strong>
-                                <div class="checkbox-label inline-flex"><span class="checkbox-symbol">☑</span> Médico Veterinario</div>
-                                <div class="checkbox-label inline-flex"><span class="checkbox-symbol">☐</span> Técnico Veterinario</div>
+                                <p class="font-bold text-[#4A4A4A] mb-2">Timbre Médico:</p>
+                                <div class="h-24 border border-gray-300 border-dashed rounded-md flex items-center justify-center">
+                                    <img src="https://alecautin8.github.io/AleVeterinaria/assets/timbre.png" alt="Timbre Médico" class="max-h-full max-w-full object-contain p-2" onerror="this.onerror=null; this.src='https://placehold.co/150x100/CFEDEC/4B4B4B?text=Timbre';">
+                                </div>
                             </div>
-                            <p><strong>Fecha procedimiento:</strong> <span id="mc-fecha-procedimiento"></span></p>
-                        </div>
-                        <div class="mt-8 pt-8 text-center">
-                            <div class="inline-block border-t-2 w-64">
-                                <p class="text-sm">Firma y Timbre</p>
+                            <div>
+                                <p class="font-bold text-[#4A4A4A] mb-2">Firma del Médico:</p>
+                                <div class="h-24 border-b-2 border-gray-500"></div>
                             </div>
                         </div>
-                    </section>
+                    </footer>
+                    <div class="flex justify-end items-center gap-4 mt-8 no-print">
+                        <button type="button" id="download-exam-order-pdf-btn" class="btn-secondary px-5 py-2 rounded-lg font-semibold">Descargar PDF</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -694,79 +635,134 @@
 
     <!-- ===== Modals ===== -->
     <div id="login-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
-        <!-- ... (Contenido sin cambios) ... -->
-    </div>
-    <div id="notification-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50">
-        <!-- ... (Contenido sin cambios) ... -->
-    </div>
-    <div id="delete-confirmation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50">
-        <!-- ... (Contenido sin cambios) ... -->
-    </div>
-    <div id="consultation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 p-4">
-        <!-- ... (Contenido sin cambios) ... -->
-    </div>
-    <div id="vaccine-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
-        <!-- ... (Contenido sin cambios) ... -->
-    </div>
-    <div id="deworming-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
-        <!-- ... (Contenido sin cambios) ... -->
-    </div>
-    <div id="exam-order-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60 p-4">
-        <!-- ... (Contenido sin cambios) ... -->
-    </div>
-    <div id="exam-result-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
-        <!-- ... (Contenido sin cambios) ... -->
-    </div>
-    <div id="service-detail-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
-        <!-- ... (Contenido sin cambios) ... -->
-    </div>
-    
-    <div id="certificate-details-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60 p-4">
-        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative modal-content">
-            <button id="close-certificate-details-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-md m-4 relative">
+            <button id="close-login-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
-            <h2 id="certificate-modal-title" class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Detalles del Certificado</h2>
-            <form id="certificate-details-form" class="space-y-4">
-                <!-- Campos para viaje -->
-                <div id="certificate-form-destination-container" class="hidden">
-                    <label for="certificate-destination" class="block text-sm font-medium text-[#7F8B96] mb-1">País de Destino</label>
-                    <input id="certificate-destination" type="text" class="w-full">
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Iniciar Sesión</h2>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="login-email" class="block text-sm font-medium text-[#7F8B96] mb-1">Correo Electrónico</label>
+                    <input id="login-email" type="email" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ring-accent">
                 </div>
-                <div id="certificate-form-travel-date-container" class="hidden">
-                    <label for="certificate-travel-date" class="block text-sm font-medium text-[#7F8B96] mb-1">Fecha de Viaje / Embarque</label>
-                    <input id="certificate-travel-date" type="date" class="w-full">
+                <div class="mb-6">
+                    <label for="login-password" class="block text-sm font-medium text-[#7F8B96] mb-1">Contraseña</label>
+                    <input id="login-password" type="password" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ring-accent">
                 </div>
-                
-                <!-- Campos para Microchip -->
-                <div id="certificate-form-microchip-container" class="hidden space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-[#7F8B96] mb-2">Modo de obtención</label>
-                        <select id="certificate-obtencion" class="w-full">
-                            <option value="Recogido">Recogido</option>
-                            <option value="Reubicacion">Reubicación</option>
-                            <option value="Regalo">Regalo</option>
-                            <option value="Nacido en casa">Nacido en casa</option>
-                            <option value="Compra">Compra</option>
-                        </select>
-                    </div>
-                     <div>
-                        <label class="block text-sm font-medium text-[#7F8B96] mb-2">Razón de Tenencia Principal</label>
-                        <select id="certificate-tenencia" class="w-full">
-                            <option value="Compañia">Compañía</option>
-                            <option value="Asistencia">Asistencia</option>
-                            <option value="Terapia">Terapia</option>
-                            <option value="Trabajo">Trabajo</option>
-                            <option value="Seguridad">Seguridad</option>
-                        </select>
-                    </div>
+                <button id="login-btn" type="submit" class="w-full btn-secondary py-3 rounded-lg text-lg font-bold shadow-md transform hover:scale-105 transition-transform">Ingresar</button>
+            </form>
+        </div>
+    </div>
+    <div id="notification-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><p id="notification-message" class="text-lg text-[#4A4A4A]"></p><button id="notification-close-btn" class="mt-6 btn-secondary px-5 py-2 rounded-lg font-semibold">Cerrar</button></div></div>
+    <div id="delete-confirmation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><h3 class="text-xl font-bold text-gray-800">Confirmar Eliminación</h3><p id="delete-confirmation-message" class="text-[#7F8B96] my-4"></p><p class="text-sm text-red-600 font-semibold">Esta acción no se puede deshacer.</p><div class="flex justify-center gap-4 mt-6"><button id="cancel-delete-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button><button id="confirm-delete-btn" class="btn-danger px-5 py-2 rounded-lg font-semibold">Eliminar Permanentemente</button></div></div></div>
+    <!-- IMPROVEMENT: Responsive Consultation Modal -->
+    <div id="consultation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 p-4"><div class="bg-[#FFFFFF] rounded-xl shadow-xl p-6 m-4 max-w-4xl w-full flex flex-col"><h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Nueva Consulta</h2><form id="consultation-form" class="space-y-6 overflow-y-auto pr-4 modal-content"><section><h3 class="text-lg font-medium text-[#4A4A4A] mb-2">Anamnesis Remota (Editable)</h3><textarea id="modal-anamnesis-remota" rows="4" class="w-full p-2 border rounded-lg"></textarea></section><section><h3 class="text-lg font-medium section-header">III. Historial Médico</h3><h4 class="text-md font-semibold text-[#4A4A4A] mb-2">A. Motivo de Consulta (MC)</h4><div class="grid grid-cols-1 gap-4"><div><label for="modal-mc-fecha" class="block text-sm">Fecha de Consulta:</label><input type="date" id="modal-mc-fecha"></div><div><label for="modal-mc-sintomas" class="block text-sm">Síntomas Principales y Duración:</label><textarea id="modal-mc-sintomas" rows="2"></textarea></div></div><h4 class="text-md font-semibold text-[#4A4A4A] mt-4 mb-2">B. Anamnesis (de la consulta)</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="modal-anamnesis-sintomas" class="block text-sm">Síntomas Adicionales:</label><textarea id="modal-anamnesis-sintomas" rows="2"></textarea></div><div><label for="modal-anamnesis-cambios" class="block text-sm">Cambios Recientes:</label><textarea id="modal-anamnesis-cambios" rows="2"></textarea></div><div><label for="modal-anamnesis-medicamentos" class="block text-sm">Medicamentos Actuales:</label><input type="text" id="modal-anamnesis-medicamentos"></div><div><label for="modal-anamnesis-historial" class="block text-sm">Historial Enfermedades/Cirurgías:</label><textarea id="modal-anamnesis-historial" rows="2"></textarea></div><div><label for="modal-anamnesis-alergias" class="block text-sm">Alergias Conocidas:</label><input type="text" id="modal-anamnesis-alergias"></div><div><label for="modal-anamnesis-habitos" class="block text-sm">Hábitos de Eliminación:</label><input type="text" id="modal-anamnesis-habitos"></div><div><label for="modal-anamnesis-dieta" class="block text-sm">Dieta Actual:</label><input type="text" id="modal-anamnesis-dieta"></div><div><label for="modal-anamnesis-actividad" class="block text-sm">Nivel de Actividad:</label><input type="text" id="modal-anamnesis-actividad"></div><div class="md:col-span-2"><label for="modal-anamnesis-ambiente" class="block text-sm">Ambiente:</label><input type="text" id="modal-anamnesis-ambiente"></div></div></section><section><h3 class="text-lg font-medium section-header">IV. Examen Físico General</h3><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div><label for="modal-efg-temp" class="block text-sm">Temp:</label><input type="text" id="modal-efg-temp"></div><div><label for="modal-efg-fc" class="block text-sm">FC:</label><input type="text" id="modal-efg-fc"></div><div><label for="modal-efg-fr" class="block text-sm">FR:</label><input type="text" id="modal-efg-fr"></div><div><label for="modal-efg-trc" class="block text-sm">TRC:</label><input type="text" id="modal-efg-trc"></div></div><div class="mt-4"><label for="modal-efg-hallazgos" class="block text-sm">Hallazgos Examen Físico:</label><textarea id="modal-efg-hallazgos" rows="4"></textarea></div></section><section><h3 class="text-lg font-medium section-header">V. Diagnóstico y Plan</h3><div><label for="modal-diag-presuntivo" class="block text-sm">Diagnóstico Presuntivo:</label><textarea id="modal-diag-presuntivo" rows="2"></textarea></div><div class="mt-4"><label for="modal-diag-diferencial" class="block text-sm">Diagnóstico Diferencial:</label><textarea id="modal-diag-diferencial" rows="2"></textarea></div><div class="mt-4"><label for="modal-plan-terapeutico" class="block text-sm">Plan Terapéutico:</label><textarea id="modal-plan-terapeutico" rows="3"></textarea></div></section><section><h3 class="text-lg font-medium section-header">VI. Notas Adicionales y Seguimiento</h3><div><label for="modal-notas-adicionales" class="block text-sm">Observaciones Veterinarias:</label><textarea id="modal-notas-adicionales" rows="3"></textarea></div><div class="mt-4"><label for="modal-proxima-cita" class="block text-sm">Próxima Cita/Revisión:</label><input type="text" id="modal-proxima-cita"></div></section><div class="flex justify-end gap-4 mt-4 pt-4 border-t"><button id="cancel-consultation-btn" type="button" class="bg-gray-300 px-4 py-2 rounded-lg">Cancelar</button><button id="save-consultation-btn" type="submit" class="btn-primary px-4 py-2 rounded-lg">Guardar Consulta</button></div></form></div></div>
+    <div id="vaccine-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
+            <button id="close-vaccine-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Registrar Vacuna</h2>
+            <form id="vaccine-form" class="space-y-4">
+                <div>
+                    <label for="vaccine-date" class="block text-sm font-medium text-[#7F8B96] mb-1">Fecha de Aplicación</label>
+                    <input id="vaccine-date" type="date" required class="w-full">
                 </div>
-
+                <div>
+                    <label for="vaccine-type" class="block text-sm font-medium text-[#7F8B96] mb-1">Tipo de Vacuna</label>
+                    <select id="vaccine-type" required class="w-full"></select>
+                </div>
+                <div>
+                    <label for="vaccine-brand" class="block text-sm font-medium text-[#7F8B96] mb-1">Marca y Lote</label>
+                    <input id="vaccine-brand" type="text" placeholder="Ej: Nobivac KC, Lote 12345" class="w-full">
+                </div>
+                <div>
+                    <label for="vaccine-next-dose" class="block text-sm font-medium text-[#7F8B96] mb-1">Próxima Dosis</label>
+                    <input id="vaccine-next-dose" type="date" class="w-full">
+                </div>
                 <div class="flex justify-end gap-4 pt-4">
-                    <button type="button" id="cancel-certificate-details-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
-                    <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Generar Certificado</button>
+                    <button type="button" id="cancel-vaccine-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
+                    <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Vacuna</button>
                 </div>
             </form>
+        </div>
+    </div>
+    <!-- IMPROVEMENT: Responsive Exam Order Modal -->
+    <div id="exam-order-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60 p-4">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-2xl m-4 relative flex flex-col modal-content">
+            <button id="close-exam-order-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6 flex-shrink-0">Crear Orden de Examen</h2>
+            <form id="exam-order-form" class="space-y-4 flex-grow flex flex-col min-h-0">
+                <div class="flex-shrink-0">
+                    <label for="exam-order-date" class="block text-sm font-medium text-[#7F8B96] mb-1">Fecha de Orden</label>
+                    <input id="exam-order-date" type="date" required class="w-full">
+                </div>
+                <div class="flex border-b flex-shrink-0">
+                    <button type="button" data-tab="laboratorio" class="exam-tab-btn flex-1 p-2 font-semibold active">Laboratorio</button>
+                    <button type="button" data-tab="imagenes" class="exam-tab-btn flex-1 p-2 font-semibold">Imágenes</button>
+                </div>
+                <div class="flex-grow overflow-y-auto">
+                    <div id="exam-tab-laboratorio" class="exam-tab-content active">
+                        <label class="block text-sm font-medium text-[#7F8B96] mb-1">Seleccionar Exámenes</label>
+                        <div id="exam-list-container" class="h-64 overflow-y-auto border rounded-lg p-2 bg-gray-50 space-y-1">
+                            <!-- Exam checkboxes will be inserted here -->
+                        </div>
+                    </div>
+                     <div id="exam-tab-imagenes" class="exam-tab-content">
+                        <label class="block text-sm font-medium text-[#7F8B96] mb-1">Seleccionar Exámenes de Imagen</label>
+                        <div id="imaging-list-container" class="h-64 overflow-y-auto border rounded-lg p-2 bg-gray-50 space-y-1">
+                            <!-- Imaging exam accordions will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-shrink-0">
+                    <label for="exam-order-instructions" class="block text-sm font-medium text-[#7F8B96] mb-1">Indicaciones para el Tutor</label>
+                    <textarea id="exam-order-instructions" rows="4" placeholder="Las indicaciones se agregarán automáticamente..." class="w-full"></textarea>
+                </div>
+                <div class="flex justify-end gap-4 pt-4 flex-shrink-0">
+                    <button type="button" id="cancel-exam-order-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
+                    <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Orden</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="exam-result-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
+            <button id="close-exam-result-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Agregar Resultados de Examen</h2>
+            <form id="exam-result-form" class="space-y-4">
+                <div>
+                    <label for="exam-result-date" class="block text-sm font-medium text-[#7F8B96] mb-1">Fecha de Resultados</label>
+                    <input id="exam-result-date" type="date" required class="w-full">
+                </div>
+                <div>
+                    <label for="exam-result-description" class="block text-sm font-medium text-[#7F8B96] mb-1">Descripción</label>
+                    <input id="exam-result-description" type="text" placeholder="Ej: Resultados de Perfil Bioquímico" class="w-full">
+                </div>
+                <div>
+                    <label for="exam-result-file" class="block text-sm font-medium text-[#7F8B96] mb-1">Adjuntar Archivo (PDF, JPG, etc.)</label>
+                    <input id="exam-result-file" type="file" class="w-full">
+                    <!-- IMPROVEMENT: File upload status message -->
+                    <p id="file-upload-status" class="text-xs text-[var(--text-muted)] mt-1"></p>
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="cancel-exam-result-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button>
+                    <button type="submit" class="btn-primary px-5 py-2 rounded-lg font-semibold">Guardar Resultados</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="service-detail-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
+        <div class="bg-[#FFFFFF] p-8 rounded-xl shadow-lg w-full max-w-lg m-4 relative">
+            <button id="close-service-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 id="service-modal-title" class="text-2xl font-bold text-center text-[#4A4A4A] mb-6"></h2>
+            <p id="service-modal-description" class="text-[#7F8B96]"></p>
         </div>
     </div>
     
@@ -775,8 +771,7 @@
         // --- Application State ---
         let currentPatientId = null;
         let currentPatientSpecies = null;
-        let currentPatientData = null;
-        let currentCertificateTemplate = null;
+        let currentPatientData = null; // Store full patient data for reuse
 
         // --- DOM Element References ---
         const views = {
@@ -785,10 +780,7 @@
             patientHub: document.getElementById('view-patient-hub'),
             editPatientData: document.getElementById('view-edit-patient-data'),
             prescription: document.getElementById('view-prescription'),
-            examOrderPrintable: document.getElementById('view-exam-order-printable'),
-            certificateGenerator: document.getElementById('view-certificate-generator'),
-            internationalTravelCertificate: document.getElementById('view-international-travel-certificate'),
-            microchipCertificate: document.getElementById('view-microchip-certificate'),
+            examOrderPrintable: document.getElementById('view-exam-order-printable'), // NEW
         };
         const appContainer = document.getElementById('app-container');
         const modals = { 
@@ -797,11 +789,9 @@
             consultation: document.getElementById('consultation-modal'),
             deleteConfirmation: document.getElementById('delete-confirmation-modal'),
             vaccine: document.getElementById('vaccine-modal'),
-            deworming: document.getElementById('deworming-modal'),
             examOrder: document.getElementById('exam-order-modal'),
             examResult: document.getElementById('exam-result-modal'),
             serviceDetail: document.getElementById('service-detail-modal'),
-            certificateDetails: document.getElementById('certificate-details-modal'),
         };
         
         // --- Navigation & Modal Functions ---
@@ -825,117 +815,6 @@
             messageEl.classList.toggle('text-red-600', isError);
             showModal('notification');
         }
-        
-        function updateBreedDropdown(species, selectedBreed = '') {
-            const breedSelect = document.getElementById('data-breed');
-            const otherBreedContainer = document.getElementById('data-breed-other-container');
-            const otherBreedInput = document.getElementById('data-breed-other');
-            breedSelect.innerHTML = '';
-
-            const canineBreeds = [
-                "Mestizo", "Affenpinscher", "Aidi", "Airedale Terrier", "Akita Inu", "Akita Americano", "Alano Español",
-                "Alaskan Klee Kai", "Alaskan Malamute", "American Bully", "American Foxhound", "American Pit Bull Terrier",
-                "American Staffordshire Terrier", "Antiguo Perro Pastor Inglés (Bobtail)", "Appenzeller", "Ariegeois",
-                "Artois", "Australian Cattle Dog (Boyero Australiano)", "Australian Shepherd (Pastor Australiano)",
-                "Australian Silky Terrier", "Australian Stumpy Tail Cattle Dog", "Azawakh",
-                "Balkan Hound", "Basenji", "Basset Azul de Gascuña", "Basset Hound", "Basset Leonado de Bretaña",
-                "Beagle", "Beagle Harrier", "Bearded Collie", "Beauceron", "Bedlington Terrier", "Bergamasco",
-                "Bichon Boloñés", "Bichon Frisé", "Bichon Habanero", "Billy", "Black and Tan Coonhound",
-                "Bloodhound (Perro de San Huberto)", "Boerboel", "Border Collie", "Border Terrier", "Borzoi",
-                "Boston Terrier", "Bouvier de Flandes", "Boxer", "Boyero de Appenzell", "Boyero de Berna",
-                "Boyero de Entlebuch", "Braco Alemán de Pelo Corto", "Braco Alemán de Pelo Duro", "Braco de Auvernia",
-                "Braco de Weimar", "Braco Francés", "Braco Húngaro (Vizsla)", "Braco Italiano", "Bull Terrier",
-                "Bulldog Americano", "Bulldog Francés", "Bulldog Inglés", "Bullmastiff",
-                "Cairn Terrier", "Cane Corso", "Caniche (Poodle)", "Cavalier King Charles Spaniel", "Chihuahua",
-                "Chin Japonés", "Chow Chow", "Cirneco del Etna", "Clumber Spaniel", "Cocker Spaniel Americano",
-                "Cocker Spaniel Inglés", "Collie de Pelo Corto", "Collie de Pelo Largo", "Coton de Tulear",
-                "Curly Coated Retriever",
-                "Dálmata", "Dandie Dinmont Terrier", "Deerhound", "Doberman", "Dogo Argentino", "Dogo de Burdeos",
-                "Dogo del Tíbet", "Drentse Patrijshond",
-                "Elkhound Noruego", "Epagneul Bretón", "Eurasier",
-                "Field Spaniel", "Fila Brasileiro", "Flat-Coated Retriever", "Fox Terrier de Pelo Duro",
-                "Fox Terrier de Pelo Liso", "Foxhound Inglés",
-                "Galgo Afgano", "Galgo Español", "Galgo Húngaro (Magyar Agár)", "Galgo Inglés (Greyhound)",
-                "Galgo Italiano", "Galgo Persa (Saluki)", "Gascon Saintongeois", "Golden Retriever", "Gordon Setter",
-                "Gran Danés (Dogo Alemán)", "Gran Gascón de Saintonge", "Gran Munsterlander", "Gran Perro Japonés",
-                "Grifón Azul de Gascuña", "Grifón de Bruselas", "Grifón Vendeano",
-                "Harrier", "Hovawart", "Husky Siberiano",
-                "Ibizan Hound (Podenco Ibicenco)", "Irish Soft Coated Wheaten Terrier", "Irish Terrier",
-                "Irish Water Spaniel", "Irish Wolfhound (Lobero Irlandés)",
-                "Jack Russell Terrier",
-                "Keeshond", "Kerry Blue Terrier", "Komondor", "Kooikerhondje", "Kuvasz",
-                "Labrador Retriever", "Lagotto Romagnolo", "Lakeland Terrier", "Landseer", "Lebrel Húngaro",
-                "Leonberger", "Lhasa Apso", "Lowchen",
-                "Maltés", "Manchester Terrier", "Mastín Español", "Mastín Inglés", "Mastín Napolitano",
-                "Mastín Tibetano", "Mudi",
-                "Nova Scotia Duck Tolling Retriever",
-                "Otterhound",
-                "Papillón", "Parson Russell Terrier", "Pastor Alemán", "Pastor Australiano", "Pastor Belga Groenendael",
-                "Pastor Belga Laekenois", "Pastor Belga Malinois", "Pastor Belga Tervueren", "Pastor Blanco Suizo",
-                "Pastor Catalán", "Pastor de Anatolia", "Pastor de los Pirineos", "Pastor de Shetland (Sheltie)",
-                "Pastor Polaco de las Llanuras", "Pastor Vasco", "Pekinés", "Pequeño Lebrel Italiano",
-                "Perdiguero de Burgos", "Perdiguero Portugués", "Perro de Agua Americano", "Perro de Agua Español",
-                "Perro de Agua Irlandés", "Perro de Agua Portugués", "Perro de Montaña de los Pirineos",
-                "Perro Lobo Checoslovaco", "Perro Lobo de Saarloos", "Pharaoh Hound", "Pinscher Alemán",
-                "Pinscher Miniatura", "Podenco Canario", "Podenco Ibicenco", "Podenco Portugués", "Pointer",
-                "Porcelaine", "Pudelpointer", "Pug (Carlino)", "Puli", "Pumi",
-                "Rafeiro do Alentejo", "Ratón de Praga", "Ratonero Bodeguero Andaluz", "Rhodesian Ridgeback",
-                "Rottweiler",
-                "Sabueso Español", "Sabueso Finlandés", "Sabueso Suizo", "Saluki", "Samoyedo", "San Bernardo",
-                "Schapendoes", "Schnauzer Gigante", "Schnauzer Mediano", "Schnauzer Miniatura", "Scottish Terrier",
-                "Sealyham Terrier", "Setter Gordon", "Setter Inglés", "Setter Irlandés", "Shar Pei", "Shiba Inu",
-                "Shih Tzu", "Shikoku", "Skye Terrier", "Sloughi", "Smousholland", "Spinone Italiano",
-                "Spitz Alemán", "Spitz Finlandés", "Spitz Japonés", "Staffordshire Bull Terrier", "Sussex Spaniel",
-                "Teckel (Dachshund)", "Terranova", "Terrier Australiano", "Terrier Brasileño", "Terrier Chileno",
-                "Terrier Checo", "Terrier de Airedale", "Terrier Escocés", "Terrier Galés", "Terrier Irlandés",
-                "Terrier Japonés", "Terrier Negro Ruso", "Terrier Tibetano", "Tosa Inu",
-                "Volpino Italiano",
-                "Weimaraner", "Welsh Corgi Cardigan", "Welsh Corgi Pembroke", "Welsh Springer Spaniel",
-                "Welsh Terrier", "West Highland White Terrier", "Whippet",
-                "Xoloitzcuintle",
-                "Yorkshire Terrier",
-                "Otro"
-            ];
-
-            const felineBreeds = [
-                "Doméstico de Pelo Corto", "Doméstico de Pelo Largo", "Abisinio", "American Bobtail", "American Curl", "American Shorthair", "American Wirehair",
-                "Azul Ruso", "Balinés", "Bengalí (Bengala)", "Birmano", "Bombay", "Bosque de Noruega", "British Shorthair", "Burmés", "Burmilla",
-                "Chartreux", "Chausie", "Cornish Rex", "Devon Rex", "Don Sphynx", "Exótico de Pelo Corto", "Gato de Angora Turco", "Gato Europeo",
-                "Habana Brown", "Himalayo", "Javanés", "Korat", "Khao Manee", "LaPerm", "Lykoi", "Maine Coon", "Manx",
-                "Ocicat", "Oriental de Pelo Corto", "Oriental de Pelo Largo", "Persa", "Peterbald", "Pixie-bob",
-                "Ragamuffin", "Ragdoll", "Sagrado de Birmania", "Savannah", "Scottish Fold", "Selkirk Rex", "Siamés", "Siberiano", "Singapura",
-                "Snowshoe", "Somalí", "Sphynx (Gato Esfinge)", "Tonkinés", "Toyger", "Van Turco", "Otro"
-            ];
-
-            const ferretBreeds = ["Estándar", "Angora", "Otro"];
-
-            let breeds;
-            if (species === 'Felina') {
-                breeds = felineBreeds;
-            } else if (species === 'Hurón') {
-                breeds = ferretBreeds;
-            } else {
-                breeds = canineBreeds;
-            }
-
-            breeds.forEach(breed => {
-                const option = document.createElement('option');
-                option.value = breed;
-                option.textContent = breed;
-                breedSelect.appendChild(option);
-            });
-
-            if (selectedBreed && !breeds.includes(selectedBreed)) {
-                breedSelect.value = 'Otro';
-                otherBreedInput.value = selectedBreed;
-                otherBreedContainer.classList.remove('hidden');
-            } else if (selectedBreed) {
-                breedSelect.value = selectedBreed;
-                otherBreedContainer.classList.add('hidden');
-            } else {
-                otherBreedContainer.classList.add('hidden');
-            }
-        }
 
         // --- Patient Hub Logic ---
         async function openPatientHub(patientId) {
@@ -946,7 +825,7 @@
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                currentPatientData = { id: docSnap.id, ...data };
+                currentPatientData = { id: docSnap.id, ...data }; // Store patient data
                 currentPatientSpecies = data.species; 
                 document.getElementById('hub-patient-name').textContent = data.name || 'Paciente sin nombre';
                 document.getElementById('hub-patient-id').textContent = `Nº Ficha: ${patientId}`;
@@ -970,7 +849,6 @@
                 loadConsultationHistory(patientId);
                 loadPrescriptionHistory(patientId);
                 loadVaccineHistory(patientId);
-                loadDewormingHistory(patientId);
                 loadExamHistory(patientId);
                 navigateTo('patientHub', patientId);
             } else {
@@ -1074,6 +952,7 @@
             const form = document.getElementById('patient-data-form');
             form.reset();
             if (patientId) {
+                // If data is already loaded, use it. Otherwise fetch.
                 if (currentPatientData && currentPatientData.id === patientId) {
                     loadPatientDataIntoForm(currentPatientData, patientId);
                 } else {
@@ -1087,8 +966,6 @@
                 }
             } else {
                 document.getElementById('data-ficha-number').textContent = 'Se generará al guardar';
-                document.querySelector('input[name="species"][value="Canina"]').checked = true;
-                updateBreedDropdown('Canina');
             }
             navigateTo('editPatientData', patientId);
         }
@@ -1103,15 +980,12 @@
             document.getElementById('data-tutor-city').value = data.tutorCity || '';
             document.getElementById('data-tutor-address').value = data.tutorAddress || '';
             document.getElementById('data-patient-name').value = data.name || '';
-            
-            const species = data.species || 'Canina';
-            document.querySelector(`#view-edit-patient-data input[name="species"][value="${species}"]`).checked = true;
-            updateBreedDropdown(species, data.breed);
-
+            if(data.species) document.querySelector(`#view-edit-patient-data input[name="species"][value="${data.species}"]`).checked = true;
+            document.getElementById('data-breed').value = data.breed || '';
             if(data.sex) document.querySelector(`#view-edit-patient-data input[name="sex"][value="${data.sex}"]`).checked = true;
             if(data.reproductiveStatus) document.querySelector(`#view-edit-patient-data input[name="reproductiveStatus"][value="${data.reproductiveStatus}"]`).checked = true;
             document.getElementById('data-birth-date').value = data.birthDate || '';
-            calculateAge();
+            calculateAge(); // Update age field
             document.getElementById('data-color-markings').value = data.colorMarkings || '';
             document.getElementById('data-microchip').value = data.microchip || '';
             document.getElementById('data-weight').value = data.weight || '';
@@ -1137,11 +1011,6 @@
                 originValue = document.getElementById('data-origin-other').value;
             }
 
-            let breedValue = document.getElementById('data-breed').value;
-            if (breedValue === 'Otro') {
-                breedValue = document.getElementById('data-breed-other').value;
-            }
-
             const data = {
                 name: document.getElementById('data-patient-name').value.toLowerCase(),
                 tutorName: document.getElementById('data-tutor-name').value,
@@ -1152,7 +1021,7 @@
                 tutorCity: document.getElementById('data-tutor-city').value,
                 tutorAddress: document.getElementById('data-tutor-address').value,
                 species: getRadioValue('species'),
-                breed: breedValue,
+                breed: document.getElementById('data-breed').value,
                 sex: getRadioValue('sex'),
                 reproductiveStatus: getRadioValue('reproductiveStatus'),
                 birthDate: document.getElementById('data-birth-date').value,
@@ -1175,7 +1044,7 @@
                         const lastNumber = counterDoc.data()?.lastNumber || 0;
                         const newNumber = lastNumber + 1;
                         const formattedNumber = String(newNumber);
-                        data.createdAt = serverTimestamp();
+                        data.createdAt = serverTimestamp(); // Add creation timestamp for new patients
                         transaction.set(doc(db, "patients", formattedNumber), data);
                         transaction.update(counterRef, { lastNumber: newNumber });
                         return formattedNumber;
@@ -1209,9 +1078,7 @@
                 await deleteSubcollection(currentPatientId, 'consultations');
                 await deleteSubcollection(currentPatientId, 'prescriptions');
                 await deleteSubcollection(currentPatientId, 'vaccines');
-                await deleteSubcollection(currentPatientId, 'deworming');
                 await deleteSubcollection(currentPatientId, 'exams');
-                await deleteSubcollection(currentPatientId, 'certificates');
                 await deleteDoc(doc(db, "patients", currentPatientId));
                 hideModal('deleteConfirmation');
                 showNotification("Paciente eliminado correctamente.");
@@ -1276,7 +1143,7 @@
                 await updateDoc(doc(db, "patients", currentPatientId), { anamnesisRemota: updatedAnamnesisRemota });
 
                 hideModal('consultation');
-                loadConsultationHistory(currentPatientId);
+                loadConsultationHistory(currentPatientId); // Refresh history list
                 showNotification("Nueva consulta guardada.");
             } catch (error) {
                 showNotification("Error al guardar la consulta.", true);
@@ -1402,20 +1269,12 @@
             form.reset();
 
             const vaccineSelect = document.getElementById('vaccine-type');
-            vaccineSelect.innerHTML = '';
+            vaccineSelect.innerHTML = ''; // Clear previous options
 
             const canineVaccines = ['Sextuple/Octuple', 'Antirrábica', 'Bordetella', 'Otros'];
             const felineVaccines = ['Triple Felina', 'Leucemia Felina', 'Antirrábica'];
-            const ferretVaccines = ['Antirrábica', 'Distemper Canino'];
             
-            let options;
-            if (currentPatientSpecies === 'Felina') {
-                options = felineVaccines;
-            } else if (currentPatientSpecies === 'Hurón') {
-                options = ferretVaccines;
-            } else {
-                options = canineVaccines;
-            }
+            const options = (currentPatientSpecies === 'Felina') ? felineVaccines : canineVaccines;
             
             options.forEach(v => {
                 const option = document.createElement('option');
@@ -1503,193 +1362,78 @@
             }
         }
 
-        // --- Deworming Logic ---
-        function openNewDewormingModal() {
-            document.getElementById('deworming-form').reset();
-            showModal('deworming');
-        }
-
-        async function saveNewDeworming(e) {
-            e.preventDefault();
-            if (!currentPatientId) return;
-
-            const { collection, addDoc, serverTimestamp } = window.firebase;
-            const db = window.db;
-
-            const dewormingData = {
-                date: document.getElementById('deworming-date').value,
-                type: document.querySelector('input[name="deworming-type"]:checked').value,
-                product: document.getElementById('deworming-product').value,
-                nextDose: document.getElementById('deworming-next-dose').value,
-                createdAt: serverTimestamp()
-            };
-
-            try {
-                await addDoc(collection(db, "patients", currentPatientId, "deworming"), dewormingData);
-                hideModal('deworming');
-                loadDewormingHistory(currentPatientId);
-                showNotification("Desparasitación registrada con éxito.");
-            } catch (error) {
-                showNotification("Error al registrar la desparasitación.", true);
-                console.error("Error saving deworming:", error);
-            }
-        }
-
-        async function loadDewormingHistory(patientId) {
-            const container = document.getElementById('deworming-history-table');
-            container.innerHTML = '<p>Cargando historial de desparasitaciones...</p>';
-            
-            const { collection, query, getDocs, orderBy } = window.firebase;
-            const db = window.db;
-
-            try {
-                const q = query(collection(db, "patients", patientId, "deworming"), orderBy("date", "desc"));
-                const querySnapshot = await getDocs(q);
-
-                if (querySnapshot.empty) {
-                    container.innerHTML = '<p class="text-center text-gray-500">No hay desparasitaciones registradas.</p>';
-                    return;
-                }
-
-                let tableHTML = `
-                    <table class="min-w-full bg-white text-sm">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="py-2 px-4 text-left">Fecha</th>
-                                <th class="py-2 px-4 text-left">Tipo</th>
-                                <th class="py-2 px-4 text-left">Producto</th>
-                                <th class="py-2 px-4 text-left">Próxima Dosis</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
-                querySnapshot.forEach(doc => {
-                    const data = doc.data();
-                    tableHTML += `
-                        <tr class="border-b">
-                            <td class="py-2 px-4">${data.date || 'N/A'}</td>
-                            <td class="py-2 px-4">${data.type || 'N/A'}</td>
-                            <td class="py-2 px-4">${data.product || 'N/A'}</td>
-                            <td class="py-2 px-4">${data.nextDose || 'N/A'}</td>
-                        </tr>
-                    `;
-                });
-
-                tableHTML += `</tbody></table>`;
-                container.innerHTML = tableHTML;
-
-            } catch (error) {
-                container.innerHTML = '<p class="text-center text-red-500">Error al cargar el historial.</p>';
-                console.error("Error loading deworming history:", error);
-            }
-        }
-
         // --- Exam Logic ---
         function openNewExamOrderModal() {
             document.getElementById('exam-order-form').reset();
+            const labContainer = document.getElementById('exam-list-container');
+            const imagingContainer = document.getElementById('imaging-list-container');
+            labContainer.innerHTML = ''; 
+            imagingContainer.innerHTML = '';
             
-            const labDropdown = document.getElementById('lab-exam-select-dropdown');
-            const imagingDropdown = document.getElementById('imaging-exam-select-dropdown');
-            labDropdown.innerHTML = ''; 
-            imagingDropdown.innerHTML = '';
-            
-            const createDropdownContent = (examData, container) => {
-                Object.keys(examData).forEach(category => {
-                    const categoryDiv = document.createElement('div');
-                    categoryDiv.className = 'p-2';
-                    categoryDiv.innerHTML = `<h3 class="font-bold text-sm text-gray-500 sticky top-0 bg-gray-100 px-2 py-1">${category}</h3>`;
-                    
-                    examData[category].forEach(exam => {
-                        const label = document.createElement('label');
-                        label.className = 'flex items-center space-x-2 p-2 hover:bg-gray-50 cursor-pointer';
-                        label.innerHTML = `
-                            <input type="checkbox" value="${exam.name}" data-instructions="${exam.instructions}" class="form-checkbox exam-checkbox">
-                            <span>${exam.name}</span>
-                        `;
-                        categoryDiv.appendChild(label);
-                    });
-                    container.appendChild(categoryDiv);
-                });
-            };
-
-            createDropdownContent(labExams, labDropdown);
-            createDropdownContent(imagingExams, imagingDropdown);
-            
-            document.querySelectorAll('.exam-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    updateSelectedExamsDisplay();
-                    updateExamInstructions();
-                });
-            });
-
-            updateSelectedExamsDisplay();
-            updateExamInstructions();
-            showModal('examOrder');
-        }
-        
-        function updateSelectedExamsDisplay() {
-            const checkboxes = document.querySelectorAll('.exam-checkbox:checked');
-            const container = document.getElementById('selected-exams-container');
-            const labPlaceholder = document.getElementById('lab-exam-select-placeholder');
-            const imagingPlaceholder = document.getElementById('imaging-exam-select-placeholder');
-            container.innerHTML = '';
-
-            let labCount = 0;
-            let imagingCount = 0;
-            
-            if (checkboxes.length === 0) {
-                container.innerHTML = '<p class="text-sm text-gray-400">Ningún examen seleccionado.</p>';
-                labPlaceholder.textContent = 'Seleccionar...';
-                imagingPlaceholder.textContent = 'Seleccionar...';
-                return;
-            }
-
-            checkboxes.forEach(checkbox => {
-                const tag = document.createElement('span');
-                tag.className = 'bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded flex items-center';
-                tag.innerHTML = `
-                    ${checkbox.value}
-                    <button type="button" data-value="${checkbox.value}" class="ml-2 text-blue-600 hover:text-blue-800 remove-exam-tag">&times;</button>
+            // Populate lab exams
+            examList.forEach(exam => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center';
+                div.innerHTML = `
+                    <input id="exam-${exam.id}" type="checkbox" value="${exam.name}" data-instructions="${exam.instructions}" class="h-4 w-4 text-[var(--color-primary)] border-gray-300 rounded focus:ring-[var(--color-primary)]">
+                    <label for="exam-${exam.id}" class="ml-3 block text-sm text-[var(--text-main)]">${exam.name}</label>
                 `;
-                container.appendChild(tag);
-
-                if (document.getElementById('lab-exam-select-dropdown').contains(checkbox)) {
-                    labCount++;
-                } else {
-                    imagingCount++;
-                }
+                labContainer.appendChild(div);
             });
+            
+            // Populate imaging exams
+            Object.keys(imagingExams).forEach(category => {
+                const categoryDiv = document.createElement('div');
+                const header = document.createElement('div');
+                header.className = 'accordion-header font-semibold';
+                header.textContent = category;
+                const body = document.createElement('div');
+                body.className = 'accordion-body p-2 space-y-2';
+                
+                imagingExams[category].forEach(exam => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center';
+                    div.innerHTML = `
+                        <input id="exam-${exam.id}" type="checkbox" value="${exam.name}" data-instructions="${exam.instructions}" class="h-4 w-4 text-[var(--color-primary)] border-gray-300 rounded focus:ring-[var(--color-primary)]">
+                        <label for="exam-${exam.id}" class="ml-3 block text-sm text-[var(--text-main)]">${exam.name}</label>
+                    `;
+                    body.appendChild(div);
+                });
 
-            labPlaceholder.textContent = labCount > 0 ? `${labCount} seleccionado(s)` : 'Seleccionar...';
-            imagingPlaceholder.textContent = imagingCount > 0 ? `${imagingCount} seleccionado(s)` : 'Seleccionar...';
+                categoryDiv.appendChild(header);
+                categoryDiv.appendChild(body);
+                imagingContainer.appendChild(categoryDiv);
 
-            container.querySelectorAll('.remove-exam-tag').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const valueToRemove = e.target.dataset.value;
-                    const checkboxToUncheck = document.querySelector(`.exam-checkbox[value="${valueToRemove}"]`);
-                    if (checkboxToUncheck) {
-                        checkboxToUncheck.checked = false;
-                        updateSelectedExamsDisplay();
-                        updateExamInstructions();
-                    }
+                header.addEventListener('click', () => {
+                    header.classList.toggle('active');
+                    body.classList.toggle('expanded');
                 });
             });
+
+
+            document.querySelectorAll('#exam-order-modal input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', updateExamInstructions);
+            });
+
+            updateExamInstructions(); // Clear instructions initially
+            showModal('examOrder');
         }
         
         function updateExamInstructions() {
             const instructionsTextarea = document.getElementById('exam-order-instructions');
-            const selectedCheckboxes = document.querySelectorAll('.exam-checkbox:checked');
+            const selectedExams = document.querySelectorAll('#exam-order-modal input:checked');
             let instructions = new Set();
             let maxAyuno = 0;
 
-            selectedCheckboxes.forEach(checkbox => {
+            selectedExams.forEach(checkbox => {
                 const instructionText = checkbox.dataset.instructions || "";
+                // Handle fasting
                 if (instructionText.toLowerCase().includes('ayuno')) {
                     if (instructionText.includes('12')) maxAyuno = Math.max(maxAyuno, 12);
                     else if (instructionText.includes('8')) maxAyuno = Math.max(maxAyuno, 8);
                     else if (instructionText.includes('6')) maxAyuno = Math.max(maxAyuno, 6);
                 }
+                // Handle other instructions
                 if (instructionText.toLowerCase().includes('post prandial')) {
                      instructions.add("Requiere muestra post prandial (2 horas después de comer).");
                 }
@@ -1705,6 +1449,7 @@
             instructionsTextarea.value = [...instructions].join('\n');
         }
 
+
         function openNewExamResultModal() {
             document.getElementById('exam-result-form').reset();
             document.getElementById('file-upload-status').textContent = '';
@@ -1717,7 +1462,10 @@
             const { collection, addDoc, serverTimestamp } = window.firebase;
             const db = window.db;
 
-            const selectedExams = Array.from(document.querySelectorAll('.exam-checkbox:checked')).map(cb => cb.value);
+            const selectedExams = [];
+            document.querySelectorAll('#exam-order-modal input:checked').forEach(checkbox => {
+                selectedExams.push(checkbox.value);
+            });
 
             const examData = {
                 date: document.getElementById('exam-order-date').value || new Date().toISOString().split('T')[0],
@@ -1731,6 +1479,7 @@
                 hideModal('examOrder');
                 loadExamHistory(currentPatientId);
                 showNotification("Orden de examen guardada.");
+                // Optionally show printable view right away
                 openPrintableExamOrder({ id: docRef.id, ...examData });
             } catch (error) {
                 showNotification("Error al guardar la orden.", true);
@@ -1759,6 +1508,7 @@
             };
 
             try {
+                // Create document first to get an ID
                 const docRef = await addDoc(collection(db, "patients", currentPatientId, "exams"), examData);
 
                 if (file) {
@@ -1767,6 +1517,7 @@
                     const uploadResult = await uploadBytes(storageRef, file);
                     const downloadURL = await getDownloadURL(uploadResult.ref);
                     
+                    // Update document with file URL
                     await updateDoc(docRef, { fileURL: downloadURL });
                     statusEl.textContent = 'Archivo subido con éxito.';
                 }
@@ -1830,6 +1581,7 @@
                     container.appendChild(card);
                 });
 
+                // Add event listeners for the new buttons
                 container.querySelectorAll('.view-exam-order-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         const orderId = e.target.dataset.orderId;
@@ -1851,6 +1603,7 @@
         function openPrintableExamOrder(orderData) {
             if (!currentPatientData) return;
             
+            // Populate patient data
             document.getElementById('exam-order-ficha-id').textContent = currentPatientData.id;
             document.getElementById('exam-order-patient-name').textContent = currentPatientData.name || '';
             document.getElementById('exam-order-species').textContent = currentPatientData.species || '';
@@ -1858,6 +1611,7 @@
             document.getElementById('exam-order-tutor-rut').textContent = currentPatientData.tutorRut ? formatRut(currentPatientData.tutorRut) : '';
             document.getElementById('exam-order-email').value = currentPatientData.tutorEmail || '';
 
+            // Populate order data
             document.getElementById('exam-order-printable-date').textContent = orderData.date;
             document.getElementById('exam-order-details').textContent = orderData.details;
             document.getElementById('exam-order-printable-instructions').textContent = orderData.instructions;
@@ -1865,284 +1619,87 @@
             navigateTo('examOrderPrintable', currentPatientId);
         }
         
-        // --- Certificate Logic ---
-        function openCertificateDetailsModal(template) {
-            currentCertificateTemplate = template;
-            const form = document.getElementById('certificate-details-form');
-            form.reset();
-
-            const destinationContainer = document.getElementById('certificate-form-destination-container');
-            const travelDateContainer = document.getElementById('certificate-form-travel-date-container');
-            const microchipContainer = document.getElementById('certificate-form-microchip-container');
-            
-            destinationContainer.classList.add('hidden');
-            travelDateContainer.classList.add('hidden');
-            microchipContainer.classList.add('hidden');
-
-            if (template.includes('viaje')) {
-                destinationContainer.classList.remove('hidden');
-            }
-            if (template === 'viaje-internacional') {
-                travelDateContainer.classList.remove('hidden');
-            }
-            if (template.includes('chip')) {
-                microchipContainer.classList.remove('hidden');
-            }
-            
-            const templateTitles = {
-                'salud': 'Certificado de Salud',
-                'viaje-nacional': 'Certificado de Viaje Nacional',
-                'viaje-internacional': 'Certificado de Viaje Internacional',
-                'implantacion-chip': 'Comprobante de Implantación de Chip',
-                'validacion-chip': 'Comprobante de Validación de Chip'
+        function downloadPDF(elementId, fileName) {
+            const element = document.getElementById(elementId);
+            const opt = {
+              margin: [0.5, 0.5, 0.5, 0.5],
+              filename: fileName,
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true },
+              jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
-            document.getElementById('certificate-modal-title').textContent = `Detalles para: ${templateTitles[template] || template.replace(/-/g, ' ')}`;
-            showModal('certificateDetails');
+            html2pdf().from(element).set(opt).save();
         }
-        
-        async function handleCertificateGeneration(e) {
-            e.preventDefault();
-            hideModal('certificateDetails');
 
-            if (currentCertificateTemplate === 'viaje-internacional') {
-                const destination = document.getElementById('certificate-destination').value;
-                const travelDate = document.getElementById('certificate-travel-date').value;
-                await generateInternationalTravelCertificate({ destination, travelDate });
-            } else if (currentCertificateTemplate.includes('chip')) {
-                const obtencion = document.getElementById('certificate-obtencion').value;
-                const tenencia = document.getElementById('certificate-tenencia').value;
-                generateMicrochipCertificate({ obtencion, tenencia });
-            } else {
-                const destination = document.getElementById('certificate-destination').value;
-                generateSimpleCertificate(currentCertificateTemplate, { destination });
-            }
-        }
-        
-        function generateSimpleCertificate(template, details) {
-            if (!currentPatientData) {
-                showNotification("No hay datos del paciente cargados.", true);
+        function sendEmail(email, subject, body) {
+            if (!email) {
+                showNotification("Por favor, ingrese un correo electrónico.", true);
                 return;
             }
-            const data = currentPatientData;
-            const certTitleEl = document.getElementById('certificate-title');
-            const certBodyEl = document.getElementById('certificate-body');
-            const generatorTitleEl = document.getElementById('certificate-generator-title');
-            document.getElementById('certificate-email').value = data.tutorEmail || '';
-            
-            const commonInfo = `
-                <div class="space-y-3 mb-6">
-                    <p>Por medio del presente, yo, <strong>Dra. Alejandra Cautín Bastías</strong>, Médico Veterinario, certifico que he examinado al paciente que se detalla a continuación:</p>
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-left bg-gray-50 p-4 rounded-lg">
-                        <div><strong>Paciente:</strong> <span class="capitalize">${data.name}</span></div>
-                        <div><strong>Nº Ficha:</strong> ${data.id}</div>
-                        <div><strong>Especie:</strong> ${data.species}</div>
-                        <div><strong>Raza:</strong> ${data.breed}</div>
-                        <div><strong>Sexo:</strong> ${data.sex}</div>
-                        <div><strong>Fecha de Nacimiento:</strong> ${data.birthDate}</div>
-                        <div><strong>Color y Señas:</strong> ${data.colorMarkings}</div>
-                        <div><strong>Microchip:</strong> ${data.microchip || 'No posee'}</div>
-                        <div><strong>Tutor:</strong> ${data.tutorName}</div>
-                        <div><strong>RUT Tutor:</strong> ${data.tutorRut ? formatRut(data.tutorRut) : ''}</div>
-                    </div>
-                </div>
-            `;
-
-            let content = '';
-            const today = new Date().toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
-            switch (template) {
-                case 'salud':
-                    generatorTitleEl.textContent = "Generar Certificado de Salud";
-                    certTitleEl.textContent = "CERTIFICADO DE SALUD";
-                    content = `<p>Al momento del examen clínico realizado el día ${today}, el paciente se encuentra en buen estado de salud, sin presentar signos de enfermedades infectocontagiosas y con sus controles sanitarios al día.</p>
-                               <p class="mt-4">Este certificado se extiende a solicitud del tutor para los fines que estime convenientes y tiene una validez de 10 días a partir de esta fecha.</p>`;
-                    break;
-                case 'viaje-nacional':
-                    generatorTitleEl.textContent = "Generar Certificado de Viaje Nacional";
-                    certTitleEl.textContent = "CERTIFICADO DE SALUD PARA VIAJE NACIONAL";
-                    content = `<p>Al momento del examen clínico realizado el día ${today}, el paciente se encuentra clínicamente sano, sin signos de enfermedades infecciosas y apto para viajar dentro del territorio nacional.</p>
-                               <p>El destino del viaje es: <strong>${details.destination || 'No especificado'}</strong>.</p>
-                               <p class="mt-4">Este certificado tiene una validez de 10 días a partir de esta fecha.</p>`;
-                    break;
-                default:
-                     generatorTitleEl.textContent = "Generar Certificado";
-                     certTitleEl.textContent = "CERTIFICADO";
-                     content = `<p>Contenido del certificado no definido para esta plantilla.</p>`;
-            }
-
-            certBodyEl.innerHTML = commonInfo + content + `<p class="mt-8">Se extiende el presente certificado en Santiago, a ${today}.</p>`;
-            navigateTo('certificateGenerator', data.id);
+            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoLink;
         }
 
-        async function generateInternationalTravelCertificate(details) {
-            if (!currentPatientData) {
-                showNotification("No hay datos del paciente cargados.", true);
-                return;
-            }
-
-            const data = currentPatientData;
-
-            document.getElementById('cert-animal-nombre').textContent = data.name || 'N/A';
-            document.getElementById('cert-animal-especie').textContent = data.species || 'N/A';
-            document.getElementById('cert-animal-raza').textContent = data.breed || 'N/A';
-            document.getElementById('cert-animal-sexo').textContent = data.sex || 'N/A';
-            document.getElementById('cert-animal-color').textContent = data.colorMarkings || 'N/A';
-            document.getElementById('cert-animal-edad').textContent = data.birthDate || data.age || 'N/A';
-            document.getElementById('cert-animal-microchip').textContent = data.microchip || 'No posee';
-
-            document.getElementById('cert-dueno-nombre').textContent = data.tutorName || 'N/A';
-            document.getElementById('cert-dueno-rut').textContent = data.tutorRut ? formatRut(data.tutorRut) : 'N/A';
-            document.getElementById('cert-dueno-telefono').textContent = data.tutorPhone || 'N/A';
-            document.getElementById('cert-dueno-direccion').textContent = data.tutorAddress || 'N/A';
-            
-            document.getElementById('cert-fecha-inspeccion').textContent = new Date().toLocaleDateString('es-CL');
-
-            const anexoContainer = document.getElementById('cert-anexo-container');
-            if (data.species === 'Canina') {
-                anexoContainer.innerHTML = await createCanineAnnexHTML(currentPatientId);
-            } else if (data.species === 'Felina') {
-                anexoContainer.innerHTML = await createFelineAnnexHTML(currentPatientId);
-            } else if (data.species === 'Hurón') {
-                anexoContainer.innerHTML = await createFerretAnnexHTML(currentPatientId);
-            } else {
-                anexoContainer.innerHTML = '<p>Especie no compatible para este certificado.</p>';
-            }
-
-            navigateTo('internationalTravelCertificate', currentPatientId);
-        }
-
-        async function createCanineAnnexHTML(patientId) {
-            const { collection, query, getDocs, orderBy } = window.firebase;
+        // --- Search Logic ---
+        async function searchPatients() {
+            const { getDocs, collection, query, where, doc, getDoc } = window.firebase;
             const db = window.db;
+            const searchTerm = document.getElementById('search-input').value.trim();
+            if (!searchTerm) return;
+            const searchResultsEl = document.getElementById('search-results');
+            searchResultsEl.innerHTML = '<p>Buscando...</p>';
+            let results = new Map(); // Use a map to avoid duplicates
+            try {
+                // Search by patient ID (Ficha)
+                if (!isNaN(searchTerm)) {
+                    const docRef = doc(db, "patients", searchTerm);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        results.set(docSnap.id, { id: docSnap.id, ...docSnap.data() });
+                    }
+                }
+                
+                // Search by patient name (case-insensitive)
+                const qName = query(collection(db, "patients"), where("name", ">=", searchTerm.toLowerCase()), where("name", "<=", searchTerm.toLowerCase() + '\uf8ff'));
+                const nameSnapshot = await getDocs(qName);
+                nameSnapshot.forEach((doc) => {
+                    results.set(doc.id, { id: doc.id, ...doc.data() });
+                });
 
-            const vaccineQuery = query(collection(db, "patients", patientId, "vaccines"), orderBy("date", "desc"));
-            const vaccineSnapshot = await getDocs(vaccineQuery);
-            let vaccineRows = '';
-            vaccineSnapshot.forEach(doc => {
-                const data = doc.data();
-                vaccineRows += `<tr>
-                    <td>${data.type || ''}</td><td></td><td>${data.brand || ''}</td><td></td><td>${data.date || ''}</td><td>${data.nextDose || ''}</td>
-                </tr>`;
-            });
+                // Search by RUT
+                const cleanRut = searchTerm.replace(/[.-]/g, '');
+                if(cleanRut) {
+                    const qRut = query(collection(db, "patients"), where("tutorRut", "==", cleanRut));
+                    const rutSnapshot = await getDocs(qRut);
+                    rutSnapshot.forEach((doc) => {
+                        results.set(doc.id, { id: doc.id, ...doc.data() });
+                    });
+                }
 
-            const dewormingQuery = query(collection(db, "patients", patientId, "deworming"), orderBy("date", "desc"));
-            const dewormingSnapshot = await getDocs(dewormingQuery);
-            let internalRows = '';
-            let externalRows = '';
-            dewormingSnapshot.forEach(doc => {
-                const data = doc.data();
-                const row = `<td>${data.product || ''}</td><td></td><td></td><td></td><td>${data.date || ''}</td><td></td>`;
-                if (data.type === 'Interna') internalRows += `<tr>${row}</tr>`;
-                if (data.type === 'Externa') externalRows += `<tr>${row}</tr>`;
-            });
-
-            return `
-                <section class="cert-section">
-                    <h2>ANEXO 2: Información del programa de vacunación y desparasitación para CANINOS</h2>
-                    <h3 class="font-semibold mt-4 mb-2">Vacunación</h3>
-                    <table class="cert-table">
-                        <thead><tr><th>Nombre vacuna</th><th>Tipo</th><th>Laboratorio</th><th>N° serie</th><th>Fecha</th><th>Vigencia</th></tr></thead>
-                        <tbody>${vaccineRows}</tbody>
-                    </table>
-                    <em class="text-xs">* La vacuna Antirrábica debe estar respaldada por el certificado original.</em>
-                    <h3 class="font-semibold mt-4 mb-2">Desparasitación</h3>
-                    <table class="cert-table">
-                        <thead><tr><th>Nombre Producto</th><th>Laboratorio</th><th>Principio activo</th><th>Lote</th><th>Fecha</th><th>Hora</th></tr></thead>
-                        <tbody>${internalRows}${externalRows}</tbody>
-                    </table>
-                </section>
-            `;
-        }
-
-        async function createFelineAnnexHTML(patientId) {
-            const { collection, query, getDocs, orderBy } = window.firebase;
-            const db = window.db;
-
-            const vaccineQuery = query(collection(db, "patients", patientId, "vaccines"), orderBy("date", "desc"));
-            const vaccineSnapshot = await getDocs(vaccineQuery);
-            let vaccineRows = '';
-            vaccineSnapshot.forEach(doc => {
-                const data = doc.data();
-                vaccineRows += `<tr>
-                    <td>${data.type || ''}</td><td></td><td>${data.brand || ''}</td><td></td><td>${data.date || ''}</td><td>${data.nextDose || ''}</td>
-                </tr>`;
-            });
-
-            const dewormingQuery = query(collection(db, "patients", patientId, "deworming"), orderBy("date", "desc"));
-            const dewormingSnapshot = await getDocs(dewormingQuery);
-            let internalRows = '';
-            let externalRows = '';
-            dewormingSnapshot.forEach(doc => {
-                const data = doc.data();
-                const row = `<td>${data.product || ''}</td><td></td><td></td><td></td><td>${data.date || ''}</td><td></td>`;
-                if (data.type === 'Interna') internalRows += `<tr>${row}</tr>`;
-                if (data.type === 'Externa') externalRows += `<tr>${row}</tr>`;
-            });
-
-            return `
-                <section class="cert-section">
-                    <h2>ANEXO 1: Información del programa de vacunación y desparasitación para FELINOS</h2>
-                    <h3 class="font-semibold mt-4 mb-2">Vacunación</h3>
-                    <table class="cert-table">
-                         <thead><tr><th>Nombre vacuna</th><th>Tipo</th><th>Laboratorio</th><th>N° serie</th><th>Fecha</th><th>Vigencia</th></tr></thead>
-                        <tbody>${vaccineRows}</tbody>
-                    </table>
-                    <em class="text-xs">* La vacuna Antirrábica debe estar respaldada por el certificado original.</em>
-                    <h3 class="font-semibold mt-4 mb-2">Desparasitación</h3>
-                    <table class="cert-table">
-                        <thead><tr><th>Nombre Producto</th><th>Laboratorio</th><th>Principio activo</th><th>Lote</th><th>Fecha</th><th>Hora</th></tr></thead>
-                        <tbody>${internalRows}${externalRows}</tbody>
-                    </table>
-                </section>
-            `;
-        }
-        
-         async function createFerretAnnexHTML(patientId) {
-            // Lógica similar para hurones si es necesario
-            return `<section class="cert-section"><h2>ANEXO 3: Información para HURONES</h2><p>Datos de vacunación y desparasitación para hurones...</p></section>`;
-        }
-
-        function generateMicrochipCertificate(details) {
-            if (!currentPatientData) {
-                showNotification("No hay datos del paciente cargados.", true);
-                return;
+            } catch(e) { 
+                console.error("Search error:", e);
+                searchResultsEl.innerHTML = '<p class="text-red-500">Ocurrió un error en la búsqueda.</p>';
             }
+            displaySearchResults(Array.from(results.values()));
+        }
 
-            const data = currentPatientData;
-            const procedureType = currentCertificateTemplate;
-            const check = '☑';
-            const uncheck = '☐';
-
-            document.getElementById('mc-animal-nombre').textContent = data.name || '';
-            document.getElementById('mc-animal-raza').textContent = data.breed || '';
-            document.getElementById('mc-animal-color').textContent = data.colorMarkings || '';
-            document.getElementById('mc-animal-fecha-nacimiento').textContent = data.birthDate ? data.birthDate.split('-').reverse().join('/') : '';
-            
-            document.getElementById('mc-animal-especie-perro').textContent = data.species === 'Canina' ? check : uncheck;
-            document.getElementById('mc-animal-especie-gato').textContent = data.species === 'Felina' ? check : uncheck;
-
-            document.getElementById('mc-animal-sexo-macho').textContent = data.sex === 'Macho' ? check : uncheck;
-            document.getElementById('mc-animal-sexo-hembra').textContent = data.sex === 'Hembra' ? check : uncheck;
-
-            const isSterilized = data.reproductiveStatus === 'Castrado' || data.reproductiveStatus === 'Esterilizada';
-            document.getElementById('mc-animal-esterilizado-si').textContent = isSterilized ? check : uncheck;
-            document.getElementById('mc-animal-esterilizado-no').textContent = !isSterilized ? check : uncheck;
-
-            document.getElementById('mc-proc-implantacion').textContent = procedureType === 'implantacion-chip' ? check : uncheck;
-            document.getElementById('mc-proc-verificacion').textContent = procedureType === 'validacion-chip' ? check : uncheck;
-
-            document.getElementById('mc-obt-recogido').textContent = details.obtencion === 'Recogido' ? check : uncheck;
-            document.getElementById('mc-obt-reubicacion').textContent = details.obtencion === 'Reubicacion' ? check : uncheck;
-            document.getElementById('mc-obt-regalo').textContent = details.obtencion === 'Regalo' ? check : uncheck;
-            document.getElementById('mc-obt-nacido').textContent = details.obtencion === 'Nacido en casa' ? check : uncheck;
-            document.getElementById('mc-obt-compra').textContent = details.obtencion === 'Compra' ? check : uncheck;
-
-            document.getElementById('mc-ten-compania').textContent = details.tenencia === 'Compañia' ? check : uncheck;
-            document.getElementById('mc-ten-asistencia').textContent = details.tenencia === 'Asistencia' ? check : uncheck;
-            document.getElementById('mc-ten-terapia').textContent = details.tenencia === 'Terapia' ? check : uncheck;
-
-            document.getElementById('mc-fecha-procedimiento').textContent = new Date().toLocaleDateString('es-CL');
-
-            navigateTo('microchipCertificate', currentPatientId);
+        function displaySearchResults(patients) {
+            const searchResultsEl = document.getElementById('search-results');
+            searchResultsEl.innerHTML = patients.length === 0 ? '<p>No se encontraron pacientes.</p>' : '';
+            const list = document.createElement('ul');
+            list.className = 'space-y-2';
+            patients.forEach(patient => {
+                const item = document.createElement('li');
+                item.className = 'p-3 border rounded-lg flex justify-between items-center hover:bg-gray-50';
+                item.innerHTML = `<span class="capitalize font-semibold text-gray-700">${patient.name} <span class="text-sm text-gray-500 font-normal">(${patient.id})</span></span>`;
+                const viewBtn = document.createElement('button');
+                viewBtn.textContent = 'Ver Ficha';
+                viewBtn.className = 'btn-tertiary text-xs px-3 py-1 rounded-md font-semibold';
+                viewBtn.onclick = () => openPatientHub(patient.id);
+                item.appendChild(viewBtn);
+                list.appendChild(item);
+            });
+            searchResultsEl.appendChild(list);
         }
 
         // --- Utility Functions ---
@@ -2245,6 +1802,9 @@
         
         // --- Agenda Form Logic ---
         async function handleAgendaContinue() {
+            const { getDocs, collection, query, where } = window.firebase;
+            const db = window.db;
+
             const tutorName = document.getElementById('agenda-tutor-name').value;
             const tutorRutRaw = document.getElementById('agenda-tutor-rut').value;
             const tutorCommune = document.getElementById('agenda-tutor-commune').value;
@@ -2258,7 +1818,12 @@
                 return;
             }
             
+            const cleanRut = tutorRutRaw.replace(/[.-]/g, '');
+            
+            // Logic to check existing pet or create new one
             const existingPetRadio = document.querySelector('input[name="existing-pet"]:checked');
+            const newPetRadio = document.getElementById('add-new-pet-radio');
+
             let petName = '';
             if (existingPetRadio && existingPetRadio.value !== 'new') {
                 petName = existingPetRadio.value;
@@ -2271,7 +1836,8 @@
                 return;
             }
 
-            const calendlyUrl = `https://calendly.com/ale-cautin/consulta?name=${encodeURIComponent(petName)}&a1=${encodeURIComponent(tutorName)}&a2=${encodeURIComponent(tutorRutRaw)}&a3=${encodeURIComponent(tutorCommune)}`;
+            // Redirect to Calendly
+            const calendlyUrl = `https://calendly.com/avmveterinaria=${encodeURIComponent(petName)}&a1=${encodeURIComponent(tutorName)}&a2=${encodeURIComponent(tutorRutRaw)}&a3=${encodeURIComponent(tutorCommune)}`;
             window.location.href = calendlyUrl;
         }
         
@@ -2281,6 +1847,7 @@
             
             const rutInput = document.getElementById('agenda-tutor-rut');
             if (!validateRut(rutInput.value)) {
+                // Hide pet sections if RUT becomes invalid
                 document.getElementById('agenda-step-2').classList.add('hidden');
                 return;
             }
@@ -2308,6 +1875,7 @@
                     existingPetsList.appendChild(div);
                 });
                 
+                // Add option to create a new pet for this tutor
                 const div = document.createElement('div');
                 div.innerHTML = `<label class="flex items-center"><input type="radio" id="add-new-pet-radio" name="existing-pet" value="new" class="form-radio mr-2"> Agregar una mascota nueva</label>`;
                 existingPetsList.appendChild(div);
@@ -2315,7 +1883,7 @@
                 document.getElementById('add-new-pet-radio').addEventListener('change', (e) => {
                     if (e.target.checked) {
                         newPatientContainer.classList.remove('hidden');
-                        document.getElementById('agenda-pet-name').value = '';
+                        document.getElementById('agenda-pet-name').value = ''; // Clear name field
                     }
                 });
 
@@ -2340,93 +1908,79 @@
         }
 
         // --- Data for Modals ---
-        const labExams = {
-            "Perfiles y Hematología": [
-                { id: 'perfil-bioquimico', name: 'Perfil bioquimico', instructions: 'AYUNO > 8 h Y CADENA DE FRÍO' },
-                { id: 'perfil-lipidico', name: 'Perfil lipidico', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-                { id: 'perfil-prequirurgico', name: 'Perfil prequirurgico', instructions: 'AYUNO > 8 h Y CADENA DE FRÍO' },
-                { id: 'hemograma-completo', name: 'Hemograma completo', instructions: 'N/A' },
-                { id: 'recuento-de-reticulocitos', name: 'Recuento de reticulocitos', instructions: 'N/A' },
-                { id: 'fibrinogeno', name: 'Fibrinogeno', instructions: 'N/A' },
-                { id: 'tiempo-de-coagulacion', name: 'Tiempo de coagulacion', instructions: 'N/A' },
-                { id: 'tiempo-de-protrombina', name: 'Tiempo de protrombina', instructions: 'N/A' },
-                { id: 'tiempo-de-tromboplastina', name: 'Tiempo de tromboplastina', instructions: 'N/A' },
-            ],
-            "Química Sanguínea Individual": [
-                { id: 'acido-urico', name: 'Acido urico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'acidos-biliares-post', name: 'Acidos biliares post', instructions: 'POST PRANDIAL Y CADENA DE FRÍO' },
-                { id: 'acidos-biliares-pre-y-post', name: 'Acidos biliares pre y post', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-                { id: 'albumina', name: 'Albumina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'amilasa', name: 'Amilasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'amonio', name: 'Amonio', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-                { id: 'calcio-ionico', name: 'Calcio ionico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'calcio-total', name: 'Calcio total', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'cloro', name: 'Cloro', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'colesterol-total', name: 'Colesterol total', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-                { id: 'creatinina', name: 'Creatinina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'ck-total', name: 'Ck total', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'fosforo', name: 'Fosforo', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'fosfatasas-alcalinas', name: 'Fosfatasas alcalinas', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'fructosamina', name: 'Fructosamina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'ggt', name: 'Ggt', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'glucosa', name: 'Glucosa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'lactato', name: 'Lactato', instructions: 'N/A' },
-                { id: 'lipasa', name: 'Lipasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'magnesio', name: 'Magnesio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'nitrogeno-ureico', name: 'Nitrogeno ureico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'potasio', name: 'Potasio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'proteinas-totales', name: 'Proteinas totales', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'sdma', name: 'Sdma', instructions: 'N/A' },
-                { id: 'sodio', name: 'Sodio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'trigliceridos', name: 'Trigliceridos', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-            ],
-            "Endocrinología y Fármacos": [
-                { id: 'cortisol-post-acth', name: 'Cortisol post acth', instructions: 'N/A' },
-                { id: 'cortisol-pre-y-post-dexametasona', name: 'Cortisol pre y post dexametasona', instructions: 'N/A' },
-                { id: 'estradiol', name: 'Estradiol', instructions: 'N/A' },
-                { id: 'fenobarbital', name: 'Fenobarbital', instructions: 'N/A' },
-                { id: 'insulina', name: 'Insulina', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
-                { id: 'progesterona', name: 'Progesterona', instructions: 'N/A' },
-                { id: 't4-libre', name: 'T4 libre', instructions: 'N/A' },
-                { id: 't4-total', name: 'T4 total', instructions: 'N/A' },
-                { id: 'testosterona', name: 'Testosterona', instructions: 'N/A' },
-                { id: 'tsh', name: 'Tsh', instructions: 'N/A' },
-            ],
-            "Análisis de Orina": [
-                { id: 'clearence-creatinina', name: 'Clearence creatinina', instructions: 'N/A' },
-                { id: 'densidad-urinaria', name: 'Densidad urinaria', instructions: 'N/A' },
-                { id: 'estudio-de-calculo-urinario', name: 'Estudio de calculo urinario', instructions: 'N/A' },
-                { id: 'rpc', name: 'Rpc', instructions: 'N/A' },
-                { id: 'relacion-albumina-creatinina', name: 'Relacion albumina/creatinina', instructions: 'N/A' },
-                { id: 'relacion-proteina-creatinina', name: 'Relacion proteina/creatinina', instructions: 'N/A' },
-                { id: 'uroanalisis-completo', name: 'Uroanalisis completo', instructions: 'N/A' },
-                { id: 'urocultivo-y-antibiograma', name: 'Urocultivo y antibiograma', instructions: 'N/A' },
-            ],
-            "Infecciosas y Parasitología": [
-                { id: 'bacteriologico-y-antibiograma', name: 'Bacteriologico y antibiograma', instructions: 'N/A' },
-                { id: 'coprologico-funcional', name: 'Coprologico funcional', instructions: 'N/A' },
-                { id: 'distemper-canino-ac', name: 'Distemper canino (ac)', instructions: 'N/A' },
-                { id: 'distemper-canino-ag', name: 'Distemper canino (ag)', instructions: 'N/A' },
-                { id: 'erlichia-canis', name: 'Erlichia canis', instructions: 'N/A' },
-                { id: 'giardia-duodenalis', name: 'Giardia duodenalis', instructions: 'N/A' },
-                { id: 'inmunodeficiencia-felina', name: 'Inmunodeficiencia felina', instructions: 'N/A' },
-                { id: 'leucemia-felina', name: 'Leucemia felina', instructions: 'N/A' },
-                { id: 'micologico', name: 'Micologico', instructions: 'N/A' },
-                { id: 'panel-respiratorio-felino', name: 'Panel respiratorio felino', instructions: 'N/A' },
-                { id: 'panel-respiratorio-canino', name: 'Panel respiratorio canino', instructions: 'N/A' },
-                { id: 'parvovirus-canino', name: 'Parvovirus canino', instructions: 'N/A' },
-                { id: 'pif', name: 'Pif', instructions: 'N/A' },
-                { id: 'raspado-de-piel', name: 'Raspado de piel', instructions: 'N/A' },
-            ],
-            "Citología e Histopatología": [
-                { id: 'citologia', name: 'Citologia', instructions: 'N/A' },
-                { id: 'histopatologia', name: 'Histopatologia', instructions: 'N/A' },
-            ],
-            "Otros Exámenes": [
-                { id: 'acetilcolinesterasa', name: 'Acetilcolinesterasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
-                { id: 'determinacion-de-sexo-por-pcr', name: 'Determinacion de sexo por pcr', instructions: 'N/A' },
-            ]
-        };
+        const examList = [
+            { id: 'acetilcolinesterasa', name: 'Acetilcolinesterasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'acido-urico', name: 'Acido urico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'acidos-biliares-post', name: 'Acidos biliares post', instructions: 'POST PRANDIAL Y CADENA DE FRÍO' },
+            { id: 'acidos-biliares-pre-y-post', name: 'Acidos biliares pre y post', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'albumina', name: 'Albumina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'amilasa', name: 'Amilasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'amonio', name: 'Amonio', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'bacteriologico-y-antibiograma', name: 'Bacteriologico y antibiograma', instructions: 'N/A' },
+            { id: 'calcio-ionico', name: 'Calcio ionico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'calcio-total', name: 'Calcio total', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'citologia', name: 'Citologia', instructions: 'N/A' },
+            { id: 'clearence-creatinina', name: 'Clearence creatinina', instructions: 'N/A' },
+            { id: 'cloro', name: 'Cloro', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'colesterol-total', name: 'Colesterol total', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'coprologico-funcional', name: 'Coprologico funcional', instructions: 'N/A' },
+            { id: 'cortisol-post-acth', name: 'Cortisol post acth', instructions: 'N/A' },
+            { id: 'cortisol-pre-y-post-dexametasona', name: 'Cortisol pre y post dexametasona', instructions: 'N/A' },
+            { id: 'creatinina', name: 'Creatinina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'ck-total', name: 'Ck total', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'densidad-urinaria', name: 'Densidad urinaria', instructions: 'N/A' },
+            { id: 'determinacion-de-sexo-por-pcr', name: 'Determinacion de sexo por pcr', instructions: 'N/A' },
+            { id: 'distemper-canino-ac', name: 'Distemper canino (ac)', instructions: 'N/A' },
+            { id: 'distemper-canino-ag', name: 'Distemper canino (ag)', instructions: 'N/A' },
+            { id: 'erlichia-canis', name: 'Erlichia canis', instructions: 'N/A' },
+            { id: 'estradiol', name: 'Estradiol', instructions: 'N/A' },
+            { id: 'estudio-de-calculo-urinario', name: 'Estudio de calculo urinario', instructions: 'N/A' },
+            { id: 'fenobarbital', name: 'Fenobarbital', instructions: 'N/A' },
+            { id: 'fibrinogeno', name: 'Fibrinogeno', instructions: 'N/A' },
+            { id: 'fosforo', name: 'Fosforo', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'fosfatasas-alcalinas', name: 'Fosfatasas alcalinas', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'fructosamina', name: 'Fructosamina', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'ggt', name: 'Ggt', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'giardia-duodenalis', name: 'Giardia duodenalis', instructions: 'N/A' },
+            { id: 'glucosa', name: 'Glucosa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'hemograma-completo', name: 'Hemograma completo', instructions: 'N/A' },
+            { id: 'histopatologia', name: 'Histopatologia', instructions: 'N/A' },
+            { id: 'inmunodeficiencia-felina', name: 'Inmunodeficiencia felina', instructions: 'N/A' },
+            { id: 'insulina', name: 'Insulina', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'lactato', name: 'Lactato', instructions: 'N/A' },
+            { id: 'leucemia-felina', name: 'Leucemia felina', instructions: 'N/A' },
+            { id: 'lipasa', name: 'Lipasa', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'magnesio', name: 'Magnesio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'micologico', name: 'Micologico', instructions: 'N/A' },
+            { id: 'nitrogeno-ureico', name: 'Nitrogeno ureico', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'panel-respiratorio-felino', name: 'Panel respiratorio felino', instructions: 'N/A' },
+            { id: 'panel-respiratorio-canino', name: 'Panel respiratorio canino', instructions: 'N/A' },
+            { id: 'parvovirus-canino', name: 'Parvovirus canino', instructions: 'N/A' },
+            { id: 'perfil-bioquimico', name: 'Perfil bioquimico', instructions: 'AYUNO > 8 h Y CADENA DE FRÍO' },
+            { id: 'perfil-lipidico', name: 'Perfil lipidico', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'perfil-prequirurgico', name: 'Perfil prequirurgico', instructions: 'AYUNO > 8 h Y CADENA DE FRÍO' },
+            { id: 'pif', name: 'Pif', instructions: 'N/A' },
+            { id: 'potasio', name: 'Potasio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'progesterona', name: 'Progesterona', instructions: 'N/A' },
+            { id: 'proteinas-totales', name: 'Proteinas totales', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 'rpc', name: 'Rpc', instructions: 'N/A' },
+            { id: 'raspado-de-piel', name: 'Raspado de piel', instructions: 'N/A' },
+            { id: 'recuento-de-reticulocitos', name: 'Recuento de reticulocitos', instructions: 'N/A' },
+            { id: 'relacion-albumina-creatinina', name: 'Relacion albumina/creatinina', instructions: 'N/A' },
+            { id: 'relacion-proteina-creatinina', name: 'Relacion proteina/creatinina', instructions: 'N/A' },
+            { id: 'sdma', name: 'Sdma', instructions: 'N/A' },
+            { id: 'sodio', name: 'Sodio', instructions: 'AYUNO > 6 h Y CADENA DE FRÍO' },
+            { id: 't4-libre', name: 'T4 libre', instructions: 'N/A' },
+            { id: 't4-total', name: 'T4 total', instructions: 'N/A' },
+            { id: 'testosterona', name: 'Testosterona', instructions: 'N/A' },
+            { id: 'tiempo-de-coagulacion', name: 'Tiempo de coagulacion', instructions: 'N/A' },
+            { id: 'tiempo-de-protrombina', name: 'Tiempo de protrombina', instructions: 'N/A' },
+            { id: 'tiempo-de-tromboplastina', name: 'Tiempo de tromboplastina', instructions: 'N/A' },
+            { id: 'trigliceridos', name: 'Trigliceridos', instructions: 'AYUNO > 12 h Y CADENA DE FRÍO' },
+            { id: 'tsh', name: 'Tsh', instructions: 'N/A' },
+            { id: 'uroanalisis-completo', name: 'Uroanalisis completo', instructions: 'N/A' },
+            { id: 'urocultivo-y-antibiograma', name: 'Urocultivo y antibiograma', instructions: 'N/A' },
+        ];
         const imagingExams = {
             "Ecografías": [
                 { id: 'eco-abdominal', name: 'Ecografía Abdominal', instructions: 'Ayuno 8–12 h. Rasurado abdominal. No requiere sedación.' },
@@ -2468,7 +2022,7 @@
                 { id: 'rm-Lumbosacro', name: 'RM Lumbosacro', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
                 { id: 'rm-Rodilla', name: 'RM Rodilla', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
                 { id: 'rm-Oído', name: 'RM Oído', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },
-                { id: 'rm-Cavidad nasal', name: 'RM Cavidad nasal', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },               
+                { id: 'rm-Cavidad nasal', name: 'RM Cavidad nasal', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria. Preoperatorio requerido.' },                
             ],
             "Endoscopías": [
                 { id: 'endoscopia-digestiva', name: 'Endoscopía digestiva (alta / baja)', instructions: 'Ayuno mínimo 12 h. Anestesia general obligatoria.' },
@@ -2521,20 +2075,6 @@
             document.getElementById('cancel-delete-btn').addEventListener('click', () => hideModal('deleteConfirmation'));
             document.getElementById('confirm-delete-btn').addEventListener('click', handleDeletePatient);
             
-            document.getElementById('data-breed').addEventListener('change', (e) => {
-                const otherBreedContainer = document.getElementById('data-breed-other-container');
-                if (e.target.value === 'Otro') {
-                    otherBreedContainer.classList.remove('hidden');
-                } else {
-                    otherBreedContainer.classList.add('hidden');
-                }
-            });
-            document.querySelectorAll('input[name="species"]').forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    updateBreedDropdown(e.target.value);
-                });
-            });
-
             // --- PATIENT HUB ---
             document.getElementById('edit-patient-data-btn').addEventListener('click', () => openPatientDataForm(currentPatientId));
             document.getElementById('back-to-hub-btn').addEventListener('click', () => openPatientHub(currentPatientId));
@@ -2573,12 +2113,6 @@
             document.getElementById('close-vaccine-modal-btn').addEventListener('click', () => hideModal('vaccine'));
             document.getElementById('cancel-vaccine-btn').addEventListener('click', () => hideModal('vaccine'));
 
-            // --- DEWORMING ---
-            document.getElementById('new-deworming-btn').addEventListener('click', openNewDewormingModal);
-            document.getElementById('deworming-form').addEventListener('submit', saveNewDeworming);
-            document.getElementById('close-deworming-modal-btn').addEventListener('click', () => hideModal('deworming'));
-            document.getElementById('cancel-deworming-btn').addEventListener('click', () => hideModal('deworming'));
-
             // --- EXAMS ---
             document.getElementById('new-exam-order-btn').addEventListener('click', openNewExamOrderModal);
             document.getElementById('exam-order-form').addEventListener('submit', saveNewExamOrder);
@@ -2588,24 +2122,15 @@
             document.getElementById('exam-result-form').addEventListener('submit', saveNewExamResult);
             document.getElementById('close-exam-result-modal-btn').addEventListener('click', () => hideModal('examResult'));
             document.getElementById('cancel-exam-result-btn').addEventListener('click', () => hideModal('examResult'));
-            
-            const labExamSelectButton = document.getElementById('lab-exam-select-button');
-            const labExamSelectDropdown = document.getElementById('lab-exam-select-dropdown');
-            const imagingExamSelectButton = document.getElementById('imaging-exam-select-button');
-            const imagingExamSelectDropdown = document.getElementById('imaging-exam-select-dropdown');
-
-            labExamSelectButton.addEventListener('click', () => labExamSelectDropdown.classList.toggle('hidden'));
-            imagingExamSelectButton.addEventListener('click', () => imagingExamSelectDropdown.classList.toggle('hidden'));
-
-            document.addEventListener('click', (e) => {
-                if (!labExamSelectButton.contains(e.target) && !labExamSelectDropdown.contains(e.target)) {
-                    labExamSelectDropdown.classList.add('hidden');
-                }
-                if (!imagingExamSelectButton.contains(e.target) && !imagingExamSelectDropdown.contains(e.target)) {
-                    imagingExamSelectDropdown.classList.add('hidden');
-                }
+            document.querySelectorAll('.exam-tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.exam-tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.exam-tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(`exam-tab-${btn.dataset.tab}`).classList.add('active');
+                });
             });
-
+            // Printable Exam Order listeners
             document.querySelector('.back-to-hub-btn-from-exam-order').addEventListener('click', () => openPatientHub(currentPatientId));
             document.getElementById('download-exam-order-pdf-btn').addEventListener('click', () => downloadPDF('exam-order-content-generator', `orden-examen-${currentPatientId}.pdf`));
             document.getElementById('send-exam-order-email-btn').addEventListener('click', () => {
@@ -2613,35 +2138,6 @@
                 const subject = `Orden de Examen para Ficha Nº ${currentPatientId}`;
                 const body = 'Estimado/a,\n\nAdjunto la orden de examen para su mascota.\n\nSaludos cordiales,\nDra. Alejandra Cautín Bastías';
                 sendEmail(email, subject, body);
-            });
-
-            // --- CERTIFICATES ---
-            document.querySelectorAll('.certificate-template-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const template = e.target.dataset.template;
-                    openCertificateDetailsModal(template);
-                });
-            });
-            document.getElementById('certificate-details-form').addEventListener('submit', handleCertificateGeneration);
-            document.getElementById('close-certificate-details-modal-btn').addEventListener('click', () => hideModal('certificateDetails'));
-            document.getElementById('cancel-certificate-details-btn').addEventListener('click', () => hideModal('certificateDetails'));
-            document.querySelectorAll('.back-to-hub-btn-from-cert').forEach(btn => {
-                btn.addEventListener('click', () => openPatientHub(currentPatientId));
-            });
-            document.getElementById('download-certificate-pdf-btn').addEventListener('click', () => downloadPDF('certificate-content-generator', `certificado-${currentCertificateTemplate}-${currentPatientId}.pdf`));
-            document.getElementById('send-certificate-email-btn').addEventListener('click', () => {
-                const email = document.getElementById('certificate-email').value;
-                const subject = `Certificado para paciente con Ficha Nº ${currentPatientId}`;
-                const body = 'Estimado/a,\n\nAdjunto el certificado para su mascota.\n\nSaludos cordiales,\nDra. Alejandra Cautín Bastías';
-                sendEmail(email, subject, body);
-            });
-            document.getElementById('download-international-cert-btn').addEventListener('click', () => {
-                const patientName = currentPatientData?.name || 'paciente';
-                downloadPDF('international-cert-content', `Certificado_Exportacion_${patientName}.pdf`);
-            });
-            document.getElementById('download-microchip-cert-btn').addEventListener('click', () => {
-                const patientName = currentPatientData?.name || 'paciente';
-                downloadPDF('microchip-cert-content', `Comprobante_Microchip_${patientName}.pdf`);
             });
 
             // --- PUBLIC LANDING PAGE ---
@@ -2676,25 +2172,28 @@
             document.querySelectorAll('#home-buttons a').forEach(link => link.addEventListener('click', handleNavClick));
             document.getElementById('mobile-menu-btn').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
             
+            // Agenda form listeners
             document.getElementById('agenda-tutor-rut').addEventListener('input', (e) => handleRutInput(e, 'agenda-rut-validation-message'));
             document.getElementById('agenda-tutor-rut').addEventListener('blur', checkTutorRutOnBlur);
             document.getElementById('agenda-continue-btn').addEventListener('click', handleAgendaContinue);
 
+            // Contact form listener
             document.getElementById('contact-form').addEventListener('submit', handleContactFormSubmit);
 
+            // FAQ Data and Generation
             const faqs = [
                 { q: '¿Qué hago si mi perro vomita un medicamento?', a: 'No repita la dosis sin consultar. Anote la hora y el medicamento y contacte a su veterinario para recibir instrucciones.' },
                 { q: '¿Cómo saber si mi mascota tiene fiebre?', a: 'La forma más precisa es con un termómetro rectal. La temperatura normal en perros y gatos es de 38°C a 39.2°C. Si no tiene termómetro, observe si sus orejas o nariz están más calientes de lo normal, pero esto no es un método confiable.' },
                 { q: '¿Cuándo debo llevar a mi mascota a un control?', a: 'Se recomienda un control anual para mascotas adultas sanas. Los cachorros, seniors o mascotas con condiciones crónicas necesitan visitas más frecuentes. Siempre consulte ante cualquier cambio de comportamiento o síntoma inusual.' }
             ];
             const faqContainer = document.getElementById('faq-accordion');
-            faqContainer.innerHTML = '';
+            faqContainer.innerHTML = ''; // Clear existing
             faqs.forEach(faq => {
                 const item = document.createElement('div');
                 item.innerHTML = `
                     <div class="accordion-header">
                         <h3 class="font-semibold text-lg text-gray-700">${faq.q}</h3>
-                        <svg class="accordion-arrow w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <svg class="accordion-arrow w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     <div class="accordion-body">
                         <p class="text-gray-600">${faq.a}</p>
@@ -2702,17 +2201,19 @@
                 `;
                 faqContainer.appendChild(item);
             });
-            
             faqContainer.querySelectorAll('.accordion-header').forEach(header => {
                 header.addEventListener('click', () => {
                     const body = header.nextElementSibling;
+                    const arrow = header.querySelector('.accordion-arrow');
                     header.classList.toggle('active');
                     body.classList.toggle('expanded');
+                    arrow.style.transform = body.classList.contains('expanded') ? 'rotate(180deg)' : 'rotate(0deg)';
                 });
             });
 
              document.querySelector('.nav-link[href="#inicio"]').classList.add('active');
              
+            // Service Modal Logic
             const serviceData = {
                 'consulta-general': { title: 'Consulta General', description: 'Evaluación completa del estado de salud de tu mascota, diagnóstico de enfermedades y recomendación de tratamientos.' },
                 'vacunaciones': { title: 'Vacunaciones', description: 'Aplicación de vacunas esenciales para proteger a tu mascota contra enfermedades infecciosas comunes.' },
@@ -2724,7 +2225,7 @@
                 'homenaje-final': { title: 'Acompañamiento y Homenaje Final', description: 'Un servicio compasivo y respetuoso para acompañarte en el difícil momento de la despedida, asegurando un final tranquilo y digno para tu fiel compañero.' }
             };
             const servicesGrid = document.getElementById('services-grid');
-            servicesGrid.innerHTML = '';
+            servicesGrid.innerHTML = ''; // Clear existing
             servicesGrid.innerHTML = Object.keys(serviceData).map(key => {
                 return `
                     <div data-service="${key}" class="service-card bg-[var(--color-surface)] p-6 rounded-xl shadow-lg text-center flex flex-col items-center cursor-pointer hover:shadow-xl transition-shadow">
