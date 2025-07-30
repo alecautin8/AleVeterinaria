@@ -3,61 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ale Veterinaria | Cuidado a Domicilio en Santiago</title>
-    <!-- Tailwind CSS -->
+    <title>Ale Veterinaria - Cuidado a domicilio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Firebase SDK -->
     <script type="module">
         // --- Firebase Configuration ---
+        // Para Firebase JS SDK v7.20.0 y versiones posteriores, measurementId es opcional
         const firebaseConfig = {
           apiKey: "AIzaSyBrYOiaa_skDuvRDD_zMZvUBknfwmTyDko",
           authDomain: "ale-veterinaria.firebaseapp.com",
           projectId: "ale-veterinaria",
-          storageBucket: "ale-veterinaria.appspot.com",
+          storageBucket: "ale-veterinaria.firebasestorage.app",
           messagingSenderId: "87862276548",
           appId: "1:87862276548:web:a55b3154a31e4c6948b491",
           measurementId: "G-PNKMJC92K3"
         };
         
         // --- Firebase Initialization ---
+        // Importe las funciones que necesita desde los SDK que necesita
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, runTransaction, orderBy, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
+        import { getFirestore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, runTransaction, orderBy, addDoc, deleteDoc, updateDoc, startAt, endAt } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
         
         try {
+            // Inicializar Firebase
             const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
             const db = getFirestore(app);
             const auth = getAuth(app);
             const storage = getStorage(app);
-            // Make Firebase services globally available
+
+            // Hacer que Firebase sea accesible globalmente para otras partes de la aplicación
             window.db = db;
             window.auth = auth;
             window.storage = storage;
+            window.analytics = analytics;
             window.firebase = { 
                 collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, 
                 runTransaction, orderBy, addDoc, deleteDoc, updateDoc, signInWithEmailAndPassword, 
-                onAuthStateChanged, signOut, ref, uploadBytes, getDownloadURL
+                onAuthStateChanged, signOut, ref, uploadBytes, getDownloadURL, startAt, endAt
             };
         } catch (e) {
-            console.error("Firebase initialization error.", e);
+            console.error("Firebase initialization error. Please check your firebaseConfig.", e);
         }
     </script>
-    <!-- html2pdf.js for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Custom Styles -->
     <style>
         :root {
-            --color-background: #F9F5EF; /* Beige claro */
+            --color-background: #F9F5EF;
             --color-surface: #FFFFFF;
-            --color-primary: #a3b2cc; /* Lavanda suave */
-            --color-secondary: #cce2d8; /* Menta suave */
-            --color-accent: #CFEDEC;
-            --color-highlight: #DAD4E6;
+            --color-primary: #A3CBB2; /* Menta suave */
+            --color-secondary: #F7DCDC; /* Rosa pálido */
+            --color-accent: #CFEDEC; /* Turquesa claro */
+            --color-highlight: #DAD4E6; /* Lavanda */
             --text-main: #4B4B4B;
             --text-muted: #7C7C75;
             --text-contrast: #FFFFFF;
@@ -70,350 +72,187 @@
         .modal { display: none; }
         .modal.active { display: flex; }
         
-        .btn-primary { background-color: var(--color-primary); color: var(--text-main); transition: all 0.3s; }
-        .btn-primary:hover { background-color: #8f9db8; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-secondary { background-color: transparent; color: var(--text-main); border: 2px solid var(--color-primary); transition: all 0.3s; }
-        .btn-secondary:hover { background-color: var(--color-primary); color: var(--text-main); }
+        .btn-primary { background-color: var(--color-primary); color: var(--text-contrast); transition: all 0.3s; transform: translateY(0); }
+        .btn-primary:hover { background-color: #8FBBA1; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-secondary { background-color: var(--color-highlight); color: var(--text-main); transition: all 0.3s; transform: translateY(0); }
+        .btn-secondary:hover { background-color: #C9C3D9; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-tertiary { background-color: var(--color-accent); color: var(--text-main); transition: all 0.3s; transform: translateY(0); }
+        .btn-tertiary:hover { background-color: #B8E0DE; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-danger { background-color: #EF4444; color: white; transition: all 0.3s; transform: translateY(0); }
+        .btn-danger:hover { background-color: #DC2626; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; }
-        details[open] .accordion-body { max-height: 1000px; padding-top: 1rem; }
-        details summary::-webkit-details-marker { display: none; }
+        input[type="text"], input[type="date"], input[type="time"], input[type="email"], input[type="tel"], input[type="password"], textarea, select { border: 1px solid #CBD5E0; border-radius: 0.375rem; padding: 0.5rem 0.75rem; transition: border-color 0.2s, box-shadow 0.2s; width: 100%;}
+        input:focus, textarea:focus, select:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(163, 203, 178, 0.3); outline: none; }
+        .form-radio, .form-checkbox { color: var(--color-primary); }
+        .form-radio:checked, .form-checkbox:checked { background-color: var(--color-primary); border-color: var(--color-primary); }
 
-        .nav-link.active { color: var(--color-primary); font-weight: 600; }
-
-        .btn-tertiary { background-color: var(--color-accent); color: var(--text-main); transition: background-color 0.3s; }
-        .btn-tertiary:hover { background-color: #BDE6E5; }
-        .btn-danger { background-color: #EF4444; color: white; transition: background-color 0.3s; }
-        .btn-danger:hover { background-color: #DC2626; }
-        input, textarea, select { border: 1px solid #CBD5E0; border-radius: 0.375rem; padding: 0.5rem 0.75rem; transition: border-color 0.2s, box-shadow 0.2s; width: 100%;}
-        input:focus, textarea:focus, select:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(163, 178, 204, 0.3); outline: none; }
-        .hub-section-btn.active-hub-btn, .tutor-portal-btn.active { background-color: var(--color-primary); color: var(--text-main); }
+        .accordion-header { cursor: pointer; padding: 1rem; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center; transition: background-color 0.3s; }
+        .accordion-header:hover { background-color: #f3f4f6; }
+        .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; padding: 0 1rem; border-left: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; background-color: var(--color-surface); }
+        .accordion-body.expanded { padding: 1.5rem 1rem; max-height: 1500px; }
+        .accordion-arrow { transition: transform 0.3s ease-in-out; }
+        .accordion-header.active .accordion-arrow { transform: rotate(180deg); }
+        
+        @media print { 
+            .no-print { display: none !important; } 
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+        .modal-content { max-height: 90vh; overflow-y: auto; }
+        .active-hub-btn { background-color: var(--color-primary) !important; color: white !important; }
+        .exam-tab-content { display: none; }
+        .exam-tab-content.active { display: block; }
+        .exam-tab-btn.active { border-bottom: 2px solid var(--color-primary); color: var(--color-primary); }
     </style>
 </head>
 <body class="antialiased">
 
-    <!-- ===== Public View ===== -->
     <div id="view-landing" class="view active">
-        <div class="min-h-screen bg-[var(--color-surface)]">
-            <nav class="bg-[var(--color-surface)] shadow-sm sticky top-0 z-40">
+        <div class="min-h-screen bg-var(--color-background)">
+            <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between items-center h-16">
-                        <a href="#inicio" class="text-xl font-bold font-poppins text-[var(--text-main)]">Ale Veterinaria</a>
+                        <div class="flex-shrink-0 flex items-center gap-2"><img src="https://placehold.co/100x40/A3CBB2/FFFFFF?text=Logo" alt="Logo Ale Veterinaria" class="h-8 w-auto"><a href="#inicio" class="text-2xl font-bold text-[var(--text-main)] font-poppins">Ale Veterinaria</a>
+</div>
                         <div class="hidden md:flex items-center space-x-8" id="desktop-nav">
                             <a href="#quien-soy" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Quién soy</a>
                             <a href="#servicios" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Servicios</a>
-                            <a href="#agenda" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Agendar</a>
+                            <a href="#informacion" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Información</a>
+                            <a href="#preguntas" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Preguntas</a>
                             <a href="#contacto" class="nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Contacto</a>
                         </div>
-                        <div class="flex items-center gap-4">
-                             <button id="show-tutor-portal-modal-btn-nav" class="btn-secondary px-4 py-2 rounded-lg font-semibold text-sm">Portal Tutor</button>
-                             <button id="mobile-menu-btn" class="md:hidden ml-4 text-[var(--text-muted)] hover:text-[var(--text-main)]">
+                        <div class="hidden md:flex items-center gap-2">
+    <button id="show-tutor-portal-btn-desktop" class="btn-primary px-4 py-2 rounded-lg font-semibold">Portal de Tutores</button>
+    <button id="show-login-modal-btn-desktop" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Portal Profesional</button>
+</div>
+                        <div class="md:hidden">
+                            <button id="mobile-menu-btn" class="text-[var(--text-muted)] hover:text-[var(--text-main)]">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                             </button>
                         </div>
                     </div>
                 </div>
-                <div id="mobile-menu" class="md:hidden hidden bg-[var(--color-surface)] border-t">
-                    <a href="#quien-soy" class="nav-link block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Quién soy</a>
-                    <a href="#servicios" class="nav-link block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Servicios</a>
-                    <a href="#agenda" class="nav-link block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Agenda</a>
-                    <a href="#contacto" class="nav-link block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Contacto</a>
-                    <button id="show-tutor-portal-modal-btn-mobile" class="w-full text-left block py-2 px-4 text-sm text-[var(--text-muted)] hover:bg-[var(--color-background)]">Portal de Tutores</button>
+                <div id="mobile-menu" class="md:hidden hidden bg-white border-t p-4 space-y-2">
+                     <a href="#quien-soy" class="block text-center nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Quién soy</a>
+                     <a href="#servicios" class="block text-center nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Servicios</a>
+                     <a href="#informacion" class="block text-center nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Información</a>
+                     <a href="#preguntas" class="block text-center nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Preguntas</a>
+                     <a href="#contacto" class="block text-center nav-link text-[var(--text-muted)] hover:text-[var(--text-main)] transition">Contacto</a>
+                     <button id="show-tutor-portal-btn-mobile" class="w-full btn-primary px-4 py-2 rounded-lg font-semibold">Portal de Tutores</button>
+                     <button id="show-login-modal-btn-mobile" class="w-full btn-secondary px-4 py-2 rounded-lg font-semibold">Portal Profesional</button>
                 </div>
             </nav>
             
             <main id="public-main-content">
-                <section id="inicio" class="relative min-h-[calc(100vh-4rem)] flex items-center bg-[var(--color-background)]">
-                    <div class="absolute inset-0 bg-cover bg-center z-0 opacity-30" style="background-image: url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=2069&auto=format&fit=crop');"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[var(--color-background)] via-[var(--color-background)]/90 to-transparent z-0"></div>
-                    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 z-10 w-full">
-                        <div class="max-w-xl text-left">
-                            <h1 class="text-4xl md:text-5xl font-bold text-[var(--text-main)] font-poppins leading-tight">Cuidar con respeto.<br>Acompañar con conciencia.</h1>
-                            <p class="mt-6 text-lg text-[var(--text-muted)] max-w-lg">Veterinaria a domicilio en Santiago. Atención cálida, responsable y sin apuro para el bienestar de tu compañero de vida.</p>
-                            <div class="mt-10 flex flex-col sm:flex-row items-start gap-4">
-                                <a href="#agenda" class="nav-link btn-primary px-8 py-3 rounded-lg font-semibold text-lg text-center shadow-lg">Agendar visita</a>
-                                <button id="show-tutor-portal-modal-btn-hero" class="btn-secondary px-6 py-3 rounded-lg font-semibold text-center text-sm">¿Ya eres paciente?</button>
-                            </div>
+                <section id="inicio" class="min-h-[calc(100vh-4rem)] flex items-center bg-cover bg-center" style="background-image: url('https://placehold.co/1200x800/F9F5EF/4B4B4B?text=Imagen+Cálida+de+Mascota');">
+                    <div class="absolute inset-0 bg-[var(--color-background)] opacity-60"></div>
+                    <div class="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <h1 class="text-4xl md:text-6xl font-bold text-[var(--text-main)] font-poppins leading-tight">Cuidar con respeto,<br>acompañar con conciencia.</h1>
+                        <p class="mt-6 text-lg md:text-xl text-[var(--text-muted)]">Veterinaria a domicilio en Santiago. Atención cálida, responsable y sin apuro.</p>
+                        <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
+                            <a href="https://calendly.com/avmveterinaria" target="_blank" class="btn-primary px-8 py-3 rounded-full font-semibold text-lg shadow-lg transform hover:scale-105 transition-transform">Agendar visita</a>
+                            <button id="show-tutor-portal-btn" class="font-semibold text-[var(--text-main)] hover:underline">¿Ya eres paciente?</button>
                         </div>
                     </div>
                 </section>
-                
-                <section id="quien-soy" class="py-20 bg-[var(--color-surface)]">
-                    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-12 items-center">
+
+                <section id="quien-soy" class="py-20 bg-white">
+                     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-12 items-center">
                         <div class="md:col-span-1">
-                            <img src="https://placehold.co/400x400/F7DCDC/4B4B4B?text=Dra.+Alejandra" alt="Foto de Dra. Alejandra" class="rounded-full shadow-xl mx-auto w-64 h-64 md:w-full md:h-auto object-cover">
+                            <img src="https://placehold.co/400x400/DAD4E6/4B4B4B?text=Dra.+Ale" alt="Foto de Dra. Alejandra" class="rounded-full shadow-xl mx-auto">
                         </div>
                         <div class="md:col-span-2">
-                            <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-4">Dra. Alejandra Cautín Bastias</h2>
-                            <p class="text-[var(--text-muted)] mb-6 text-base leading-relaxed">Hola, soy Alejandra. Médica Veterinaria, mamá perruna y gatuna, y una enamorada de ese lazo tan profundo que creamos con nuestros animales. Mi misión es cuidarlos con respeto, calma y cariño, tal como me gustaría que cuiden a los míos. Después de años en clínicas, entendí que la medicina necesita más tiempo, más contención y menos apuro. Por eso hoy acompaño desde el hogar, donde cada perro y gato puede sentirse seguro, sin miedo, sin jaulas, sin estrés. Trabajo con un enfoque preventivo e integrativo, poniendo atención no solo a su cuerpo, sino también a su bienestar emocional. Mi propósito es estar presente en cada etapa: desde que llega un cachorro a casa, hasta ese último respiro que nos rompe el alma.</p>
-                            <blockquote class="border-l-4 border-[var(--color-primary)] pl-4 italic text-lg text-[var(--text-main)]">
-                                "Acompaño desde el cuidado consciente, respetando la conexión sagrada entre tutor y animal."
-                            </blockquote>
+                            <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-4">Dra. Alejandra Cautín</h2>
+                            <p class="text-[var(--text-muted)] mb-4">Soy Médica Veterinaria con un profundo amor por el lazo que nos une a nuestros animales. Mi enfoque es integrativo y respetuoso, entendiendo que cada mascota es un mundo y que su bienestar emocional es tan importante como su salud física. Acompaño a las familias en cada etapa, desde la alegría de un nuevo cachorro hasta el momento sagrado de la despedida, siempre con calma, presencia y todo el corazón.</p>
+                            <p class="text-[var(--text-main)] italic text-lg mt-4">"Mi propósito es ser un puente de confianza y tranquilidad entre tú y tu mejor amigo."</p>
                         </div>
                     </div>
                 </section>
 
                 <section id="servicios" class="py-20 bg-[var(--color-background)]">
                     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <h2 class="text-3xl font-bold text-center text-[var(--text-main)] font-poppins mb-12">Mis Servicios</h2>
-                        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                            <div class="bg-[var(--color-surface)] p-8 rounded-xl shadow-lg text-center flex flex-col items-center transition hover:shadow-xl hover:-translate-y-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
-                                <h3 class="font-bold text-xl text-[var(--text-main)] mb-2 mt-4">Consulta a Domicilio</h3>
-                                <p class="text-[var(--text-muted)] text-sm">Evaluación integral en un ambiente seguro y tranquilo para tu mascota.</p>
+                        <h2 class="text-3xl font-bold text-center text-[var(--text-main)] font-poppins mb-12">Servicios pensados para su bienestar</h2>
+                        <div id="services-grid" class="grid sm:grid-cols-1 lg:grid-cols-2 gap-8">
+                          </div>
+                    </div>
+                </section>
+                
+                <section id="informacion" class="py-20 bg-white">
+                    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 class="text-3xl font-bold text-center text-[var(--text-main)] font-poppins mb-12">Información Importante</h2>
+                        <div class="grid md:grid-cols-3 gap-8 text-center">
+                            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                                <h3 class="font-bold text-xl text-[var(--text-main)] font-poppins mb-2">Zonas de Cobertura</h3>
+                                <p class="text-[var(--text-muted)]">Las Condes, Vitacura, Lo Barnechea, Providencia, La Reina, Ñuñoa. Consulta por otras comunas.</p>
                             </div>
-                            <div class="bg-[var(--color-surface)] p-8 rounded-xl shadow-lg text-center flex flex-col items-center transition hover:shadow-xl hover:-translate-y-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /><path d="M5.707 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L12 5.414l-2.293 2.293a1 1 0 01-1.414 0z" /></svg>
-                                <h3 class="font-bold text-xl text-[var(--text-main)] mb-2 mt-4">Vacunación y Desparasitación</h3>
-                                <p class="text-[var(--text-muted)] text-sm">Planes preventivos actualizados para proteger a tu compañero de vida.</p>
+                            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                                <h3 class="font-bold text-xl text-[var(--text-main)] font-poppins mb-2">Horarios de Atención</h3>
+                                <p class="text-[var(--text-muted)]">Lunes a Viernes: 10:00 - 19:00 hrs.<br>Sábados: 10:00 - 14:00 hrs.</p>
                             </div>
-                             <div class="bg-[var(--color-surface)] p-8 rounded-xl shadow-lg text-center flex flex-col items-center transition hover:shadow-xl hover:-translate-y-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 12L3 12m4 4l4-4m6 4v-4m0 4l4-4m-4 4l-4-4" /></svg>
-                                <h3 class="font-bold text-xl text-[var(--text-main)] mb-2 mt-4">Toma de Exámenes</h3>
-                                <p class="text-[var(--text-muted)] text-sm">Toma de muestras de sangre y orina para análisis en laboratorio.</p>
-                            </div>
-                            <div class="bg-[var(--color-surface)] p-8 rounded-xl shadow-lg text-center flex flex-col items-center transition hover:shadow-xl hover:-translate-y-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
-                                <h3 class="font-bold text-xl text-[var(--text-main)] mb-2 mt-4">Implantación de Microchip</h3>
-                                <p class="text-[var(--text-muted)] text-sm">Registro e identificación oficial de tu mascota de forma segura.</p>
-                            </div>
-                            <div class="bg-[var(--color-surface)] p-8 rounded-xl shadow-lg text-center flex flex-col items-center transition hover:shadow-xl hover:-translate-y-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                <h3 class="font-bold text-xl text-[var(--text-main)] mb-2 mt-4">Certificados de Salud</h3>
-                                <p class="text-[var(--text-muted)] text-sm">Emisión de documentos necesarios para viajes y otros trámites.</p>
-                            </div>
-                            <div class="bg-[var(--color-surface)] p-8 rounded-xl shadow-lg text-center flex flex-col items-center transition hover:shadow-xl hover:-translate-y-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                                <h3 class="font-bold text-xl text-[var(--text-main)] mb-2 mt-4">Seguimiento y Asesorías</h3>
-                                <p class="text-[var(--text-muted)] text-sm">Acompañamiento en tratamientos y orientación en bienestar emocional.</p>
+                             <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                                <h3 class="font-bold text-xl text-[var(--text-main)] font-poppins mb-2">Métodos de Pago</h3>
+                                <p class="text-[var(--text-muted)]">Transferencia bancaria, tarjetas de débito y crédito.</p>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <section id="agenda" class="py-20 bg-[var(--color-surface)]">
+                 <section id="preguntas" class="py-20 bg-[var(--color-background)]">
+                     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 class="text-3xl font-bold text-center text-[var(--text-main)] font-poppins mb-12">Preguntas Frecuentes</h2>
+                        <div id="faq-accordion" class="space-y-4">
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="contacto" class="py-20 bg-white">
                     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-6">Agenda una visita</h2>
-                        <p class="text-[var(--text-muted)] mb-8 max-w-2xl mx-auto">Comienza ingresando tu RUT para buscar tus datos. Si eres un nuevo tutor, ¡no te preocupes! Podrás completar tu información a continuación.</p>
-                        
-                        <form id="agenda-form" class="space-y-4 text-left bg-white p-8 rounded-lg shadow-md">
-                            <div>
-                                <label for="agenda-tutor-rut" class="block text-sm font-medium text-[var(--text-muted)]">RUT del tutor</label>
-                                <input type="text" id="agenda-tutor-rut" required class="mt-1" placeholder="Ej: 12.345.678-9">
-                                <div id="agenda-rut-validation-message" class="text-red-500 text-xs mt-1"></div>
-                            </div>
-                            
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="agenda-tutor-name" class="block text-sm font-medium text-[var(--text-muted)]">Nombre completo del tutor</label>
-                                    <input type="text" id="agenda-tutor-name" required class="mt-1">
-                                </div>
-                                <div>
-                                    <label for="agenda-tutor-commune" class="block text-sm font-medium text-[var(--text-muted)]">Comuna</label>
-                                    <input type="text" id="agenda-tutor-commune" required class="mt-1">
-                                </div>
-                            </div>
-                            
-                            <div id="agenda-pet-selection-container" class="pt-4 border-t hidden">
-                                <p class="font-semibold mb-2 text-center">Selecciona tu mascota</p>
-                                <div id="existing-pets-list" class="space-y-2"></div>
-                                <div id="new-patient-fields" class="hidden space-y-4 mt-4">
-                                    <p class="font-semibold text-center">Datos de tu nueva mascota</p>
-                                    <input type="text" id="agenda-pet-name" placeholder="Nombre de la mascota" required class="mt-1">
-                                </div>
-                            </div>
-
-                            <div class="pt-4 text-center">
-                                <button type="submit" class="btn-primary inline-block px-10 py-3 rounded-lg font-semibold text-lg shadow-lg">Continuar a agendamiento</button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-                <section id="recursos" class="py-20 bg-[var(--color-background)]">
-                    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-5 gap-12">
-                        <div class="md:col-span-3">
-                            <h3 class="text-2xl font-bold text-center md:text-left text-[var(--text-main)] font-poppins mb-8">Preguntas Frecuentes</h3>
-                            <div class="space-y-4">
-                                <details class="group bg-white p-4 rounded-lg shadow-sm">
-                                    <summary class="font-semibold cursor-pointer list-none flex justify-between items-center text-[var(--text-main)]">
-                                        ¿Qué comunas de Santiago atiendes?
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                    </summary>
-                                    <div class="accordion-body">
-                                        <p class="text-[var(--text-muted)]">Atiendo principalmente en las comunas del sector oriente de Santiago (Las Condes, Vitacura, Lo Barnechea, Providencia, Ñuñoa). Si vives en otra comuna, contáctame para confirmar si tu dirección está dentro de mi zona de cobertura.</p>
-                                    </div>
-                                </details>
-                                <details class="group bg-white p-4 rounded-lg shadow-sm">
-                                    <summary class="font-semibold cursor-pointer list-none flex justify-between items-center text-[var(--text-main)]">
-                                        ¿Qué hago en una emergencia?
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                    </summary>
-                                    <div class="accordion-body">
-                                        <p class="text-[var(--text-muted)]">Mi servicio es de atención programada y no de urgencia. En caso de una emergencia vital (ej: atropello, intoxicación, dificultad respiratoria severa), te recomiendo acudir a la clínica de urgencias 24 horas más cercana para una atención inmediata.</p>
-                                    </div>
-                                </details>
-                                <details class="group bg-white p-4 rounded-lg shadow-sm">
-                                    <summary class="font-semibold cursor-pointer list-none flex justify-between items-center text-[var(--text-main)]">
-                                        ¿Cuál es el valor de la consulta?
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                                    </summary>
-                                    <div class="accordion-body">
-                                        <p class="text-[var(--text-muted)]">El valor de la consulta a domicilio varía según la comuna. Por favor, contáctame por WhatsApp para darte el valor exacto para tu ubicación. Los procedimientos y medicamentos tienen un costo adicional.</p>
-                                    </div>
-                                </details>
-                            </div>
-                        </div>
-                        <div class="md:col-span-2">
-                             <h3 class="text-2xl font-bold text-center md:text-left text-[var(--text-main)] font-poppins mb-8">Recursos Educativos</h3>
-                             <div class="space-y-4">
-                                <a href="#" class="block border border-gray-200 bg-white rounded-lg p-4 flex items-center gap-4 transition hover:shadow-md">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--color-primary)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                    <div>
-                                        <h4 class="font-bold text-[var(--text-main)]">Guía de Primeros Auxilios</h4>
-                                        <p class="text-sm text-[var(--text-muted)]">Un PDF práctico con lo esencial.</p>
-                                    </div>
-                                </a>
-                                <a href="#" class="block border border-gray-200 bg-white rounded-lg p-4 flex items-center gap-4 transition hover:shadow-md">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[var(--color-primary)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                                    <div>
-                                        <h4 class="font-bold text-[var(--text-main)]">Alimentación Natural</h4>
-                                        <p class="text-sm text-[var(--text-muted)]">Artículo sobre dieta BARF.</p>
-                                    </div>
-                                </a>
-                             </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="homenaje" class="py-20 bg-[var(--color-surface)]">
-                    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-4">Huella Eterna</h2>
-                        <p class="text-[var(--text-muted)] mb-12 max-w-2xl mx-auto">Un espacio para recordar con amor a aquellos que dejaron una marca imborrable en nuestras vidas. Su luz nunca se apaga.</p>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-                            <div class="text-center">
-                                <img src="https://placehold.co/200x200/DAD4E6/4B4B4B?text=Rocky" class="rounded-full w-32 h-32 mx-auto shadow-md object-cover">
-                                <h4 class="mt-4 font-semibold text-[var(--text-main)]">Rocky</h4>
-                                <p class="text-xs text-gray-500 italic">"Siempre en nuestros corazones."</p>
-                            </div>
-                            <div class="text-center">
-                                <img src="https://placehold.co/200x200/cce2d8/4B4B4B?text=Luna" class="rounded-full w-32 h-32 mx-auto shadow-md object-cover">
-                                <h4 class="mt-4 font-semibold text-[var(--text-main)]">Luna</h4>
-                                <p class="text-xs text-gray-500 italic">"Gracias por tanta alegría."</p>
-                            </div>
-                            <div class="text-center">
-                                <img src="https://placehold.co/200x200/F9F5EF/4B4B4B?text=Max" class="rounded-full w-32 h-32 mx-auto shadow-md object-cover">
-                                <h4 class="mt-4 font-semibold text-[var(--text-main)]">Max</h4>
-                                <p class="text-xs text-gray-500 italic">"Compañero fiel."</p>
-                            </div>
-                            <div class="text-center">
-                                <img src="https://placehold.co/200x200/a3b2cc/FFFFFF?text=Mila" class="rounded-full w-32 h-32 mx-auto shadow-md object-cover">
-                                <h4 class="mt-4 font-semibold text-[var(--text-main)]">Mila</h4>
-                                <p class="text-xs text-gray-500 italic">"Te extrañamos cada día."</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="contacto" class="py-20 bg-[var(--color-background)]">
-                    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-10">Hablemos</h2>
-                        <div class="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12">
-                            <a href="https://wa.me/56976040797" target="_blank" class="text-center group">
-                                <div class="bg-white p-5 rounded-full inline-block group-hover:scale-110 group-hover:shadow-lg transition-all">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.839 8.839 0 01-4.43-1.232l-2.148.862.92-2.093A8.958 8.958 0 012 10c0-4.418 4.477-8 10-8s8 3.582 8 8zm-4.812-3.248a.75.75 0 00-1.202-.88l-2.36 1.77a.75.75 0 00.33 1.333l4.03-1.343a.75.75 0 00.202-.98zM10 15a.75.75 0 00.75-.75v-4.5a.75.75 0 00-1.5 0v4.5A.75.75 0 0010 15z" clip-rule="evenodd" /></svg>
-                                </div>
-                                <p class="font-semibold mt-3 text-[var(--text-main)]">WhatsApp</p>
-                                <p class="text-sm text-[var(--text-muted)]">(Sólo mensajes)</p>
+                        <h2 class="text-3xl font-bold text-[var(--text-main)] font-poppins mb-4">Conversemos</h2>
+                        <p class="text-[var(--text-muted)] mb-8">Si tienes dudas o prefieres agendar por otro medio, aquí me encuentras.</p>
+                        <div class="flex flex-col md:flex-row justify-center items-center gap-8 text-lg">
+                            <a href="https://wa.me/56976040797" target="_blank" class="flex items-center gap-2 text-[var(--text-main)] hover:text-[var(--color-primary)] transition">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.003 2.011.564 3.963 1.648 5.684l.269.444-1.043 3.816 3.817-1.042.433.261z"/></svg>
+                                <span>WhatsApp</span>
                             </a>
-                            <a href="mailto:avmveterinaria@gmail.com" class="text-center group">
-                                <div class="bg-white p-5 rounded-full inline-block group-hover:scale-110 group-hover:shadow-lg transition-all">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-500" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg>
-                                </div>
-                                <p class="font-semibold mt-3 text-[var(--text-main)]">Email</p>
-                                <p class="text-sm text-[var(--text-muted)]">avmveterinaria@gmail.com</p>
+                            <a href="mailto:avmveterinaria@gmail.com" class="flex items-center gap-2 text-[var(--text-main)] hover:text-[var(--color-primary)] transition">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                <span>Email</span>
                             </a>
-                            <a href="https://instagram.com/AleVeterinaria" target="_blank" class="text-center group">
-                                <div class="bg-white p-5 rounded-full inline-block group-hover:scale-110 group-hover:shadow-lg transition-all">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-pink-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM5.5 8.5a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM10 12a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /><path d="M10 14a4 4 0 100-8 4 4 0 000 8z" /></svg>
-                                </div>
-                                <p class="font-semibold mt-3 text-[var(--text-main)]">Instagram</p>
-                                <p class="text-sm text-[var(--text-muted)]">@AleVeterinaria</p>
+                            <a href="https://instagram.com/AleVeterinaria" target="_blank" class="flex items-center gap-2 text-[var(--text-main)] hover:text-[var(--color-primary)] transition">
+                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
+                                <span>Instagram</span>
                             </a>
-                        </div>
-                         <div class="mt-12 text-sm text-[var(--text-muted)] border-t pt-6 max-w-md mx-auto">
-                            <p><strong>Zona de atención:</strong> Principalmente sector Oriente, Santiago.</p>
-                            <p><strong>Horario:</strong> Lunes a Viernes de 9:00 a 18:00 hrs.</p>
                         </div>
                     </div>
                 </section>
             </main>
-            <footer class="bg-gray-800 text-white py-8">
-                <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400">
-                    <p>&copy; 2024 Dra. Alejandra Cautín Bastias. Todos los derechos reservados.</p>
-                    <p class="text-xs mt-2">La información en este sitio es educativa y no reemplaza una consulta veterinaria profesional.</p>
-                    <a href="#" id="show-admin-login-link" class="text-xs text-gray-500 hover:text-white mt-4 inline-block">Acceso Profesional</a>
+             <footer class="bg-[#2F4F4F] text-white py-8">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-300">
+                    <p>&copy; 2024 Dra. Alejandra Cautín. Todos los derechos reservados.</p>
+                    <p class="text-sm mt-2">La información en este sitio es educativa y no reemplaza una consulta veterinaria directa.</p>
                 </div>
             </footer>
         </div>
     </div>
 
-    <!-- ===== Tutor Portal View ===== -->
-    <div id="view-tutor-portal" class="view">
-        <header class="bg-white shadow-sm sticky top-0 z-30">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-                <h1 class="text-xl font-bold font-poppins text-[var(--text-main)]">Portal del Tutor</h1>
-                <button id="tutor-logout-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold text-sm">Cerrar Sesión</button>
-            </div>
-        </header>
-        <main class="max-w-5xl mx-auto p-4 md:p-8">
-            <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
-                <h2 id="tutor-welcome-message" class="text-2xl font-bold text-[var(--text-main)] mb-4"></h2>
-                <div>
-                    <label for="pet-selector" class="block text-sm font-medium text-[var(--text-muted)]">Selecciona tu mascota:</label>
-                    <select id="pet-selector" class="mt-1 max-w-xs"></select>
-                </div>
-            </div>
-
-            <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
-                <div id="tutor-portal-nav" class="flex flex-wrap gap-2">
-                    <button data-section="ficha" class="tutor-portal-btn flex-1 px-3 py-2 rounded-md font-semibold text-sm text-center">Ficha</button>
-                    <button data-section="vacunas" class="tutor-portal-btn flex-1 px-3 py-2 rounded-md font-semibold text-sm text-center">Vacunas</button>
-                    <button data-section="desparasitacion" class="tutor-portal-btn flex-1 px-3 py-2 rounded-md font-semibold text-sm text-center">Desparasitación</button>
-                    <button data-section="recetas" class="tutor-portal-btn flex-1 px-3 py-2 rounded-md font-semibold text-sm text-center">Recetas</button>
-                    <button data-section="examenes" class="tutor-portal-btn flex-1 px-3 py-2 rounded-md font-semibold text-sm text-center">Exámenes</button>
-                    <button data-section="certificados" class="tutor-portal-btn flex-1 px-3 py-2 rounded-md font-semibold text-sm text-center">Certificados</button>
-                </div>
-            </div>
-
-            <div id="tutor-portal-content" class="bg-white p-6 rounded-xl shadow-lg min-h-[300px]">
-                <!-- Contenido dinámico se insertará aquí -->
-            </div>
-        </main>
-    </div>
-
-    <!-- ===== Admin Application Container ===== -->
     <div id="app-container" class="hidden">
-        <header class="bg-[#FFFFFF] shadow-md p-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-[#4A4A4A]">Gestión Clínica Veterinaria</h1>
-            <button id="admin-logout-btn" class="btn-danger px-4 py-2 rounded-lg font-semibold">Cerrar Sesión</button>
+        <header class="bg-[#FFFFFF] shadow-md p-4 flex justify-between items-center no-print">
+            <h1 id="app-header-title" class="text-xl font-bold text-[#4A4A4A]">Gestión Clínica Veterinaria</h1>
+            <div>
+                <button id="back-to-landing-btn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold hidden">← Volver al Inicio</button>
+                <button id="logout-btn" class="btn-danger px-4 py-2 rounded-lg font-semibold">Cerrar Sesión</button>
+            </div>
         </header>
-        <div id="admin-app-content" class="max-w-5xl mx-auto p-4 md:p-8">
-            <!-- Vistas del Admin se insertarán aquí por JS -->
-        </div>
-    </div>
-    
-    <!-- Template for Admin HTML Content -->
-    <template id="admin-panel-template">
-        <div id="app">
-            <!-- ===== Dashboard View ===== -->
-            <div id="view-dashboard" class="admin-view">
+
+        <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
+            <div id="view-dashboard" class="view">
                 <main class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
                     <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg">
                         <h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">Buscar Paciente</h2>
-                        <div class="flex space-x-2">
-                            <input id="search-input" type="text" placeholder="Nº Ficha, Nombre o RUT" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ring-accent">
+                         <div class="relative">
+                            <input id="search-input" type="text" placeholder="Escribe un nombre para buscar..." class="w-full">
+                            <p class="text-xs text-gray-500 mt-1">Busca por nombre en tiempo real, o por RUT/Ficha y presiona el botón.</p>
                         </div>
+                        <button id="search-btn" class="w-full mt-2 btn-secondary px-5 py-2 rounded-lg font-semibold">Buscar por RUT / Ficha</button>
                         <div id="search-results" class="mt-4"></div>
                     </div>
                     <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg flex flex-col items-center justify-center">
@@ -422,455 +261,834 @@
                     </div>
                 </main>
             </div>
-            <!-- All other admin views will be added here dynamically -->
+            <div id="view-tutor-portal" class="view">
+                <div class="bg-white p-6 rounded-xl shadow-lg max-w-3xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center text-[var(--text-main)] font-poppins mb-2">Portal de Tutores</h2>
+                    <p class="text-center text-[var(--text-muted)] mb-6">Ingresa tu RUT para ver la información de tus mascotas.</p>
+                    <div class="flex space-x-2">
+                        <input id="portal-rut-input" type="text" placeholder="Ej: 12.345.678-9" class="w-full">
+                        <button id="portal-search-btn" class="btn-primary px-5 py-2 rounded-lg font-semibold">Buscar</button>
+                    </div>
+                </div>
+                <div id="portal-results-container" class="mt-8 space-y-8"></div>
+            </div>
+            <div id="view-patient-hub" class="view">
+                <header class="flex justify-between items-center bg-[#FFFFFF] p-4 rounded-xl shadow-lg mb-6">
+                    <div>
+                        <h1 id="hub-patient-name" class="text-3xl font-bold text-[#4A4A4A] capitalize"></h1>
+                        <p id="hub-patient-id" class="text-[#7F8B96]"></p>
+                    </div>
+                    <button class="back-to-dashboard-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver</button>
+                </header>
+                
+                <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-[#4A4A4A]">Datos Principales</h2>
+                        <button id="edit-patient-data-btn" class="btn-secondary px-4 py-2 rounded-lg font-semibold">Editar Datos</button>
+                    </div>
+                    <div id="hub-patient-summary" class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm"></div>
+                </div>
+        
+                <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-[#4A4A4A]">Anamnesis Remota</h2>
+                        <button id="save-hub-anamnesis-btn" class="btn-primary px-4 py-2 rounded-lg font-semibold">Guardar Anamnesis</button>
+                    </div>
+                    <textarea id="hub-anamnesis-remota" rows="6" class="w-full p-2 border rounded-lg" placeholder="Antecedentes, alergias, historial de enfermedades importantes..."></textarea>
+                </div>
+        
+                <div class="bg-[#FFFFFF] p-4 rounded-xl shadow-lg mb-6">
+                    <div id="hub-section-buttons" class="flex flex-wrap gap-2">
+                        <button data-section="consultas" class="hub-section-btn bg-gray-200 px-4 py-2 rounded-lg">Consultas</button>
+                        <button data-section="vacunas" class="hub-section-btn bg-gray-200 px-4 py-2 rounded-lg">Vacunas</button>
+                        <button data-section="desparasitacion" class="hub-section-btn bg-gray-200 px-4 py-2 rounded-lg">Desparasitación</button>
+                        <button data-section="examenes" class="hub-section-btn bg-gray-200 px-4 py-2 rounded-lg">Exámenes</button>
+                        <button data-section="certificados" class="hub-section-btn bg-gray-200 px-4 py-2 rounded-lg">Certificados</button>
+                        <button data-section="recetas" class="hub-section-btn bg-gray-200 px-4 py-2 rounded-lg">Recetas</button>
+                    </div>
+                </div>
+        
+                <div id="hub-content-area"></div>
+            </div>
+            <div id="view-edit-patient-data" class="view">
+                <header class="flex justify-between items-center bg-[#FFFFFF] p-4 rounded-xl shadow-lg mb-6">
+                    <h1 class="text-3xl font-bold text-[#4A4A4A]">Datos del Paciente</h1>
+                    <button id="back-to-hub-btn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 font-semibold">← Volver a Ficha</button>
+                </header>
+                <form id="patient-data-form">
+                    <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg mb-6">
+                        <h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">I. Datos del Tutor</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label for="data-tutor-name" class="block text-sm font-medium">Nombre Completo:</label><input type="text" id="data-tutor-name"></div>
+                            <div>
+                                <label for="data-tutor-rut" class="block text-sm font-medium">Cédula de Identidad/DNI:</label>
+                                <input type="text" id="data-tutor-rut" class="rut-input">
+                                <div id="rut-validation-message" class="text-red-500 text-xs mt-1"></div>
+                            </div>
+                            <div>
+                                <label for="data-tutor-phone" class="block text-sm font-medium">Teléfono Principal:</label>
+                                <input type="tel" id="data-tutor-phone">
+                            </div>
+                            <div><label for="data-tutor-phone2" class="block text-sm font-medium">Teléfono Secundario:</label><input type="tel" id="data-tutor-phone2"></div>
+                            <div>
+                                <label for="data-tutor-email" class="block text-sm font-medium">Correo Electrónico:</label>
+                                <input type="email" id="data-tutor-email">
+                            </div>
+                            <div><label for="data-tutor-city" class="block text-sm font-medium">Ciudad/Comuna:</label><input type="text" id="data-tutor-city"></div>
+                            <div class="md:col-span-2"><label for="data-tutor-address" class="block text-sm font-medium">Dirección Completa:</label><input type="text" id="data-tutor-address"></div>
+                        </div>
+                    </div>
+                    <div class="bg-[#FFFFFF] p-6 rounded-xl shadow-lg mb-6">
+                        <h2 class="text-2xl font-bold text-[#4A4A4A] mb-4">II. Datos del Paciente</h2>
+                        <p class="mb-4 text-lg"><strong>Nº de Ficha:</strong> <span id="data-ficha-number" class="text-highlight font-bold"></span></p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div><label for="data-patient-name" class="block text-sm font-medium">Nombre del Paciente:</label><input type="text" id="data-patient-name" required></div>
+                            
+                            <div>
+                                <label for="data-breed" class="block text-sm font-medium">Raza:</label>
+                                <select id="data-breed"></select>
+                                <input type="text" id="data-breed-other" class="hidden mt-2" placeholder="Especificar otra raza">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Especie:</label>
+                                <div class="flex items-center gap-4"><label><input type="radio" name="species" value="Canina" class="form-radio" checked> Canina</label><label><input type="radio" name="species" value="Felina" class="form-radio"> Felina</label></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Sexo:</label>
+                                <div class="flex items-center gap-4"><label><input type="radio" name="sex" value="Macho" class="form-radio"> Macho</label><label><input type="radio" name="sex" value="Hembra" class="form-radio"> Hembra</label></div>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium mb-1">Estado Reproductivo:</label>
+                                <div class="flex items-center gap-4"><label><input type="radio" name="reproductiveStatus" value="Entero" class="form-radio"> Entero</label><label><input type="radio" name="reproductiveStatus" value="Castrado" class="form-radio"> Castrado</label><label><input type="radio" name="reproductiveStatus" value="Esterilizada" class="form-radio"> Esterilizada</label></div>
+                            </div>
+                            <div><label for="data-birth-date" class="block text-sm font-medium">Fecha de Nacimiento (Estimada):</label><input type="date" id="data-birth-date"></div>
+                            <div><label for="data-age" class="block text-sm font-medium">Edad Actual:</label><input type="text" id="data-age" readonly class="bg-gray-100"></div>
+                            <div><label for="data-color-markings" class="block text-sm font-medium">Color/Señas Particulares:</label><input type="text" id="data-color-markings"></div>
+                            <div><label for="data-weight" class="block text-sm font-medium">Peso Actual (kg):</label><input type="text" id="data-weight"></div>
+                            
+                            <div><label for="data-microchip" class="block text-sm font-medium">Microchip (N°):</label><input type="text" id="data-microchip"></div>
+                            <div><label for="data-chip-site" class="block text-sm font-medium">Sitio de Implantación del Chip:</label><input type="text" id="data-chip-site"></div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium mb-1">Origen:</label>
+                                <div class="flex flex-wrap items-center gap-x-4 gap-y-2"><label><input type="radio" name="origin" value="Criadero" class="form-radio"> Criadero</label><label><input type="radio" name="origin" value="Refugio" class="form-radio"> Refugio</label><label><input type="radio" name="origin" value="Rescate" class="form-radio"> Rescate</label><label><input type="radio" name="origin" value="Particular" class="form-radio"> Particular</label><label class="flex items-center gap-2"><input type="radio" name="origin" value="Otro" class="form-radio"> Otro: <input type="text" id="data-origin-other" class="p-1 text-sm"></label></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center gap-4">
+                        <button type="button" id="delete-patient-btn" class="btn-danger px-6 py-3 rounded-lg text-lg font-bold">Eliminar Paciente</button>
+                        <button type="submit" class="btn-primary px-6 py-3 rounded-lg text-lg font-bold">Guardar Datos</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </template>
+    </div>
 
-
-    <!-- ===== Modals ===== -->
+    <!-- Modals -->
     <div id="login-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
         <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md m-4 relative">
             <button id="close-login-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
-            <h2 class="text-2xl font-bold text-center text-[var(--text-main)] mb-6">Acceso Profesional</h2>
+            <h2 class="text-2xl font-bold text-center text-[#4A4A4A] mb-6">Portal Profesional</h2>
             <form id="login-form">
                 <div class="mb-4">
                     <label for="login-email" class="block text-sm font-medium text-[#7F8B96] mb-1">Correo Electrónico</label>
-                    <input id="login-email" type="email" required class="w-full px-4 py-2 border rounded-lg">
+                    <input id="login-email" type="email" required class="w-full">
                 </div>
                 <div class="mb-6">
                     <label for="login-password" class="block text-sm font-medium text-[#7F8B96] mb-1">Contraseña</label>
-                    <input id="login-password" type="password" required class="w-full px-4 py-2 border rounded-lg">
+                    <input id="login-password" type="password" required class="w-full">
                 </div>
-                <button type="submit" class="w-full bg-[var(--color-primary)] text-white py-3 rounded-lg text-lg font-bold shadow-md">Ingresar</button>
+                <button type="submit" class="w-full btn-secondary py-3 rounded-lg text-lg font-bold">Ingresar</button>
             </form>
         </div>
     </div>
+    <div id="notification-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-white rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><p id="notification-message" class="text-lg text-[#4A4A4A]"></p><button id="notification-close-btn" class="mt-6 btn-secondary px-5 py-2 rounded-lg font-semibold">Cerrar</button></div></div>
+    <div id="delete-confirmation-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50"><div class="bg-white rounded-xl shadow-xl p-8 m-4 max-w-sm text-center"><h3 class="text-xl font-bold text-gray-800">Confirmar Eliminación</h3><p id="delete-confirmation-message" class="text-[#7F8B96] my-4"></p><p class="text-sm text-red-600 font-semibold">Esta acción no se puede deshacer.</p><div class="flex justify-center gap-4 mt-6"><button id="cancel-delete-btn" class="bg-gray-300 px-5 py-2 rounded-lg font-semibold">Cancelar</button><button id="confirm-delete-btn" class="btn-danger px-5 py-2 rounded-lg font-semibold">Eliminar Permanentemente</button></div></div></div>
     
-    <div id="tutor-login-modal" class="modal fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-60">
-        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md m-4 relative">
-            <button id="close-tutor-login-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <h2 class="text-2xl font-bold text-center text-[var(--text-main)] mb-6">Portal de Tutores</h2>
-            <p class="text-center text-sm text-[var(--text-muted)] mb-4">Ingresa tu RUT para ver la información de tus mascotas.</p>
-            <form id="tutor-login-form">
-                <div class="mb-4">
-                    <label for="tutor-login-rut" class="block text-sm font-medium text-[#7F8B96] mb-1">RUT</label>
-                    <input id="tutor-login-rut" type="text" required placeholder="12.345.678-9" class="w-full px-4 py-2 border rounded-lg">
-                </div>
-                <button type="submit" class="w-full bg-[var(--color-primary)] text-white py-3 rounded-lg text-lg font-bold shadow-md">Ingresar</button>
-            </form>
-        </div>
-    </div>
+<script type="module">
+    // --- Application State ---
+    let currentPatientId = null;
+    let currentPatientSpecies = null;
+    let currentPatientData = null;
+    let allPatients = []; // Cache for real-time search
+
+    // --- DOM Element References ---
+    const appContainer = document.getElementById('app-container');
+    const appDiv = document.getElementById('app');
+    const modals = { 
+        login: document.getElementById('login-modal'),
+        notification: document.getElementById('notification-modal'),
+        deleteConfirmation: document.getElementById('delete-confirmation-modal'),
+    };
+
+    // --- Data Definitions ---
+    const canineBreeds = ["Mestizo / Quiltro", "Poodle", "Labrador Retriever", "Bulldog Francés", "Pastor Alemán", "Beagle", "Boxer", "Chihuahua", "Golden Retriever", "Pastor Australiano", "Salchicha (Dachshund)", "Shih Tzu", "Yorkshire Terrier", "Otro"];
+    const felineBreeds = ["Doméstico de Pelo Corto", "Doméstico de Pelo Largo", "Siamés", "Persa", "Ragdoll", "Maine Coon", "Bengalí", "Otro"];
+
+    // --- Utility & Core Functions ---
+    /**
+     * Normalizes text by converting to lowercase and removing diacritics.
+     * @param {string} text - The text to normalize.
+     * @returns {string} The normalized text.
+     */
+    function normalizeText(text) {
+        if (!text) return '';
+        return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
     
-    <!-- Main Application Logic -->
-    <script type="module">
-        let currentTutorData = null; 
-        let allPatientsCache = []; // Cache for admin search
-
-        // --- UTILITY FUNCTIONS ---
-        const normalizeText = (text) => {
-            if (!text) return '';
-            return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        };
-
-        const formatRut = (rut) => {
-            if (!rut) return '';
-            let cleanRut = rut.replace(/[^0-9kK]/g, '').toUpperCase();
-            if (cleanRut.length <= 1) return cleanRut;
-            let body = cleanRut.slice(0, -1);
-            let dv = cleanRut.slice(-1);
-            let formattedBody = body.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            return `${formattedBody}-${dv}`;
-        };
-
-        const validateRut = (rut) => {
-            if (!rut || !/^[0-9]{1,2}\.?[0-9]{3}\.?[0-9]{3}-[0-9kK]{1}$/.test(rut)) return false;
-            const cleanRut = rut.replace(/[.-]/g, '');
-            let body = cleanRut.slice(0, -1);
-            let dv = cleanRut.slice(-1).toUpperCase();
-            let sum = 0;
-            let multiple = 2;
-            for (let i = body.length - 1; i >= 0; i--) {
-                sum += multiple * body.charAt(i);
-                if (multiple < 7) multiple++;
-                else multiple = 2;
-            }
-            const dvExpected = 11 - (sum % 11);
-            const dvCalculated = (dvExpected === 11) ? '0' : (dvExpected === 10) ? 'K' : String(dvExpected);
-            return dv === dvCalculated;
-        };
-
-        function showModal(modalName) { document.getElementById(modalName).classList.add('active'); }
-        function hideModal(modalName) { document.getElementById(modalName).classList.remove('active'); }
+    /**
+     * Hides all views and shows the one with the specified ID.
+     * @param {string} viewId - The ID of the view to show (e.g., 'view-dashboard').
+     */
+    function showView(viewId) {
+        // Hide all top-level views
+        document.querySelectorAll('#view-landing, #app-container').forEach(el => el.classList.remove('active'));
         
-        // --- PUBLIC PAGE & AGENDA LOGIC ---
-        function initializePublicPage() {
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetElement = document.querySelector(link.getAttribute('href'));
-                    if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth' });
-                        mobileMenu.classList.add('hidden');
-                    }
-                });
-            });
-
-            const agendaRutInput = document.getElementById('agenda-tutor-rut');
-            agendaRutInput.addEventListener('input', (e) => e.target.value = formatRut(e.target.value));
-            agendaRutInput.addEventListener('blur', findTutorPets);
-            document.getElementById('agenda-form').addEventListener('submit', handleAgendaSubmit);
-        }
-
-        async function findTutorPets() {
-            const rutInput = document.getElementById('agenda-tutor-rut');
-            const nameInput = document.getElementById('agenda-tutor-name');
-            const communeInput = document.getElementById('agenda-tutor-commune');
-            const petSelectionContainer = document.getElementById('agenda-pet-selection-container');
-            const existingPetsList = document.getElementById('existing-pets-list');
-            const newPatientFields = document.getElementById('new-patient-fields');
-
-            const cleanRut = rutInput.value.replace(/[.-]/g, '');
-            if (!validateRut(rutInput.value)) return;
-
-            const { getDocs, collection, query, where } = window.firebase;
-            const db = window.db;
-            const q = query(collection(db, "patients"), where("tutorRut", "==", cleanRut));
-            const querySnapshot = await getDocs(q);
-
-            petSelectionContainer.classList.remove('hidden');
-            existingPetsList.innerHTML = '';
-            newPatientFields.classList.add('hidden');
-
-            if (!querySnapshot.empty) {
-                const pets = [];
-                querySnapshot.forEach(doc => pets.push({ id: doc.id, ...doc.data() }));
-
-                nameInput.value = pets[0].tutorName || '';
-                communeInput.value = pets[0].tutorCity || '';
-
-                pets.forEach((pet, index) => {
-                    const div = document.createElement('div');
-                    div.innerHTML = `<label class="flex items-center"><input type="radio" name="agenda-pet" value="${pet.name}" class="form-radio mr-2" ${index === 0 ? 'checked' : ''}> <span class="capitalize">${pet.name}</span> (${pet.species})</label>`;
-                    existingPetsList.appendChild(div);
-                });
-
-                const newPetOption = document.createElement('div');
-                newPetOption.innerHTML = `<label class="flex items-center"><input type="radio" name="agenda-pet" value="new" class="form-radio mr-2"> Agregar otra mascota</label>`;
-                existingPetsList.appendChild(newPetOption);
-                
-                existingPetsList.addEventListener('change', (e) => {
-                    newPatientFields.classList.toggle('hidden', e.target.value !== 'new');
-                });
-
-            } else {
-                nameInput.value = '';
-                communeInput.value = '';
-                existingPetsList.innerHTML = '<p class="text-sm text-center text-gray-500">No encontramos mascotas registradas. Por favor, ingresa los datos de tu nuevo compañero.</p>';
-                newPatientFields.classList.remove('hidden');
-            }
-        }
-
-        function handleAgendaSubmit(e) {
-            e.preventDefault();
-            const tutorName = document.getElementById('agenda-tutor-name').value;
-            const tutorRut = document.getElementById('agenda-tutor-rut').value;
-            const tutorCommune = document.getElementById('agenda-tutor-commune').value;
-            
-            let petName = '';
-            const selectedPetRadio = document.querySelector('input[name="agenda-pet"]:checked');
-            if (selectedPetRadio) {
-                petName = selectedPetRadio.value === 'new' ? document.getElementById('agenda-pet-name').value : selectedPetRadio.value;
-            }
-
-            if (!tutorName || !tutorRut || !petName) {
-                alert("Por favor, completa todos los campos requeridos.");
-                return;
-            }
-            
-            const calendlyUrl = `https://calendly.com/avmveterinaria?name=${encodeURIComponent(tutorName)}&email=&a1=${encodeURIComponent(tutorRut)}&a2=${encodeURIComponent(petName)}&a3=${encodeURIComponent(tutorCommune)}`;
-            window.open(calendlyUrl, '_blank');
-        }
-
-        // --- TUTOR PORTAL LOGIC ---
-        async function handleTutorLogin(e) {
-            e.preventDefault();
-            const rutInput = document.getElementById('tutor-login-rut');
-            rutInput.value = formatRut(rutInput.value);
-            const cleanRut = rutInput.value.replace(/[.-]/g, '');
-
-            if (!validateRut(rutInput.value)) {
-                alert("RUT inválido. Por favor, ingrésalo con el formato correcto.");
-                return;
-            }
-
-            const { getDocs, collection, query, where } = window.firebase;
-            const db = window.db;
-            const q = query(collection(db, "patients"), where("tutorRut", "==", cleanRut));
-            const querySnapshot = await getDocs(q);
-
-            if (querySnapshot.empty) {
-                alert("No se encontraron mascotas asociadas a este RUT.");
-                return;
-            }
-
-            currentTutorData = [];
-            querySnapshot.forEach(doc => currentTutorData.push({ id: doc.id, ...doc.data() }));
-            loadTutorPortal();
-        }
-
-        function loadTutorPortal() {
-            document.getElementById('view-landing').classList.remove('active');
-            document.getElementById('view-tutor-portal').classList.add('active');
-            hideModal('tutor-login-modal');
-
-            document.getElementById('tutor-welcome-message').textContent = `¡Hola, ${currentTutorData[0].tutorName}!`;
-            
-            const petSelector = document.getElementById('pet-selector');
-            petSelector.innerHTML = '';
-            currentTutorData.forEach(pet => {
-                const option = document.createElement('option');
-                option.value = pet.id;
-                option.textContent = pet.name;
-                petSelector.appendChild(option);
-            });
-
-            petSelector.addEventListener('change', () => displayTutorContent(petSelector.value));
-            
-            document.querySelectorAll('.tutor-portal-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.tutor-portal-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    displayTutorContent(petSelector.value);
-                });
-            });
-
-            document.querySelector('.tutor-portal-btn[data-section="ficha"]').classList.add('active');
-            displayTutorContent(petSelector.value);
-        }
-        
-        async function displayTutorContent(patientId) {
-            const contentArea = document.getElementById('tutor-portal-content');
-            const activeSection = document.querySelector('.tutor-portal-btn.active').dataset.section;
-            const petData = currentTutorData.find(p => p.id === patientId);
-            
-            contentArea.innerHTML = `<p class="text-center p-10">Cargando...</p>`;
-
-            let html = '';
-            const { collection, query, getDocs } = window.firebase;
-            const db = window.db;
-
-            switch(activeSection) {
-                case 'ficha':
-                    html = `
-                        <h3 class="text-xl font-bold mb-4 capitalize">${petData.name}</h3>
-                        <div class="grid grid-cols-2 gap-4 text-sm">
-                            <div><strong>Especie:</strong> ${petData.species || 'N/A'}</div>
-                            <div><strong>Raza:</strong> ${petData.breed || 'N/A'}</div>
-                            <div><strong>Sexo:</strong> ${petData.sex || 'N/A'}</div>
-                            <div><strong>Nacimiento:</strong> ${petData.birthDate || 'N/A'}</div>
-                            <div><strong>Microchip:</strong> ${petData.microchip || 'No posee'}</div>
-                        </div>`;
-                    break;
-                case 'vacunas':
-                case 'desparasitacion':
-                case 'recetas':
-                case 'examenes':
-                case 'certificados':
-                    const subcollection = activeSection;
-                    const q = query(collection(db, "patients", patientId, subcollection));
-                    const snapshot = await getDocs(q);
-                    html = `<h3 class="text-xl font-bold mb-4 capitalize">${activeSection.replace('-', ' ')}</h3>`;
-                    if (snapshot.empty) {
-                        html += `<p>No hay registros de ${subcollection}.</p>`;
-                    } else {
-                        html += `<div class="overflow-x-auto"><table class="w-full text-sm text-left">
-                                    <thead class="bg-gray-50"><tr>
-                                        <th class="p-2">Fecha</th>
-                                        <th class="p-2">Detalle</th>
-                                        ${subcollection === 'examenes' ? '<th class="p-2">Archivo</th>' : ''}
-                                        ${subcollection === 'vacunas' || subcollection === 'desparasitacion' ? '<th class="p-2">Próxima Dosis</th>' : ''}
-                                    </tr></thead><tbody>`;
-                        const sortedDocs = snapshot.docs.sort((a, b) => {
-                            const dataA = a.data();
-                            const dataB = b.data();
-                            let timeA = 0;
-                            let timeB = 0;
-                            if (dataA.date) timeA = new Date(dataA.date).getTime();
-                            else if (dataA.createdAt && dataA.createdAt.toMillis) timeA = dataA.createdAt.toMillis();
-                            if (dataB.date) timeB = new Date(dataB.date).getTime();
-                            else if (dataB.createdAt && dataB.createdAt.toMillis) timeB = dataB.createdAt.toMillis();
-                            return timeB - timeA;
-                        });
-                        sortedDocs.forEach(doc => {
-                            const data = doc.data();
-                            let detail = data.type || data.product || data.treatment || data.description || data.typeName || 'N/A';
-                            let date = data.date || (data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('es-CL') : 'N/A');
-                            html += `<tr class="border-b">
-                                        <td class="p-2">${date}</td>
-                                        <td class="p-2">${detail}</td>
-                                        ${subcollection === 'examenes' ? `<td class="p-2">${data.fileURL ? `<a href="${data.fileURL}" target="_blank" class="text-blue-500 hover:underline">Ver</a>` : 'N/A'}</td>` : ''}
-                                        ${subcollection === 'vacunas' || subcollection === 'desparasitacion' ? `<td class="p-2">${data.nextDose || 'N/A'}</td>` : ''}
-                                     </tr>`;
-                        });
-                        html += `</tbody></table></div>`;
-                    }
-                    break;
-            }
-            contentArea.innerHTML = html;
-        }
-
-        function tutorLogout() {
-            currentTutorData = null;
-            document.getElementById('view-tutor-portal').classList.remove('active');
+        if (viewId === 'view-landing') {
             document.getElementById('view-landing').classList.add('active');
-        }
-
-        // --- ADMIN PANEL LOGIC ---
-        async function handleAdminLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const { signInWithEmailAndPassword } = window.firebase;
-            const auth = window.auth;
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                hideModal('login-modal');
-                // onAuthStateChanged will handle showing the admin panel
-            } catch (error) {
-                console.error("Admin login failed:", error);
-                alert("Correo o contraseña incorrectos.");
+        } else {
+            appContainer.classList.remove('hidden');
+            appContainer.classList.add('active');
+            
+            // Hide all views within the app container
+            appDiv.querySelectorAll('.view').forEach(view => {
+                view.style.display = 'none';
+            });
+            
+            // Show the target view
+            const targetView = document.getElementById(viewId);
+            if (targetView) {
+                targetView.style.display = 'block';
+            } else {
+                console.error(`View with ID ${viewId} not found.`);
             }
         }
+    }
 
-        async function initializeAdminApp() {
-            const adminContent = document.getElementById('admin-app-content');
-            if (!adminContent) return;
-            
-            const template = document.getElementById('admin-panel-template');
-            const clone = template.content.cloneNode(true);
-            adminContent.innerHTML = '';
-            adminContent.appendChild(clone);
+    function showModal(modalName) { if(modals[modalName]) modals[modalName].classList.add('active'); }
+    function hideModal(modalName) { if(modals[modalName]) modals[modalName].classList.remove('active'); }
 
-            const dashboardView = adminContent.querySelector('#view-dashboard');
-            if(dashboardView) dashboardView.classList.add('active');
+    function showNotification(message) {
+        const el = document.getElementById('notification-message');
+        if(el) el.textContent = message;
+        showModal('notification');
+    }
 
-            // Cache all patients for search
-            const { getDocs, collection } = window.firebase;
-            const db = window.db;
-            const querySnapshot = await getDocs(collection(db, "patients"));
-            allPatientsCache = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const { signInWithEmailAndPassword } = window.firebase;
+        const auth = window.auth;
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            hideModal('login');
+            // The onAuthStateChanged listener will handle the view transition
+        } catch (error) {
+            showNotification("Correo o contraseña incorrectos.");
+        }
+    }
 
-            // Add event listeners for the admin panel
-            const searchInput = adminContent.querySelector('#search-input');
-            if (searchInput) searchInput.addEventListener('input', searchPatients);
-            
-            // This is where the rest of the original admin functions and listeners would go
-            // For example:
-            // const newPatientBtn = adminContent.querySelector('#new-patient-btn');
-            // if (newPatientBtn) newPatientBtn.addEventListener('click', openPatientDataForm);
+    async function handleLogout() {
+        const { signOut } = window.firebase;
+        const auth = window.auth;
+        try {
+            await signOut(auth);
+            // The onAuthStateChanged listener will handle the view transition
+        } catch(e){
+            showNotification("Error al cerrar sesión.");
+        }
+    }
+    
+    /**
+     * Formats a RUT input in real-time to the Chilean standard.
+     * @param {InputEvent} e - The input event.
+     */
+    function handleRutFormatting(e) {
+        let rut = e.target.value.replace(/[^0-9kK]/g, '');
+        rut = rut.slice(0, 9); 
+        let result = "";
+        if (rut.length > 1) {
+            const dv = rut.slice(-1);
+            const body = rut.slice(0, -1);
+            result = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + "-" + dv;
+        } else {
+            result = rut;
+        }
+        e.target.value = result.toUpperCase();
+    }
+
+    const validateRut = (rut) => {
+        if (!rut || !/^[0-9]{1,2}(\.?[0-9]{3}){2}-[0-9kK]{1}$/.test(rut)) return false;
+        const cleanRut = rut.replace(/[.-]/g, '');
+        let body = cleanRut.slice(0, -1);
+        let dv = cleanRut.slice(-1).toUpperCase();
+        let sum = 0;
+        let multiple = 2;
+        for (let i = body.length - 1; i >= 0; i--) {
+            sum += multiple * body.charAt(i);
+            if (multiple < 7) multiple++;
+            else multiple = 2;
+        }
+        const dvExpected = 11 - (sum % 11);
+        const dvCalculated = (dvExpected === 11) ? '0' : (dvExpected === 10) ? 'K' : String(dvExpected);
+        return dv === dvCalculated;
+    };
+    
+    function calculateAge() {
+        const birthDateInput = document.getElementById('data-birth-date');
+        const ageInput = document.getElementById('data-age');
+        if (!birthDateInput || !ageInput) return;
+        if (!birthDateInput.value) {
+            ageInput.value = '';
+            return;
+        }
+        try {
+            const birthDate = new Date(birthDateInput.value);
+            const today = new Date();
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            if (months < 0 || (months === 0 && today.getDate() < birthDate.getDate())) {
+                years--;
+                months = (months + 12) % 12;
+            }
+            ageInput.value = `${years} años, ${months} meses`;
+        } catch (e) {
+            ageInput.value = 'Fecha inválida';
+        }
+    }
+    
+    // --- App Functions ---
+    async function loadAllPatientsForSearch() {
+        const { getDocs, collection, query, orderBy } = window.firebase;
+        const db = window.db;
+        try {
+            const q = query(collection(db, "patients"), orderBy("name"));
+            const snapshot = await getDocs(q);
+            allPatients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        } catch(e) {
+            console.error("Error loading patients for search:", e);
+            showNotification("No se pudieron cargar los pacientes para la búsqueda.");
+        }
+    }
+
+    function realTimeSearch() {
+        const searchTerm = document.getElementById('search-input').value;
+        const normalizedTerm = normalizeText(searchTerm);
+        
+        if (!normalizedTerm) {
+            document.getElementById('search-results').innerHTML = '';
+            return;
         }
 
-        function searchPatients() {
-            const searchInput = document.getElementById('search-input');
-            const searchResultsEl = document.getElementById('search-results');
-            if (!searchInput || !searchResultsEl) return;
+        const filteredPatients = allPatients.filter(patient => 
+            normalizeText(patient.name).includes(normalizedTerm) ||
+            normalizeText(patient.tutorName).includes(normalizedTerm)
+        );
+        
+        displaySearchResults(filteredPatients);
+    }
+    
+    async function searchByRutOrFicha() {
+        const { doc, getDoc, collection, query, where, getDocs } = window.firebase;
+        const db = window.db;
+        const searchTerm = document.getElementById('search-input').value.trim();
+        const searchResultsEl = document.getElementById('search-results');
+        
+        if (!searchTerm) return;
+        searchResultsEl.innerHTML = '<p>Buscando...</p>';
+        let results = new Map();
 
-            const searchTerm = normalizeText(searchInput.value);
-            if (searchTerm.length < 1) {
-                searchResultsEl.innerHTML = '';
+        try {
+            // Search by Ficha
+            if (!isNaN(searchTerm)) {
+                const docRef = doc(db, "patients", searchTerm);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    results.set(docSnap.id, { id: docSnap.id, ...docSnap.data() });
+                }
+            }
+            // Search by RUT
+            if (validateRut(searchTerm)) {
+                 const cleanRut = searchTerm.replace(/[.-]/g, '');
+                 const qRut = query(collection(db, "patients"), where("tutorRut", "==", cleanRut));
+                 const rutSnapshot = await getDocs(qRut);
+                 rutSnapshot.forEach((doc) => {
+                     results.set(doc.id, { id: doc.id, ...doc.data() });
+                 });
+            }
+        } catch (e) {
+            console.error("Search by RUT/Ficha error:", e);
+            searchResultsEl.innerHTML = '<p class="text-red-500">Ocurrió un error en la búsqueda.</p>';
+        }
+        displaySearchResults(Array.from(results.values()));
+    }
+
+
+    function displaySearchResults(patients) {
+        const searchResultsEl = document.getElementById('search-results');
+        searchResultsEl.innerHTML = patients.length === 0 ? '<p>No se encontraron pacientes.</p>' : '';
+        const list = document.createElement('ul');
+        list.className = 'space-y-2';
+        patients.forEach(patient => {
+            const item = document.createElement('li');
+            item.className = 'p-3 border rounded-lg flex justify-between items-center hover:bg-gray-50';
+            item.innerHTML = `<span class="capitalize font-semibold text-gray-700">${patient.name} <span class="text-sm text-gray-500 font-normal">(${patient.tutorName})</span></span>`;
+            const viewBtn = document.createElement('button');
+            viewBtn.textContent = 'Ver Ficha';
+            viewBtn.className = 'btn-tertiary text-xs px-3 py-1 rounded-md font-semibold';
+            viewBtn.onclick = () => openPatientHub(patient.id);
+            item.appendChild(viewBtn);
+            list.appendChild(item);
+        });
+        searchResultsEl.appendChild(list);
+    }
+
+    function updateBreedOptions() {
+        const speciesEl = document.querySelector('input[name="species"]:checked');
+        if (!speciesEl) return;
+        const species = speciesEl.value;
+        const breedSelect = document.getElementById('data-breed');
+        const breedOtherInput = document.getElementById('data-breed-other');
+        const breeds = (species === 'Canina') ? canineBreeds : felineBreeds;
+
+        breedSelect.innerHTML = '';
+        breeds.forEach(breed => {
+            const option = document.createElement('option');
+            option.value = breed;
+            option.textContent = breed;
+            breedSelect.appendChild(option);
+        });
+        
+        breedSelect.onchange = () => {
+             if (breedSelect.value === 'Otro') {
+                breedOtherInput.classList.remove('hidden');
+            } else {
+                breedOtherInput.classList.add('hidden');
+                breedOtherInput.value = '';
+            }
+        };
+    }
+
+    async function openPatientDataForm(patientId) {
+        showView('view-edit-patient-data');
+        currentPatientId = patientId;
+
+        if (patientId) {
+            const { doc, getDoc } = window.firebase;
+            const db = window.db;
+            const docRef = doc(db, "patients", patientId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                currentPatientData = { id: docSnap.id, ...docSnap.data() };
+                loadPatientDataIntoForm(currentPatientData, patientId);
+            }
+        } else {
+            currentPatientData = null;
+            document.getElementById('patient-data-form').reset();
+            document.getElementById('data-ficha-number').textContent = 'Se generará al guardar';
+            document.querySelector('input[name="species"][value="Canina"]').checked = true;
+            updateBreedOptions();
+        }
+    }
+
+    function loadPatientDataIntoForm(data, patientId) {
+        document.getElementById('data-ficha-number').textContent = patientId;
+        document.getElementById('data-tutor-name').value = data.tutorName || '';
+        const rutInput = document.getElementById('data-tutor-rut');
+        rutInput.value = data.tutorRut || '';
+        handleRutFormatting({ target: rutInput }); // Format the loaded RUT
+        document.getElementById('data-tutor-phone').value = data.tutorPhone || '';
+        document.getElementById('data-tutor-phone2').value = data.tutorPhone2 || '';
+        document.getElementById('data-tutor-email').value = data.tutorEmail || '';
+        document.getElementById('data-tutor-city').value = data.tutorCity || '';
+        document.getElementById('data-tutor-address').value = data.tutorAddress || '';
+        document.getElementById('data-patient-name').value = data.name || '';
+        if (data.species) document.querySelector(`input[name="species"][value="${data.species}"]`).checked = true;
+        
+        updateBreedOptions(); 
+        const breedSelect = document.getElementById('data-breed');
+        const breedOtherInput = document.getElementById('data-breed-other');
+        const breedExistsInList = [...breedSelect.options].some(opt => opt.value === data.breed);
+        if (data.breed && breedExistsInList) {
+            breedSelect.value = data.breed;
+            breedOtherInput.classList.add('hidden');
+        } else if (data.breed) {
+            breedSelect.value = 'Otro';
+            breedOtherInput.value = data.breed;
+            breedOtherInput.classList.remove('hidden');
+        }
+
+        if (data.sex) document.querySelector(`input[name="sex"][value="${data.sex}"]`).checked = true;
+        if (data.reproductiveStatus) document.querySelector(`input[name="reproductiveStatus"][value="${data.reproductiveStatus}"]`).checked = true;
+        document.getElementById('data-birth-date').value = data.birthDate || '';
+        calculateAge();
+        document.getElementById('data-color-markings').value = data.colorMarkings || '';
+        document.getElementById('data-microchip').value = data.microchip || '';
+        document.getElementById('data-chip-site').value = data.chipSite || '';
+        document.getElementById('data-weight').value = data.weight || '';
+        if (data.origin) {
+            const originRadio = document.querySelector(`input[name="origin"][value="${data.origin}"]`);
+            if (originRadio) {
+                originRadio.checked = true;
+            } else {
+                document.querySelector(`input[name="origin"][value="Otro"]`).checked = true;
+                document.getElementById('data-origin-other').value = data.origin;
+            }
+        }
+    }
+    
+    async function savePatientData(e) {
+        e.preventDefault();
+        const { setDoc, doc, serverTimestamp, runTransaction } = window.firebase;
+        const db = window.db;
+
+        const getRadioValue = (name) => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; };
+        let originValue = getRadioValue('origin');
+        if (originValue === 'Otro') {
+            originValue = document.getElementById('data-origin-other').value;
+        }
+
+        let breedValue = document.getElementById('data-breed').value;
+        if (breedValue === 'Otro') {
+            breedValue = document.getElementById('data-breed-other').value;
+        }
+
+        const data = {
+            name: document.getElementById('data-patient-name').value.toLowerCase(),
+            tutorName: document.getElementById('data-tutor-name').value,
+            tutorRut: document.getElementById('data-tutor-rut').value.replace(/[.-]/g, ''),
+            tutorPhone: document.getElementById('data-tutor-phone').value,
+            tutorPhone2: document.getElementById('data-tutor-phone2').value,
+            tutorEmail: document.getElementById('data-tutor-email').value,
+            tutorCity: document.getElementById('data-tutor-city').value,
+            tutorAddress: document.getElementById('data-tutor-address').value,
+            species: getRadioValue('species'),
+            breed: breedValue,
+            sex: getRadioValue('sex'),
+            reproductiveStatus: getRadioValue('reproductiveStatus'),
+            birthDate: document.getElementById('data-birth-date').value,
+            age: document.getElementById('data-age').value,
+            colorMarkings: document.getElementById('data-color-markings').value,
+            microchip: document.getElementById('data-microchip').value,
+            chipSite: document.getElementById('data-chip-site').value,
+            weight: document.getElementById('data-weight').value,
+            origin: originValue,
+            lastUpdated: serverTimestamp()
+        };
+        try {
+            if (currentPatientId) {
+                // IMPORTANT: Use { merge: true } to avoid overwriting existing data
+                await setDoc(doc(db, "patients", currentPatientId), data, { merge: true });
+                showNotification("Datos actualizados.");
+                openPatientHub(currentPatientId);
+            } else {
+                const counterRef = doc(db, "counters", "patientCounter");
+                const newPatientNumber = await runTransaction(db, async (transaction) => {
+                    const counterDoc = await transaction.get(counterRef);
+                    const lastNumber = counterDoc.data()?.lastNumber || 0;
+                    const newNumber = lastNumber + 1;
+                    const formattedNumber = String(newNumber);
+                    data.createdAt = serverTimestamp();
+                    transaction.set(doc(db, "patients", formattedNumber), data);
+                    transaction.update(counterRef, { lastNumber: newNumber });
+                    return formattedNumber;
+                });
+                currentPatientId = newPatientNumber;
+                showNotification(`Nuevo paciente creado con Ficha Nº ${newPatientNumber}.`);
+                await loadAllPatientsForSearch(); // Refresh search cache
+                openPatientHub(currentPatientId);
+            }
+        } catch (error) {
+            showNotification("Error al guardar datos.");
+            console.error("Error saving patient data:", error);
+        }
+    }
+    
+    async function handleDeletePatient() {
+        if (!currentPatientId) return;
+        const { doc, deleteDoc, collection, getDocs } = window.firebase;
+        const db = window.db;
+
+        async function deleteSubcollection(patientId, subcollectionName) {
+            const subcollectionRef = collection(db, "patients", patientId, subcollectionName);
+            const snapshot = await getDocs(subcollectionRef);
+            const deletePromises = [];
+            snapshot.forEach(doc => {
+                deletePromises.push(deleteDoc(doc.ref));
+            });
+            await Promise.all(deletePromises);
+        }
+
+        try {
+            await Promise.all([
+                deleteSubcollection(currentPatientId, 'consultations'),
+                deleteSubcollection(currentPatientId, 'prescriptions'),
+                deleteSubcollection(currentPatientId, 'vaccines'),
+                deleteSubcollection(currentPatientId, 'deworming'),
+                deleteSubcollection(currentPatientId, 'exams'),
+                deleteSubcollection(currentPatientId, 'certificates')
+            ]);
+            await deleteDoc(doc(db, "patients", currentPatientId));
+            hideModal('deleteConfirmation');
+            showNotification("Paciente eliminado correctamente.");
+            await loadAllPatientsForSearch(); // Refresh search cache
+            showView('view-dashboard');
+        } catch (error) {
+            hideModal('deleteConfirmation');
+            showNotification("Error al eliminar el paciente.");
+            console.error("Error deleting patient:", error);
+        }
+    }
+      
+    async function openPatientHub(patientId) {
+        const { doc, getDoc } = window.firebase;
+        const db = window.db;
+        const docRef = doc(db, "patients", patientId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            currentPatientData = { id: docSnap.id, ...docSnap.data() };
+            currentPatientId = patientId;
+            currentPatientSpecies = currentPatientData.species;
+            
+            showView('view-patient-hub');
+            document.getElementById('hub-patient-name').textContent = currentPatientData.name || 'Paciente sin nombre';
+            document.getElementById('hub-patient-id').textContent = `Nº Ficha: ${patientId}`;
+            document.getElementById('hub-anamnesis-remota').value = currentPatientData.anamnesisRemota || '';
+            
+            const summaryEl = document.getElementById('hub-patient-summary');
+            summaryEl.innerHTML = `
+                <div><strong>Especie:</strong> ${currentPatientData.species || 'N/A'}</div>
+                <div><strong>Raza:</strong> ${currentPatientData.breed || 'N/A'}</div>
+                <div><strong>Nacimiento:</strong> ${currentPatientData.birthDate || 'N/A'}</div>
+                <div><strong>Tutor:</strong> ${currentPatientData.tutorName || 'N/A'}</div>
+                <div><strong>Teléfono:</strong> ${currentPatientData.tutorPhone || 'N/A'}</div>
+                <div><strong>RUT Tutor:</strong> ${currentPatientData.tutorRut ? handleRutFormatting({target: {value: currentPatientData.tutorRut}}).value : 'N/A'}</div>
+            `;
+            
+            // Placeholder for content area
+            document.getElementById('hub-content-area').innerHTML = `<p class="text-center p-4 bg-white rounded-lg shadow">Seleccione una sección para ver el historial.</p>`;
+            document.querySelector('.hub-section-btn[data-section="consultas"]').click();
+        } else {
+            showNotification(`No se encontró el paciente con Ficha Nº ${patientId}.`);
+            showView('view-dashboard');
+        }
+    }
+
+    // --- Event Listener Initializers ---
+    
+    function initializePublicListeners() {
+        document.getElementById('show-login-modal-btn-desktop').addEventListener('click', () => showModal('login'));
+        document.getElementById('close-login-modal-btn').addEventListener('click', () => hideModal('login'));
+        document.getElementById('login-form').addEventListener('submit', handleLogin);
+        document.getElementById('notification-close-btn').addEventListener('click', () => hideModal('notification'));
+        
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        const showTutorPortalView = () => {
+             showView('view-tutor-portal');
+             document.getElementById('back-to-landing-btn').classList.remove('hidden');
+             document.getElementById('logout-btn').classList.add('hidden');
+        };
+        
+        document.getElementById('show-tutor-portal-btn-desktop').addEventListener('click', showTutorPortalView);
+        document.getElementById('show-tutor-portal-btn').addEventListener('click', showTutorPortalView);
+        document.getElementById('show-tutor-portal-btn-mobile').addEventListener('click', showTutorPortalView);
+        document.getElementById('show-login-modal-btn-mobile').addEventListener('click', () => showModal('login'));
+        
+        document.getElementById('back-to-landing-btn').addEventListener('click', () => {
+            appContainer.classList.add('hidden');
+            showView('view-landing');
+        });
+    }
+
+    function initializeAppListeners() {
+        // Event delegation for the entire app container
+        appDiv.addEventListener('click', (e) => {
+            if (e.target.matches('#search-btn')) searchByRutOrFicha();
+            if (e.target.matches('#new-patient-btn')) openPatientDataForm(null);
+            if (e.target.matches('#portal-search-btn')) searchTutorPets();
+            if (e.target.matches('.back-to-dashboard-btn')) showView('view-dashboard');
+            if (e.target.matches('#edit-patient-data-btn')) openPatientDataForm(currentPatientId);
+            if (e.target.matches('#back-to-hub-btn')) openPatientHub(currentPatientId);
+            if (e.target.matches('#delete-patient-btn')) {
+                document.getElementById('delete-confirmation-message').textContent = `¿Seguro que quieres eliminar la ficha de ${currentPatientData?.name || 'este paciente'}?`;
+                showModal('deleteConfirmation');
+            }
+            if (e.target.matches('#confirm-delete-btn')) handleDeletePatient();
+            if (e.target.matches('#cancel-delete-btn')) hideModal('deleteConfirmation');
+            if (e.target.closest('.hub-section-btn')) {
+                 const section = e.target.closest('.hub-section-btn').dataset.section;
+                document.querySelectorAll('.hub-section-btn').forEach(b => b.classList.remove('active-hub-btn'));
+                e.target.closest('.hub-section-btn').classList.add('active-hub-btn');
+                document.getElementById('hub-content-area').innerHTML = `<p class="text-center p-4 bg-white rounded-lg shadow">Historial de <strong>${section}</strong> en construcción.</p>`;
+            }
+        });
+
+        appDiv.addEventListener('input', (e) => {
+            if (e.target.matches('#search-input')) realTimeSearch();
+            if (e.target.matches('.rut-input')) handleRutFormatting(e);
+        });
+
+        appDiv.addEventListener('change', (e) => {
+            if (e.target.matches('input[name="species"]')) updateBreedOptions();
+            if (e.target.matches('#data-birth-date')) calculateAge();
+        });
+
+        appDiv.addEventListener('submit', (e) => {
+            if (e.target.matches('#patient-data-form')) savePatientData(e);
+        });
+    }
+    
+    async function searchTutorPets() {
+        const { collection, query, where, getDocs } = window.firebase;
+        const db = window.db;
+        const rutInput = document.getElementById('portal-rut-input');
+        const resultsContainer = document.getElementById('portal-results-container');
+        const cleanRut = rutInput.value.replace(/[.-]/g, '');
+
+        if (!validateRut(rutInput.value)) {
+            showNotification("Por favor, ingrese un RUT válido.");
+            return;
+        }
+        
+        resultsContainer.innerHTML = `<p>Buscando mascotas...</p>`;
+        
+        try {
+            const q = query(collection(db, "patients"), where("tutorRut", "==", cleanRut));
+            const snapshot = await getDocs(q);
+            
+            if (snapshot.empty) {
+                resultsContainer.innerHTML = `<p class="text-center">No se encontraron mascotas asociadas a este RUT.</p>`;
                 return;
             }
             
-            const results = allPatientsCache.filter(patient => {
-                const normalizedName = normalizeText(patient.name);
-                const normalizedTutor = normalizeText(patient.tutorName);
-                const normalizedRut = normalizeText(patient.tutorRut);
-                const normalizedId = normalizeText(patient.id);
-
-                return normalizedName.includes(searchTerm) || 
-                       normalizedTutor.includes(searchTerm) || 
-                       normalizedRut.includes(searchTerm) ||
-                       normalizedId.includes(searchTerm);
+            resultsContainer.innerHTML = '';
+            snapshot.forEach(doc => {
+                const pet = { id: doc.id, ...doc.data() };
+                const petCard = document.createElement('div');
+                petCard.className = "bg-white rounded-xl shadow-lg p-5";
+                petCard.innerHTML = `
+                    <h3 class="text-2xl font-bold text-gray-800 capitalize">${pet.name}</h3>
+                    <p class="text-sm text-gray-500 mb-4">Ficha N°: ${pet.id}</p>
+                    <div class="border-t pt-4">
+                        <h4 class="font-bold text-lg mb-2">Historial Reciente</h4>
+                        <div id="history-for-${pet.id}" class="space-y-4">
+                            <p class="text-sm text-gray-600">Cargando historial...</p>
+                        </div>
+                    </div>
+                `;
+                resultsContainer.appendChild(petCard);
+                loadPetHistoryForTutor(pet.id);
             });
 
-            displaySearchResults(results);
+        } catch (e) {
+            console.error("Error searching tutor pets:", e);
+            resultsContainer.innerHTML = `<p class="text-red-500 text-center">Ocurrió un error al buscar.</p>`;
         }
+    }
 
-        function displaySearchResults(patients) {
-            const searchResultsEl = document.getElementById('search-results');
-            searchResultsEl.innerHTML = patients.length === 0 ? '<p>No se encontraron pacientes.</p>' : '';
-            const list = document.createElement('ul');
-            list.className = 'space-y-2';
-            patients.forEach(patient => {
-                const item = document.createElement('li');
-                item.className = 'p-3 border rounded-lg flex justify-between items-center hover:bg-gray-50';
-                item.innerHTML = `<span class="capitalize font-semibold text-gray-700">${patient.name} <span class="text-sm text-gray-500 font-normal">(${patient.id})</span></span>`;
-                const viewBtn = document.createElement('button');
-                viewBtn.textContent = 'Ver Ficha';
-                viewBtn.className = 'btn-tertiary text-xs px-3 py-1 rounded-md font-semibold';
-                // This function needs to be defined within the admin scope to work
-                // For now, it will log to console to show it's connected
-                viewBtn.onclick = () => {
-                    alert(`Funcionalidad para abrir ficha de ${patient.name} (ID: ${patient.id}) se debe implementar aquí.`);
-                    // openPatientHub(patient.id); 
-                };
-                list.appendChild(viewBtn);
-            });
-            searchResultsEl.appendChild(list);
-        }
+    async function loadPetHistoryForTutor(petId) {
+        // This is a simplified example. You would fetch actual data for vaccines, prescriptions, etc.
+        const historyContainer = document.getElementById(`history-for-${petId}`);
+        historyContainer.innerHTML = `
+            <!-- Example Card: Vaccine -->
+            <div class="border border-gray-200 rounded-lg p-4 flex items-start gap-4 hover:bg-gray-50">
+                <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <div>
+                    <h4 class="font-bold">Vacuna Óctuple</h4>
+                    <p class="text-sm text-gray-600">Aplicada: 15/03/2024</p>
+                    <p class="text-sm text-gray-500">Próxima: 15/03/2025</p>
+                </div>
+            </div>
+             <!-- Example Card: Prescription -->
+            <div class="border border-gray-200 rounded-lg p-4 flex items-start gap-4 hover:bg-gray-50">
+                <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                </div>
+                <div>
+                    <h4 class="font-bold">Receta: Antiinflamatorio</h4>
+                    <p class="text-sm text-gray-600">Fecha: 10/02/2024</p>
+                    <a href="#" class="text-sm text-blue-600 hover:underline">Ver detalles</a>
+                </div>
+            </div>
+        `;
+    }
 
+    /**
+     * Initializes the entire application.
+     */
+    function initializeApp() {
+        const { onAuthStateChanged } = window.firebase;
+        const auth = window.auth;
 
-        // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            initializePublicPage();
-            
-            // Tutor Portal Listeners
-            document.getElementById('show-tutor-portal-modal-btn-nav').addEventListener('click', () => showModal('tutor-login-modal'));
-            document.getElementById('show-tutor-portal-modal-btn-hero').addEventListener('click', () => showModal('tutor-login-modal'));
-            document.getElementById('show-tutor-portal-modal-btn-mobile').addEventListener('click', () => showModal('tutor-login-modal'));
-            document.getElementById('close-tutor-login-modal-btn').addEventListener('click', () => hideModal('tutor-login-modal'));
-            document.getElementById('tutor-login-form').addEventListener('submit', handleTutorLogin);
-            document.getElementById('tutor-logout-btn').addEventListener('click', tutorLogout);
-            document.getElementById('tutor-login-rut').addEventListener('input', (e) => e.target.value = formatRut(e.target.value));
+        initializePublicListeners();
+        initializeAppListeners();
 
-            // Admin Login Listeners
-            document.getElementById('show-admin-login-link').addEventListener('click', (e) => { e.preventDefault(); showModal('login-modal'); });
-            document.getElementById('close-login-modal-btn').addEventListener('click', () => hideModal('login-modal'));
-            document.getElementById('login-form').addEventListener('submit', handleAdminLogin);
-
-            const { onAuthStateChanged, signOut } = window.firebase;
-            const auth = window.auth;
-            onAuthStateChanged(auth, user => {
-                const appContainer = document.getElementById('app-container');
-                const landingView = document.getElementById('view-landing');
-                const tutorView = document.getElementById('view-tutor-portal');
-
-                if (user) { // Admin is logged in
-                    landingView.classList.remove('active');
-                    tutorView.classList.remove('active');
-                    appContainer.classList.remove('hidden');
-                    appContainer.classList.add('active');
-                    initializeAdminApp(); 
-                    
-                    const adminLogoutBtn = document.getElementById('admin-logout-btn');
-                    if(adminLogoutBtn) adminLogoutBtn.addEventListener('click', () => signOut(auth));
-                } else { // No admin logged in
-                    appContainer.classList.add('hidden');
-                    appContainer.classList.remove('active');
-                    if (!tutorView.classList.contains('active')) {
-                        landingView.classList.add('active');
-                    }
-                }
-            });
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                document.getElementById('logout-btn').classList.remove('hidden');
+                document.getElementById('back-to-landing-btn').classList.add('hidden');
+                showView('view-dashboard');
+                loadAllPatientsForSearch();
+            } else {
+                appContainer.classList.add('hidden');
+                showView('view-landing');
+            }
         });
-    </script>
+
+        // --- Dynamic Content Population for Public Page ---
+        const serviceData = [
+            { title: 'Consulta General a Domicilio', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />', description: 'Evaluación completa y sin estrés en la comodidad de tu hogar.' },
+            { title: 'Vacunación y Desparasitación', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />', description: 'Planes de prevención personalizados para proteger a tu compañero.' },
+            { title: 'Implantación de Microchip', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 11c.604-2.186 2.232-3.814 4.418-4.418m-8.836 0c2.186.604 3.814 2.232 4.418 4.418m0 0a4.5 4.5 0 11-8.836 0 4.5 4.5 0 018.836 0zM12 3v1m0 16v1m-6.4-2.6l.7-.7m11.4 0l-.7-.7M3 12h1m16 0h-1" />', description: 'Registro oficial y seguro para la identificación de tu mascota.' },
+            { title: 'Toma de Exámenes', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m3 3H9" />', description: 'Coordinación y toma de muestras para análisis de laboratorio.' },
+            { title: 'Certificados de Salud y Viaje', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />', description: 'Documentos necesarios para viajar o cumplir con normativas.' },
+            { title: 'Acompañamiento Final (Eutanasia)', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />', description: 'Un adiós digno y respetuoso en un entorno de paz y amor.' }
+        ];
+        const servicesGrid = document.getElementById('services-grid');
+        if (servicesGrid) {
+            servicesGrid.innerHTML = '';
+            serviceData.forEach(service => {
+                const serviceEl = document.createElement('div');
+                serviceEl.className = "bg-white p-6 rounded-xl shadow-md flex items-start gap-4 transition-transform transform hover:scale-105";
+                serviceEl.innerHTML = `<div class="flex-shrink-0 w-12 h-12 bg-[var(--color-secondary)] rounded-full flex items-center justify-center"><svg class="w-6 h-6 text-[var(--text-main)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">${service.icon}</svg></div><div><h3 class="font-bold text-xl text-[var(--text-main)] font-poppins mb-1">${service.title}</h3><p class="text-[var(--text-muted)] text-sm">${service.description}</p></div>`;
+                servicesGrid.appendChild(serviceEl);
+            });
+        }
+        const faqs = [
+            { q: '¿Qué hago si mi perro vomita un medicamento?', a: 'No repita la dosis sin consultar. Anote la hora y el medicamento y contacte a su veterinario para recibir instrucciones.' },
+            { q: '¿Cómo saber si mi mascota tiene fiebre?', a: 'La forma más precisa es con un termómetro rectal. La temperatura normal en perros y gatos es de 38°C a 39.2°C.' },
+            { q: '¿Cuándo debo llevar a mi mascota a un control?', a: 'Se recomienda un control anual para mascotas adultas sanas. Los cachorros, seniors o con condiciones crónicas necesitan visitas más frecuentes.' }
+        ];
+        const faqContainer = document.getElementById('faq-accordion');
+        if (faqContainer) {
+            faqContainer.innerHTML = '';
+            faqs.forEach(faq => {
+                const item = document.createElement('div');
+                item.innerHTML = `<div class="accordion-header"><h3 class="font-semibold text-lg text-gray-700">${faq.q}</h3><svg class="accordion-arrow w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="accordion-body"><p class="text-gray-600">${faq.a}</p></div>`;
+                faqContainer.appendChild(item);
+            });
+            faqContainer.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', (e) => {
+                    e.currentTarget.classList.toggle('active');
+                    e.currentTarget.nextElementSibling.classList.toggle('expanded');
+                });
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeApp);
+</script>    
 </body>
 </html>
